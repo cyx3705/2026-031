@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-023 HistoryVulcan · OneHistory</title>
+  <meta name="description" content="宿主、命令总线、模块生命周期">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-023</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-023">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>HistoryVulcan 5.6.1</h1>
+<p>OneHistory 模块宿主：模块注册与生命周期、命令总线、本地 CLI、开发和发布管线。源码为 <strong>5.6.1</strong>，冻结基线为 <strong>v5.4.0</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/AGENTS.md">工作合同</a> / <a href="https://github.com/cyx3705/2026-023/blob/HEAD/project.manifest.json">项目清单</a></td>
+<td>修改边界、活动目录与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>组件与职责</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>现行合同、消费文档与证据索引</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>构建、测试与交付检查</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a> / <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">开发手册</a></td>
+<td>模块接入与工作区流程</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-Samples/README.md">起步示例</a></td>
+<td>DemoModule</td>
+</tr>
+</tbody></table>
+<p>根 <code>HistoryVulcan.sln</code> 是唯一解决方案，SDK 由 <code>global.json</code> 固定。首次构建先执行 <code>dotnet restore .\HistoryVulcan.sln --locked-mode</code>，其余命令见验证合同。</p>
+<p>宿主使用 <code>vulcan.release.cycle</code>，禁止走模块 <code>vulcan.dev.start/submit/finish</code>。候选构建须显式指定工作区；提交、标签、推送、正式发布及部署须有明确授权。</p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

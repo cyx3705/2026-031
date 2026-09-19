@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-012 便携式自动冷萃咖啡机 · OneHistory</title>
+  <meta name="description" content="一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-012</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-012">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>2026-012 便携式自动冷萃咖啡机</h1>
+<p>一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵，通过 ESP32-S3 控制咖啡液在上下舱之间循环，并配套 Windows 上位机完成设备联调、手动控制、循环配方与运行记录。</p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-012/HEAD/b-Picture/%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="便携式自动冷萃咖啡机渲染图"></p>
+<h2>项目概览</h2>
+<p>项目覆盖从产品结构到软硬件联调的完整原型资料：</p>
+<ul>
+<li><strong>机械结构</strong>：上下舱体、中部电气仓、泵、电池、管路及整机装配模型。</li>
+<li><strong>电子硬件</strong>：ESP32-S3 主控、电源与继电器驱动原理图、PCB 和接线资料。</li>
+<li><strong>嵌入式固件</strong>：基于 Arduino / PlatformIO，实现安全初始化、双泵互锁和串口控制。</li>
+<li><strong>Windows 上位机</strong>：基于 .NET 8 / WPF，支持模拟与实机模式、手动上液/降液、固定循环、命名配方和历史记录。</li>
+<li><strong>项目交付</strong>：产品渲染图、汇报文件、用户手册、串口协议及工程设计源文件。</li>
+</ul>
+<h2>工作原理</h2>
+<p>机器由上舱体、电气仓和下舱体组成。两只泵分别负责两个方向的液体输送：</p>
+<pre><code class="language-text">上液：下舱体 -- GPIO15 / 泵 1 --&gt; 上舱体
+降液：上舱体 -- GPIO16 / 泵 2 --&gt; 下舱体
+</code></pre>
+<p>上位机按照“上液 -&gt; 停留 -&gt; 降液 -&gt; 停留”的顺序执行可配置循环。当前原型没有液位、温度或压力传感器，运行过程以人工标定的时间为依据，界面中的液位为模拟或估算值。</p>
+<h2>当前状态</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>状态</th>
+<th>主要内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>机械结构</td>
+<td>已完成原型设计</td>
+<td>Solid Edge / SolidWorks 模型、整机装配和 KeyShot 渲染</td>
+</tr>
+<tr>
+<td>电路设计</td>
+<td>已完成原型资料</td>
+<td>Altium Designer 原理图、PCB、元件库和接线依据</td>
+</tr>
+<tr>
+<td>ESP32 固件</td>
+<td>已完成联调版本</td>
+<td>115200 波特率 JSON Lines 协议、状态上报和双泵互锁</td>
+</tr>
+<tr>
+<td>Windows 上位机</td>
+<td><code>v0.4.0-M4</code></td>
+<td>模拟/设备控制、循环编排、配方、历史记录和故障显示</td>
+</tr>
+<tr>
+<td>文档</td>
+<td>已整理</td>
+<td>汇报文件、用户手册、产品规划、串口协议和引脚定义</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>本仓库是工程原型资料，不是可直接量产的定版方案。接线或上电前请先阅读“安全与硬件确认”章节。</p>
+</blockquote>
+<h2>快速开始</h2>
+<h3>1. 运行 Windows 上位机</h3>
+<p>环境要求：Windows 10/11、<a href="https://dotnet.microsoft.com/download/dotnet/8.0">.NET 8 SDK</a>。</p>
+<pre><code class="language-powershell">cd &quot;b-Code-上位机程序&quot;
+dotnet restore APPShell.sln
+dotnet run --project src/App/App.csproj
+</code></pre>
+<p>程序可在没有硬件时使用模拟模式。连接 ESP32 时，在右侧控制面板刷新并选择对应串口；默认通讯参数为 <code>115200 / UTF-8 / JSON Lines</code>。详细操作见<a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E7%A8%8B%E5%BA%8F/docs/%E5%92%96%E5%95%A1%E5%86%B7%E8%90%83%E6%9C%BA%E4%B8%8A%E4%BD%8D%E6%9C%BA_%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C.md">上位机用户手册</a>。</p>
+<h3>2. 编译并烧录 ESP32 固件</h3>
+<p>环境要求：VS Code + PlatformIO，目标板为 ESP32-S3 DevKitC-1 兼容板。</p>
+<pre><code class="language-powershell">cd &quot;b-Code-引脚定义和esp32程序/coffee_cold_brew&quot;
+pio run
+pio run --target upload
+pio device monitor --baud 115200
+</code></pre>
+<p>固件启动后默认关闭两路继电器，并周期性输出状态快照。实际烧录前请核对 <a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E5%92%8Cesp32%E7%A8%8B%E5%BA%8F/coffee_cold_brew/platformio.ini"><code>platformio.ini</code></a> 中的开发板环境以及<a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E5%92%8Cesp32%E7%A8%8B%E5%BA%8F/ESP32-S3_%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E8%A1%A8.md">引脚定义表</a>。</p>
+<h2>核心控制定义</h2>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th align="right">GPIO</th>
+<th>电平</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>泵 1 继电器 / 上液</td>
+<td align="right">15</td>
+<td>HIGH 有效</td>
+<td>下舱体向上舱体输送</td>
+</tr>
+<tr>
+<td>泵 2 继电器 / 降液</td>
+<td align="right">16</td>
+<td>HIGH 有效</td>
+<td>上舱体向下舱体输送</td>
+</tr>
+<tr>
+<td>泵 1 PWM</td>
+<td align="right">1</td>
+<td>待标定</td>
+<td>启动时保持 0%</td>
+</tr>
+<tr>
+<td>泵 2 PWM</td>
+<td align="right">2</td>
+<td>待标定</td>
+<td>启动时保持 0%</td>
+</tr>
+<tr>
+<td>模式开关</td>
+<td align="right">4</td>
+<td>输入</td>
+<td>外部 10k 上拉</td>
+</tr>
+<tr>
+<td>电池电压采样</td>
+<td align="right">5</td>
+<td>ADC</td>
+<td>100k / 47k 分压</td>
+</tr>
+</tbody></table>
+<p>GPIO15 与 GPIO16 必须保持互斥。方向切换时应先将两路关闭，经过安全死区后再开启目标输出；停机时先将 PWM 降至 0%，再释放继电器。</p>
+<h2>目录结构</h2>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>内容</th>
+<th>推荐打开方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Altium-Designer"><code>b-Altium-Designer</code></a></td>
+<td>原理图、PCB、元件库及设计历史</td>
+<td>Altium Designer</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E7%A8%8B%E5%BA%8F"><code>b-Code-上位机程序</code></a></td>
+<td>Windows 上位机、说明文档和串口协议</td>
+<td>Visual Studio 2022 / .NET 8 SDK</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E5%92%8Cesp32%E7%A8%8B%E5%BA%8F"><code>b-Code-引脚定义和esp32程序</code></a></td>
+<td>ESP32-S3 固件、引脚表和联调资料</td>
+<td>VS Code + PlatformIO</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Module-SE"><code>b-Module-SE</code></a></td>
+<td>整机及零部件结构模型</td>
+<td>Solid Edge</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Module-SW"><code>b-Module-SW</code></a></td>
+<td>SolidWorks 装配与零件文件</td>
+<td>SolidWorks</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Module-GE"><code>b-Module-GE</code></a></td>
+<td>通用件和外购件三维模型</td>
+<td>对应 CAD 软件</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-KeyShot"><code>b-KeyShot</code></a></td>
+<td>渲染工程目录</td>
+<td>KeyShot</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Picture"><code>b-Picture</code></a></td>
+<td>产品渲染、原理图、PCB 图和过程图片</td>
+<td>图片查看器</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Office"><code>b-Office</code></a></td>
+<td>项目汇报文件</td>
+<td>PowerPoint</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-References"><code>b-References</code></a></td>
+<td>参考资料</td>
+<td>对应文档工具</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-012/blob/HEAD/Unused"><code>Unused</code></a></td>
+<td>历史方案及未采用资料</td>
+<td>仅供追溯</td>
+</tr>
+</tbody></table>
+<h2>关键文档</h2>
+<ul>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E7%A8%8B%E5%BA%8F/docs/%E5%92%96%E5%95%A1%E5%86%B7%E8%90%83%E6%9C%BA%E4%B8%8A%E4%BD%8D%E6%9C%BA_%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C.md">咖啡冷萃机上位机用户手册</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E7%A8%8B%E5%BA%8F/docs/%E5%92%96%E5%95%A1%E5%86%B7%E8%90%83%E6%9C%BA%E4%B8%8A%E4%BD%8D%E6%9C%BA_%E4%BA%A7%E5%93%81%E4%B8%8E%E5%B7%A5%E7%A8%8B%E8%A7%84%E5%88%92.md">咖啡冷萃机上位机产品与工程规划</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E7%A8%8B%E5%BA%8F/docs/%E4%B8%B2%E5%8F%A3%E9%80%9A%E8%AE%AF%E5%8D%8F%E8%AE%AE_M3.md">串口通讯协议 M3</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Code-%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E5%92%8Cesp32%E7%A8%8B%E5%BA%8F/ESP32-S3_%E5%BC%95%E8%84%9A%E5%AE%9A%E4%B9%89%E8%A1%A8.md">ESP32-S3 引脚定义表</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Picture/%E5%8E%9F%E7%90%86%E5%9B%BE.png">产品原理图</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Picture/PCB-2D.png">PCB 二维图</a></li>
+<li><a href="https://github.com/cyx3705/2026-012/blob/HEAD/b-Office/%E4%BE%BF%E6%90%BA%E5%BC%8F%E8%87%AA%E5%8A%A8%E5%86%B7%E8%90%83%E5%92%96%E5%95%A1%E6%9C%BA%E6%8A%A5%E5%91%8A.pptx">项目汇报</a></li>
+</ul>
+<h2>安全与硬件确认</h2>
+<ul>
+<li>上电、复位、断连和程序退出时，两路泵输出都应回到关闭状态；上位机的软件停止不能替代硬件保护。</li>
+<li>当前原理图中的继电器驱动需在硬件定版前复核 NPN 基极限流电阻及线圈续流二极管的实际网络。</li>
+<li>PWM 频率、极性、最小启动占空比和换向死区需要结合实装泵及驱动电路标定。</li>
+<li>电池 ADC 换算、板级压降及满电阈值需要通过实测校准，不能直接使用理论值作为保护阈值。</li>
+<li>未连接到原理图的 GPIO 视为保留资源；新增功能应同步更新原理图、引脚表和固件命名。</li>
+</ul>
+<h2>数据位置</h2>
+<p>上位机的命名配方和运行历史默认保存在：</p>
+<pre><code class="language-text">%AppData%\ColdBrewMachine\data\brew-m4.json
+</code></pre>
+<p>应用最多保留 500 条历史记录，界面显示最近 80 条。重新安装或迁移电脑前，请按需备份该文件。</p>
+<h2>项目信息</h2>
+<ul>
+<li>项目编号：<code>2026-012</code></li>
+<li>当前上位机版本：<code>0.4.0-M4</code></li>
+<li>项目类型：便携式自动冷萃咖啡机工程原型</li>
+<li>原模板作者：Pinavia（2025）</li>
+</ul>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

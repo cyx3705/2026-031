@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-018 MyAPI · OneHistory</title>
+  <meta name="description" content="后端模块运行时探索">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-018</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-018">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>MyAPI</h1>
+<p>MyAPI 是 OneHistory 的后端模块运行时探索项目。当前从 <code>b-Code-MyAPI/</code> 中的 Lite 原型开始，目标是形成模块注册器、命令管线以及本地/HTTP/MCP 调用适配；页面由独立前端模块提供，AppShell 和 Web 只承担页面宿主层。用于验收模块接入的测试能力和注册适配已外置到根级 <code>b-Code-TestModule/</code>。</p>
+<p>本项目处于 V4 exploration 状态，不影响已冻结的 <code>2026-023-AppShell</code> 3.0.3，也不提供稳定 API 或正式发布包。</p>
+<h2>入口</h2>
+<ul>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/AGENTS.md">AI 工作合同</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/project.manifest.json">项目清单</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/b-Office/document-center.md">文档中心</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/b-Office/current/overview.md">项目概览</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/b-Office/current/technical-contract.md">技术合同</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/b-Office/current/v4-exploration.md">V4 探索模型</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/b-Office/package/reuse.md">复用说明</a></li>
+<li><a href="https://github.com/cyx3705/2026-018/blob/HEAD/Module/%E6%A8%A1%E5%9D%97%E5%BC%80%E6%94%BE%E8%AF%B4%E6%98%8E.md">模块开放说明</a></li>
+</ul>
+<h2>当前构建</h2>
+<pre><code class="language-powershell">dotnet restore .\b-Code-MyAPI\MyAPI.sln --locked-mode
+dotnet build .\b-Code-MyAPI\MyAPI.sln -c Release --no-restore
+dotnet run --project .\b-Code-MyAPI\tests\MyAPI.ContractTests\MyAPI.ContractTests.csproj -c Release --no-build
+</code></pre>
+<p>旧 Lite 工程已被拆分为合同、运行时、宿主和契约测试项目；外置测试模块用于验证真实的跨目录模块消费，不属于生产内核或发布内容。V4 API 仍处于探索态，待边界稳定后再评审正式 NuGet 命名。</p>
+<p>OHS、AppShell 等上层模块的实验性源码和工程暂存于 <code>Module/</code>。该目录用于逐步建构和验证模块，不是正式发布快照。</p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-007 三维坐标机器 · OneHistory</title>
+  <meta name="description" content="三轴直角坐标机器人">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-007</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-007">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>三维坐标机器（直角坐标机器人）</h1>
+<blockquote>
+<p>基于 STC8 嵌入式控制的三轴直角坐标机器人课程设计项目，涵盖机械结构、Altium 硬件电路、纯嵌入式/串口联调程序及 WinForms 前端曲线轨迹规划。</p>
+</blockquote>
+<h2>目录结构</h2>
+<ul>
+<li><code>b-Altium-Designer/</code> — Altium 原理图与 PCB 工程（含历史版本 <code>History/</code>、ECO 日志）</li>
+<li><code>b-Code-三维坐标机器人纯嵌入式代码/</code> — 纯嵌入式控制程序（按键点动、扫描记录与回放，三轴独立频率 + 梯形加减速）</li>
+<li><code>b-Code-51三维坐标控制机器人嵌入式软件/</code> — 曲线运动嵌入式程序（串口分段频率控制）</li>
+<li><code>b-Code-三维坐标机器人前端设计/</code> — C# WinForms 前端（路径规划、频率换算、串口下发）</li>
+<li><code>b-Code-虚拟示波器/</code> — C# WinForms 小工具，串口采样波形显示，用于调试/测量步进脉冲频率</li>
+<li><code>b-Code-51与电脑通讯/</code>、<code>b-Code-轴输出方波与上报/</code> — 串口通信与单轴方波输出相关实验代码</li>
+<li><code>b-Code-小灯点亮实验/</code> — STC8 入门实验（MAX7219 点阵屏图案显示），用于熟悉 Keil/C51 开发流程</li>
+<li><code>b-Module-SE/</code>、<code>b-Module-2D/</code> — 三维模型（Solid Edge 装配体/零件）与二维工程图纸（.dwg）</li>
+<li><code>b-Office/</code> — 设计说明书、指导书、任务文档与汇报材料</li>
+<li><code>b-Picture/</code> — 项目图片资源（效果图、前端界面、电路板实物等）</li>
+<li><code>b-References/</code> — 参考资料、元器件手册、驱动与烧录工具</li>
+<li><code>Unused/</code> — 暂未使用/已废弃的辅助资源（EPLAN 电气图、KeyShot 渲染、SolidWorks 备份模型等）</li>
+</ul>
+<h2>使用方法（包括INDEX）</h2>
+<h3>项目概览</h3>
+<p>本项目设计并制作一套<strong>直角坐标机器人 / 直线运动模组</strong>，通过嵌入式微机数字控制实现机械手在 x、y、z 三轴的调节与移动。系统采用龙门式结构：x 轴同步带传动，y、z 轴滚珠丝杠传动，步进电机驱动；控制核心为 <strong>STC8A8K64D4</strong>，支持单轴手动控制、轨迹扫描记录/回放，以及上位机曲线轨迹联调。</p>
+<p><strong>主要技术指标：</strong></p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>运动范围</td>
+<td>400 mm × 400 mm × 125 mm（x、y、z）</td>
+</tr>
+<tr>
+<td>控制方式</td>
+<td>数字控制，三轴独立运动</td>
+</tr>
+<tr>
+<td>位移分辨率</td>
+<td>≥ 0.015 mm</td>
+</tr>
+<tr>
+<td>重复定位精度</td>
+<td>± 0.25 mm</td>
+</tr>
+<tr>
+<td>有效负荷</td>
+<td>4 kg</td>
+</tr>
+<tr>
+<td>工作速度</td>
+<td>20 mm/s</td>
+</tr>
+</tbody></table>
+<h3>效果图</h3>
+<p><strong>整机效果：</strong></p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-007/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="整机效果图"></p>
+<p><strong>前端设计界面（曲线轨迹规划与串口联调）：</strong></p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-007/HEAD/b-Picture/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E8%A7%86%E5%9B%BE.png" alt="前端设计视图"></p>
+<p><strong>控制板实物：</strong></p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-007/HEAD/b-Picture/%E6%9D%BF%E5%AD%90%E5%AE%9E%E7%89%A9%E5%9B%BE.jpg" alt="板子实物效果图"></p>
+<h3>设计说明</h3>
+<h4>机械与电气</h4>
+<ul>
+<li>结构方案见 <code>b-Module-SE/</code>，二维图纸见 <code>b-Module-2D/</code></li>
+<li>硬件电路在 <code>b-Altium-Designer/</code> 中完成原理图与 PCB 设计</li>
+<li>电路说明图片见 <code>b-Picture/</code>（原理图、PCB 布局、三维视图）</li>
+<li>完整设计文档：<code>b-Office/三维坐标机器控制设计说明书.docx</code></li>
+<li>课程指导书：<code>b-Office/直角坐标机器人设计与制作指导书（2026年2月修订）.doc</code></li>
+</ul>
+<h4>控制程序（两套固件 + 实验/调试小程序）</h4>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>目录</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>纯嵌入式</td>
+<td><code>b-Code-三维坐标机器人纯嵌入式代码/</code></td>
+<td>不依赖上位机；P0 按键点动，P2 输出三轴 CLK/DIR；支持扫描记录与自动回放；三轴各自独立工作频率并带梯形加减速</td>
+</tr>
+<tr>
+<td>曲线联调</td>
+<td><code>b-Code-51三维坐标控制机器人嵌入式软件/</code></td>
+<td>串口接收 <code>Fx,Fy,Fz,DirX,DirY,DirZ###</code>，Timer0 中断同步输出三轴脉冲</td>
+</tr>
+<tr>
+<td>单轴实验</td>
+<td><code>b-Code-轴输出方波与上报/</code>、<code>b-Code-51与电脑通讯/</code></td>
+<td>单轴方波输出、串口上报调试代码</td>
+</tr>
+<tr>
+<td>入门实验</td>
+<td><code>b-Code-小灯点亮实验/</code></td>
+<td>MAX7219 点阵屏图案显示，STC8/Keil 开发流程练习</td>
+</tr>
+<tr>
+<td>调试工具</td>
+<td><code>b-Code-虚拟示波器/</code></td>
+<td>串口采集波形并绘图，用于实测/标定步进脉冲频率</td>
+</tr>
+</tbody></table>
+<p><strong>引脚定义（步进驱动）：</strong></p>
+<ul>
+<li>P2.0 / P2.1 — X 轴 CLK / DIR</li>
+<li>P2.2 / P2.3 — Y 轴 CLK / DIR</li>
+<li>P2.4 / P2.5 — Z 轴 CLK / DIR</li>
+</ul>
+<p><strong>三轴脉冲频率与梯形加减速（<code>b-Code-三维坐标机器人纯嵌入式代码/text1.c</code>）：</strong></p>
+<p>依据《直角坐标机器人设计与制作指导书（2026年2月修订）》的传动参数计算得到三轴工作频率：</p>
+<table>
+<thead>
+<tr>
+<th>轴</th>
+<th>传动型式</th>
+<th>导程</th>
+<th>细分</th>
+<th>减速比</th>
+<th>位移分辨率</th>
+<th>20mm/s 对应频率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X</td>
+<td>同步带</td>
+<td>95 mm</td>
+<td>4</td>
+<td>1:10</td>
+<td>0.0119 mm</td>
+<td>1680 Hz</td>
+</tr>
+<tr>
+<td>Y</td>
+<td>滚珠丝杠</td>
+<td>5 mm</td>
+<td>4</td>
+<td>1:1</td>
+<td>0.00625 mm</td>
+<td>3200 Hz</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>滚珠丝杠</td>
+<td>5 mm</td>
+<td>4</td>
+<td>1:1</td>
+<td>0.00625 mm</td>
+<td>3200 Hz</td>
+</tr>
+</tbody></table>
+<p>固件通过 DDS（相位累加器）分频实现三轴不同频率同时输出（软件延迟时基，非硬件定时器，需示波器标定 <code>BASE_DELAY_COUNT</code>），并叠加线性（梯形）加减速：起步于起动频率 500Hz、按 <code>ACCEL_STEP</code> 线性升到工作频率、保持匀速、松开/停止后线性降回起动频率再停止。可交互查看单轴 v-t 梯形图：<code>b-Code-三维坐标机器人纯嵌入式代码/梯形加减速v-t图.html</code>（浏览器直接打开，红点标注按下/抬起按钮的加减速起点）。</p>
+<h4>曲线运动流程</h4>
+<ol>
+<li>在前端添加控制点，选择插值方式（linear / bezier / spline）</li>
+<li><code>PathPlanner</code> 等距采样，将曲线分解为微小直线段</li>
+<li><code>FrequencyConverter</code> 按路径速度换算三轴脉冲频率</li>
+<li>串口逐段下发至 MCU，嵌入式定时器同步执行</li>
+</ol>
+<p>串口协议：<code>Fx,Fy,Fz,DirX,DirY,DirZ###</code> → MCU 回复 <code>OK###</code>；握手 <code>PING###</code> → <code>PONG###</code></p>
+<h3>快速上手</h3>
+<h4>1. 纯嵌入式模式（独立调试）</h4>
+<ol>
+<li>用 Keil 打开 <code>b-Code-三维坐标机器人纯嵌入式代码/text1.uvproj</code></li>
+<li>编译并烧录至 STC8A8K64D4 控制板</li>
+<li>上电后通过面板按键进行三轴点动、扫描与回放（详见设计说明书 2.2 节）</li>
+</ol>
+<h4>2. 曲线联调模式（前端 + 嵌入式）</h4>
+<p><strong>下位机：</strong></p>
+<ol>
+<li>打开 <code>b-Code-51三维坐标控制机器人嵌入式软件/text1.uvproj</code>，编译烧录</li>
+<li>控制板串口默认 <strong>9600 bps</strong>，连接 USB-串口模块</li>
+</ol>
+<p><strong>上位机：</strong></p>
+<ol>
+<li>用 Visual Studio 打开 <code>b-Code-三维坐标机器人前端设计/</code> 解决方案</li>
+<li>运行主程序：</li>
+</ol>
+<pre><code class="language-bash">cd b-Code-三维坐标机器人前端设计/b-Code-三维坐标机器人前端设计
+dotnet run
+</code></pre>
+<ol start="3">
+<li>在界面中选择串口、建立连接，添加路径控制点并执行轨迹下发</li>
+<li>串口测试模式：<code>dotnet run -- serial-test</code></li>
+</ol>
+<p>更详细的前端说明见 <code>b-Code-三维坐标机器人前端设计/README.md</code>。</p>
+<h4>3. 硬件电路查看</h4>
+<ul>
+<li>Altium 工程：<code>b-Altium-Designer/Project.PrjPcb</code></li>
+<li>导出图片：<code>b-Picture/电路板原理图.png</code>、<code>电路PCB图片.png</code>、<code>电路板3d视图.png</code></li>
+</ul>
+<h3>INDEX（关键文件索引）</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>项目总览</td>
+<td><code>README.md</code>（本文件）</td>
+</tr>
+<tr>
+<td>控制设计说明书</td>
+<td><code>b-Office/三维坐标机器控制设计说明书.docx</code></td>
+</tr>
+<tr>
+<td>机械设计说明书</td>
+<td><code>b-Office/三维坐标机器设计说明书.docx</code></td>
+</tr>
+<tr>
+<td>课程指导书</td>
+<td><code>b-Office/直角坐标机器人设计与制作指导书（2026年2月修订）.doc</code></td>
+</tr>
+<tr>
+<td>原理图 / PCB</td>
+<td><code>b-Altium-Designer/SCH.SchDoc</code>、<code>PCB.PcbDoc</code></td>
+</tr>
+<tr>
+<td>纯嵌入式源码</td>
+<td><code>b-Code-三维坐标机器人纯嵌入式代码/text1.c</code></td>
+</tr>
+<tr>
+<td>梯形加减速 v-t 图</td>
+<td><code>b-Code-三维坐标机器人纯嵌入式代码/梯形加减速v-t图.html</code></td>
+</tr>
+<tr>
+<td>曲线嵌入式源码</td>
+<td><code>b-Code-51三维坐标控制机器人嵌入式软件/text1.c</code></td>
+</tr>
+<tr>
+<td>前端主程序</td>
+<td><code>b-Code-三维坐标机器人前端设计/b-Code-三维坐标机器人前端设计/Form1.cs</code></td>
+</tr>
+<tr>
+<td>路径规划</td>
+<td><code>b-Code-三维坐标机器人前端设计/b-Code-三维坐标机器人前端设计/PathPlanner.cs</code></td>
+</tr>
+<tr>
+<td>串口协议</td>
+<td><code>b-Code-三维坐标机器人前端设计/b-Code-三维坐标机器人前端设计/SerialProtocol.cs</code></td>
+</tr>
+<tr>
+<td>项目图片</td>
+<td><code>b-Picture/</code></td>
+</tr>
+</tbody></table>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板，每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-007/HEAD/Logo.png" alt="logo"></p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-001 大AGV · OneHistory</title>
+  <meta name="description" content="大型 AGV 整车设计资料，含悬挂底盘、电源模块、钣金外壳">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-001</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-001">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>2026-001-大AGV</h1>
+<blockquote>
+<p>大型 AGV 整车设计资料，含悬挂底盘、电源模块、钣金外壳、激光传感器及充电刷等装配模型与电气文档</p>
+</blockquote>
+<h2>项目内容</h2>
+<ol>
+<li><strong>项目定位</strong>
+本仓库为大 AGV 整车设计资料，顶层 Solid Edge 装配为 <code>0-车.asm</code>。EPLAN 工程标注公司为宁波宁工机器人科技有限公司，路径标识为 N0000-MBW。仓库按机械三维、二维工程图、电气工程与办公文档分区存放，不包含已填入的控制程序或效果图。</li>
+<li><strong>机械组成</strong></li>
+</ol>
+<ul>
+<li>底盘：<code>1-底盘.asm</code>，含左 / 右悬挂（梁、立柱、轮、减震器）、焊接底板与底盘架、底轮；</li>
+<li>车上模块：工控机装配体、刷版及保护模块、电阻件、雷达固定件；</li>
+<li>充电：<code>1-9-充电刷.asm</code>（电刷板、石墨垫片、磁铁等）；</li>
+<li>电源：<code>2-电源件.asm</code>，含电源保护架、电源本体与电源模块固定件；</li>
+<li>外壳：<code>3-外壳.asm</code>，含左后 / 右后 / 前下 / 前上钣金壳体、前板、后板、顶板、保护边条、灯及激光传感器安装。</li>
+</ul>
+<ol start="3">
+<li><strong>电气与传感元件</strong></li>
+</ol>
+<ul>
+<li>三维占位件（<code>b-Module-SE</code> 中 <code>a-</code> 前缀）：PLC、电机、左 / 右轮驱动器、电源模块、传感器本体、无线客户端、接线端子、电阻、电箱导轨；</li>
+<li>电气工程：<code>b-EPLAN/N0000.elk</code>（EPLAN 2022.0.3，IEC 标识结构工程，工程信息见 <code>N0000.edb/ProjectInfo.xml</code>）。</li>
+</ul>
+<ol start="4">
+<li><strong>三维与图纸资料</strong></li>
+</ol>
+<ul>
+<li><code>b-Module-SE</code>：Solid Edge 主模型（装配、零件与配置，另含国标螺钉 / 螺母 / 垫圈 / 卡环标准件）；</li>
+<li><code>b-Module-SW</code>：SolidWorks 装配体 <code>0-装配体.SLDASM</code> 与零件 <code>零件.SLDPRT</code>；</li>
+<li><code>b-Module-2D</code>：AutoCAD 工程图 <code>工程图.dwg</code>。</li>
+</ul>
+<ol start="5">
+<li><strong>配套文档资源</strong></li>
+</ol>
+<ul>
+<li><code>b-Office/立项报告.doc</code>、<code>b-Office/项目报告.pptx</code>、<code>b-Office/BOM表.xlsx</code>；</li>
+<li><code>b-LFSFils</code>：Git LFS 大文件存放目录（说明见该目录 <code>READEME.md</code>）。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-013 NXUG学习 · OneHistory</title>
+  <meta name="description" content="NX/UG 学习资料，包含将 YD-ESP32-S3 开发板 STEP 导入 Siemens…">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-013</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-013">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>2026-013-NXUG学习</h1>
+<blockquote>
+<p>NX/UG 学习资料，包含将 YD-ESP32-S3 开发板 STEP 导入 Siemens NX 得到的零件文件，以及对应的 IGES/STEP 交换模型</p>
+</blockquote>
+<h2>项目内容</h2>
+<ol>
+<li><strong>b-Module-GE</strong>
+通用交换格式三维模型：<code>_model2.igs</code>（IGES）、<code>_model2.stp</code>（STEP）。</li>
+<li><strong>b-Module-NX</strong></li>
+</ol>
+<ul>
+<li>Siemens NX 零件（<code>.prt</code>）共 110 个，由 <code>YD-ESP32-S3 v34.step</code> 经 NX STEP AP203 转入，转换记录见 <code>YD-ESP32-S3 v34.log</code>；</li>
+<li>模组与板级：ESP32-S3-WROOM（本体、外壳、过孔及镜像）、PCB、USB Type-C 6pin 母座、WS2812B、22 位排针；</li>
+<li>阻容与封装：R0402、C0402、C1206、0805 LED（红 / 绿 / 琥珀）、QFN-16、SOT-23、SOT-223、DO220AA；</li>
+<li>另有 <code>_model1.prt</code>、<code>_model2.prt</code>，以及阳极、阴极、灯体等拆分零件。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

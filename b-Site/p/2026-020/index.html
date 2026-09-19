@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-020 HistoryJanus · OneHistory</title>
+  <meta name="description" content="项目与 Git 治理">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-020</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-020">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>HistoryJanus</h1>
+<p>HistoryJanus 5.8.1 是运行在 HistoryVulcan 中的项目与 Git 治理模块。HistoryVulcan 独立负责 Shell、命令总线、模块生命周期、ServiceHost 和 MCP/Web 基础设施；Janus 只注册业务命令和页面。</p>
+<h2>结构</h2>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-Studio</code></td>
+<td>Janus 业务源码、模块入口与候选构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code-Verify</code></td>
+<td>Contracts、功能 Smoke 与 ModuleSmoke</td>
+</tr>
+<tr>
+<td><code>b-Office/current</code></td>
+<td>四份核心元文档、指令规范与 AI/图谱专题计划</td>
+</tr>
+<tr>
+<td><code>b-Office/package</code></td>
+<td>唯一跨项目模块 API 文档</td>
+</tr>
+<tr>
+<td><code>b-Office/history</code></td>
+<td>只读版本记录，不是现行开发输入</td>
+</tr>
+<tr>
+<td><code>z-Publish</code></td>
+<td>当前 <code>HistoryJanus-vX.Y.Z/</code> 候选与 <code>history/</code> 历史包</td>
+</tr>
+</tbody></table>
+<p>文档入口：<a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a>；跨模块入口：<a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet restore .\HistoryJanus.sln --locked-mode -p:NuGetAudit=false
+dotnet build .\HistoryJanus.sln -c Debug --no-restore -p:NuGetAudit=false
+dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Debug --no-build --no-restore -p:NuGetAudit=false
+.\b-Code-Studio\eng\Test-QualityGate.ps1
+dotnet run --project .\b-Code-Verify\ModuleSmoke\ModuleSmoke.csproj -c Release -- .\z-Publish
+</code></pre>
+<p>日常开发执行质量门禁、相关 Contracts、Debug 构建、定向功能 Smoke 与 ModuleSmoke；<code>Test-QualityGate.ps1</code>
+把抑制标记、千行文件、版本链一致性、Git/规则交互、模块 API 投影、正式树边界和宿主合同七项漂移检查日常化（代码管道化条件 4：
+漂移由检查自动阻断，不积累到发布）。推送到 <code>2026-020-HistoryJanus</code> 分支时，GitHub Actions 门禁
+（<code>.github/workflows/historyjanus-gate.yml</code>）并行复验锁定还原、双配置构建、Contracts、格式与同一门禁脚本。
+候选验证和正式提升只走宿主 <code>vulcan.dev.submit</code> / <code>finish</code>。Diana 不发布。</p>
+<pre><code class="language-powershell">.\b-Code-Studio\eng\Build-HistoryJanusPackage.ps1
+</code></pre>
+<p>正式快照含 <code>HistoryJanus.dll</code>、XML、module manifest、checksum 与 <code>docs/</code> 中已发布 Markdown；
+模块 API 的编辑源是 <code>b-Office/package</code>，跨项目读取走 <code>diana.docs.read domain=janus</code>。正式包不含 Janus EXE
+或 HistoryVulcan 运行库。Janus 本地构建脚本不测试开机自启动，也不启动 HistoryVulcan。</p>
+<h2>AI 工作边界</h2>
+<ul>
+<li>当前事实以源码、测试、<code>b-Office/current</code>、<code>b-Office/package</code> 和最新 z 级正式快照为准。</li>
+<li>默认不列举、搜索或读取 <code>b-Office/history</code>；只有用户明确追溯版本时才读取指定文件。</li>
+<li>HistoryVulcan 合同只从平级 <code>2026-023-HistoryVulcan/z-Publish</code> 消费，不复制其源码或文档。</li>
+<li>不提交 <code>bin</code>、<code>obj</code>、<code>.vs</code> 或 <code>z-Publish</code>；z 级正式快照进入 Git。</li>
+<li>根目录 <code>AGENTS.md</code> 是仓库 AI 工作合同；本节保留 Janus 特有的事实边界。</li>
+</ul>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

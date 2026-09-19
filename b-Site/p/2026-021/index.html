@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-021 HistoryMercury · OneHistory</title>
+  <meta name="description" content="活动坞、快捷键、命令工作台">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-021</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-021">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>HistoryMercury</h1>
+<p>HistoryMercury owns the HistoryVulcan desktop project dock and Explorer entry for the <code>HistoryClio</code> project library.</p>
+<p>Current source: <code>5.0.5</code>, built against host <strong>HistoryVulcan 5.1.0</strong> and rendered by <strong>HistoryAurora 1.9.2</strong>
+(page-registration protocol V1; panel protocol V3 is a hard requirement). The dock tile reads <code>HC</code>, the Explorer namespace entry is <code>HistoryClio 项目</code>, and the project scan prefers
+<code>proj.libraryroot</code> (default <code>C:\OneHistory\HistoryClio</code>). Configured <code>HistoryVesta</code> roots are rewritten to Clio.
+Mutable shortcut files, state and logs live under <code>%APPDATA%\HistoryVulcan\HistoryMercury</code>, outside the
+manifest-verified runtime module package.</p>
+<p>5.0.0 follows the host&#39;s 5.0 removal of the module UI SDK. The module entry is <code>MercuryModule</code>
+(<code>IModuleContextAware</code> + <code>IDisposable</code>) and it constructs <strong>no frontend control</strong>: its page — the dock manager — is declared as data through <code>mercury.ui.describe</code> / <code>mercury.ui.actions</code> / <code>mercury.ui.data</code> and
+rendered by HistoryAurora. The desktop dock is unaffected: it is Mercury&#39;s own window, code-built on its own STA
+thread, and it stays on screen whether or not the frontend is running. The command workbench (catalog session,
+completion, detail page) left with the host mount point it was attached to; <code>mercury.go</code> now relays
+<code>aurora.log.source</code>.</p>
+<p>5.0.1 brings the page description back in line with the frontend. It had been written against Aurora 1.7, and
+Aurora has since retired page-level <code>button</code> / <code>input</code> / <code>select</code> (1.8.14), stopped scrolling tool pages (1.9.0) and
+booked table <code>view</code> options as a no-op declaration (1.9.0). The visible result was that the dock manager&#39;s whole row
+of actions rendered as retirement notices — the buttons were still there and still did nothing, with no error on
+either side. Row actions now go through the table&#39;s <code>rowActions</code> (inline buttons and the right-click menu from one
+declaration), the retention policy and refresh collapse into a single horizontal toolbar, and &quot;加入扩展坞&quot; moved off
+the page entirely into a right-click popup. That last one needed a capability Aurora did not have; it was added to
+Aurora&#39;s public component area as <code>popup.trigger</code> (1.9.1 / REQ-UI-056) by giving the existing flyout a second way to
+open, not by building a second flyout. The dock&#39;s pinned marker also changed from a <code>·</code> after the project number to a
+bright yellow ring on the tile.</p>
+<p>5.0.2 finishes that move and ships it. The 5.0.1 source had already been rewritten for Aurora 1.9.2&#39;s panel protocol
+V3 (<code>widgets</code> → <code>rows</code>) but was never published, so the running module still declared flat <code>widgets</code> and both panels —
+the toolbar at the top of the dock manager and the right-click &quot;加入扩展坞&quot; flyout — rendered as empty boards.
+On top of that the dock manager page is trimmed: the caption line is gone, so is the <code>lastopened</code> column, and every
+row action now declares <code>inline: false</code>, which removes the trailing 「操作」 column Aurora adds for in-row buttons.
+The page does not scroll, so each line and column removed is a table row or a column width the entries table gets
+back. The trade-off is that nothing on the page advertises the right-click: adding an entry and acting on a row are
+both right-click only.</p>
+<p>The module is developed in <code>b-Code-MercuryDock</code>. Its code namespace and command domain are <code>Mercury</code>; its module identity, assembly and consumer snapshot are <code>HistoryMercury</code>, <code>HistoryMercury.dll</code> and <code>z-Publish/HistoryMercury-vX.Y.Z</code>.</p>
+<h2>Commands</h2>
+<pre><code class="language-powershell">dotnet run --project .\b-Code-Tests\HistoryMercury.Smoke\HistoryMercury.Smoke.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Build-HistoryMercuryPackage.ps1
+</code></pre>
+<p>The final command creates and verifies a candidate package in <code>z-Publish/HistoryMercury-vX.Y.Z</code>. Module development uses the host Console CLI: start, submit with an explicit worktree, then finish after approval. Diana does not publish.</p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

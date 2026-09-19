@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-030 HistoryApollo · OneHistory</title>
+  <meta name="description" content="注册到 HistoryVulcan 的模型调用模块">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-030</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-030">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>HistoryApollo 模型调用</h1>
+<p>HistoryApollo 是注册到 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/2026-023-HistoryVulcan">HistoryVulcan</a> 的模型调用模块：
+把 OpenAI 兼容的对话补全接口变成宿主指令，首发内置 DeepSeek，可按需联网搜索（博查）。</p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-030/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<p>它只做一件事——<strong>把一次模型调用说清楚</strong>。会话历史、提示词工程、重试编排和流式输出
+都属于调用方，不在这里。</p>
+<h2>快速使用</h2>
+<pre><code>apollo.key.set token=&lt;密钥&gt; provider=deepseek
+apollo.chat.ask prompt=用一句话解释张量
+apollo.key.set token=&lt;博查密钥&gt; provider=bocha
+apollo.chat.ask prompt=&quot;CDQ2B20-10D 是哪个品牌的气缸&quot; web=true
+apollo.provider.list
+</code></pre>
+<p>指令、参数、返回载荷与密钥约定见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md"><code>b-Office/package/模块API.md</code></a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 读取顺序、真值规则、工作边界与完成要求</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、命令与上下文排除项</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md"><code>b-Office/package/模块API.md</code></a></td>
+<td>模块消费合同（随发布包同行）</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md"><code>b-Office/current/项目概览.md</code></a></td>
+<td>目标、范围、状态和交付物</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md"><code>b-Office/current/技术合同.md</code></a></td>
+<td>现行需求和系统架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md"><code>b-Office/current/有效决策.md</code></a></td>
+<td>当前仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md"><code>b-Office/current/验证合同.md</code></a></td>
+<td>验证层级、命令和证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md"><code>b-Office/文档中心.md</code></a></td>
+<td>文档索引及根目录 a/b/z 规范</td>
+</tr>
+</tbody></table>
+<h2>常用命令</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryApollo\HistoryApollo.csproj -c Release
+dotnet run --project .\b-Code\HistoryApollo.Tests\HistoryApollo.Tests.csproj -c Release
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\HistoryApollo\eng\Build-HistoryApolloPackage.ps1
+</code></pre>
+<p>自动验证全程离线：对话相关用例走假传输，不出网、不计费。需要联网实调时设
+<code>APOLLO_LIVE=1</code> 再跑测试，它会用本机真实配置发一次最小请求。</p>
+<h2>密钥</h2>
+<p>密钥只落在本机 <code>%AppData%\HistoryVulcan\Modules\HistoryApollo\data\providers.json</code>，
+或由环境变量 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code> 提供（环境变量优先）；博查是 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>。</p>
+<p><strong>密钥不入库。</strong> 项目合同检查会扫描全仓并拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</p>
+<p>作者：Pinavia</p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

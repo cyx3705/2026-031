@@ -1,0 +1,76 @@
+name: 刷新项目目录并发布
+
+on:
+  # 每天 UTC 20:00 = 北京时间次日 04:00 刷新一次
+  schedule:
+    - cron: "0 20 * * *"
+  # 手动触发
+  workflow_dispatch:
+  # 改了模板、脚本、配置或样式时立刻重建
+  push:
+    branches: [main]
+    paths:
+      - "b-Code/**"
+      - "b-Site/index.template.html"
+      - "b-Site/p.template.html"
+      - "b-Site/assets/**"
+      - "b-Site/CNAME"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/build-site.yml"
+
+permissions:
+  contents: write      # 把生成结果提交回仓库
+  pages: write         # 发布到 GitHub Pages
+  id-token: write
+
+concurrency:
+  group: onehistory-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: 从各仓库 README 生成目录与说明页
+        run: node b-Code/build.mjs
+        env:
+          # 带上 token，GitHub API 限额从 60/小时 提到 5000/小时
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 提交差异
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add b-Site
+          if git diff --staged --quiet; then
+            echo "目录无变化，跳过提交"
+          else
+            git commit -m "chore(site): 刷新项目目录 $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: b-Site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

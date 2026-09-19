@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-003 中型AGV小车 · OneHistory</title>
+  <meta name="description" content="中型智能自主导航AGV搬运机器人（2025-005 项目）">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">2026-003</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/2026-003">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>中型AGV小车</h1>
+<blockquote>
+<p>中型智能自主导航AGV搬运机器人（2025-005 项目）</p>
+</blockquote>
+<h2>目录结构</h2>
+<ul>
+<li><code>Body/</code> -存放主要内容</li>
+<li><code>Note</code>  -存放零时想法</li>
+</ul>
+<h2>使用方法（包括INDEX）</h2>
+<h3>效果图</h3>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-003/HEAD/8-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="中型AGV小车整体效果图">
+<em>中型AGV小车 - 实物渲染效果</em></p>
+<hr>
+<h3>项目简介</h3>
+<p>本项目为<strong>中型AGV小车</strong>（Automated Guided Vehicle），是一款中型智能自主导航搬运机器人。采用差速驱动 + 多雷达感知系统，可实现室内外自主导航、路径规划、物料搬运、自动避障等功能，适用于工厂车间、仓储物流、智能制造等场景。</p>
+<p><strong>主要特点</strong>：平板式承载平台 + 模块化设计，负载能力强，灵活性高。</p>
+<hr>
+<h3>主要功能</h3>
+<ul>
+<li><strong>自主导航与路径规划</strong>：支持激光 SLAM / 二维码 / 磁导航等多种导航方式</li>
+<li><strong>智能避障</strong>：多激光雷达 + 3D 视觉全域感知，实现动态避障</li>
+<li><strong>物料搬运</strong>：大尺寸平板平台，适合托盘、物料箱、设备运输</li>
+<li><strong>自动充电</strong>：支持接触式充电刷块或自动充电桩</li>
+<li><strong>调度系统对接</strong>：可接入上位机调度系统，实现多机协作</li>
+<li><strong>人机交互</strong>：状态指示灯 + 可选屏幕/语音提示</li>
+</ul>
+<hr>
+<h3>设计亮点</h3>
+<ul>
+<li>平板式大承载平台，适合多种物料放置</li>
+<li>模块化底盘设计，便于后期维护和功能扩展</li>
+<li>低重心结构 + 悬挂系统，运行稳定</li>
+<li>自动充电刷块，支持无人值守长时间作业</li>
+<li>多雷达融合感知，安全可靠</li>
+</ul>
+<h3>技术参数</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>承载重量</td>
+<td>50kg</td>
+</tr>
+<tr>
+<td>驱动方式</td>
+<td>差速驱动 / 步科一体式电机</td>
+</tr>
+<tr>
+<td>导航方式</td>
+<td>激光 SLAM + 多雷达融合</td>
+</tr>
+<tr>
+<td>电池</td>
+<td>48V 高容量锂电池</td>
+</tr>
+<tr>
+<td>续航</td>
+<td>长时间作业（待实测）</td>
+</tr>
+<tr>
+<td>充电方式</td>
+<td>自动充电刷块 + 手动充电口</td>
+</tr>
+<tr>
+<td>感知系统</td>
+<td>多激光雷达</td>
+</tr>
+</tbody></table>
+<h3>📍 快速导航（快捷方式）</h3>
+<p><strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/Body">Body</a></strong> 项目核心文件（设计图纸、3D模型、装配图等 
+<strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/Body/1-Module-SE">Body/1-Module-SE</a></strong> 机械结构模块 
+<strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/Body/10-References">Body/10-References</a></strong> 参考资料、手册、PDF
+<strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/Body/8-Picture">Body/8-Picture</a></strong> 参考图片等
+<strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/11-LFSFiles">11-LFSFiles</a></strong> 大文件专区（视频、PR工程、大模型文件）
+<strong><a href="https://github.com/cyx3705/2026-003/blob/HEAD/README.md">README.md</a></strong> 本项目说明（当前页面） </p>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

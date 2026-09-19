@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0000-001 AIReady · OneHistory</title>
+  <meta name="description" content="OneHistory AI 优先项目模板">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <main class="page">
+    <p class="page-meta">
+      <span class="id">0000-001</span>
+      <a href="/">返回目录</a>
+      <a href="https://github.com/cyx3705/0000-001-AIReady">GitHub 仓库</a>
+    </p>
+    <article class="doc">
+<h1>OneHistory AI-Ready 项目模板</h1>
+<p>这是从 <code>0000-000-Template</code> 派生的 AI 优先项目模板。它保留 OneHistory 的多专业工程素材，
+同时用稳定入口、结构化清单、现行文档和可执行验证规则，让人和 AI 都能快速判断项目目标、
+真值、修改边界与完成标准。</p>
+<p><img src="https://raw.githubusercontent.com/cyx3705/0000-001-AIReady/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>模板原则</h2>
+<ul>
+<li>根目录只提供必要入口，不要求 AI 扫描整个仓库。</li>
+<li><code>project.manifest.json</code> 声明活动目录、文档、命令、归档和生成物。</li>
+<li>根目录的可见文件夹只使用 <code>a-*</code>、<code>b-*</code>、<code>z-*</code> 三种级别。</li>
+<li><code>b-Office/current/</code> 只保存必要的项目现行文档；<code>b-Office/package/</code> 保存精简复用入口。</li>
+<li><code>b-Office/history/</code> 默认不进入 AI 上下文。</li>
+<li>任何构建、测试或验收命令都必须在 manifest 中明确声明；不适用时使用 <code>null</code>。</li>
+</ul>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 读取顺序、真值规则、工作边界与完成要求</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>可机器读取的项目身份、路径、命令和上下文排除项</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/package/%E5%A4%8D%E7%94%A8%E8%AF%B4%E6%98%8E.md"><code>b-Office/package/复用说明.md</code></a></td>
+<td>文档包边界与建议读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md#%E7%9B%AE%E5%BD%95%E8%A7%84%E8%8C%83"><code>b-Office/文档中心.md</code></a></td>
+<td>文档索引及根目录 a/b/z 规范</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md"><code>b-Office/current/项目概览.md</code></a></td>
+<td>项目目标、范围、状态和交付物</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md"><code>b-Office/current/技术合同.md</code></a></td>
+<td>现行需求和系统架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md"><code>b-Office/current/有效决策.md</code></a></td>
+<td>当前仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md"><code>b-Office/current/验证合同.md</code></a></td>
+<td>分层验证方法与证据要求</td>
+</tr>
+</tbody></table>
+<h2>从模板建立项目</h2>
+<ol>
+<li>以本分支建立新的项目分支和工作树，不直接修改本模板。</li>
+<li>修改 <code>project.manifest.json</code> 中的项目身份、类型、活动目录和命令，并将
+<code>template.isTemplate</code> 改为 <code>false</code>。</li>
+<li>按项目需要创建 <code>a-*</code> 子项目、<code>b-*</code> 项目组件或 <code>z-*</code> 跨项目复用元目录，使用能表达
+职责的名称，并登记到 manifest。</li>
+<li>替换 <code>b-Office/current/</code> 中全部 <code>{{...}}</code> 占位内容，删除不适用的小节。</li>
+<li>更新根 README，使其描述真实项目，而不是模板。</li>
+<li>执行严格验收：</li>
+</ol>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>严格验收通过只代表项目入口和文档合同完整；产品本身仍须执行 manifest 中声明的构建、
+测试和验收命令。</p>
+<h2>模板验证</h2>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1
+</code></pre>
+<p>作者：Pinavia</p>
+
+    </article>
+    <p class="page-end">
+      <a href="/">返回目录</a>
+      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+    </p>
+  </main>
+  <script src="/assets/site.js"></script>
+</body>
+</html>

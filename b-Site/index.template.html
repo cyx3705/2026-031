@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OneHistory</title>
+  <meta name="description" content="OneHistory 公开项目目录。">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
+    <span class="grow"></span>
+    <a href="https://exc0.top">exc0</a>
+    <button type="button" id="theme">深色</button>
+  </header>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="lede">/*__LEDE__*/</p>
+      <p><a href="https://github.com//*__OWNER__*/">github.com//*__OWNER__*/</a></p>
+    </div>
+    <div class="hero-mark">
+      <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
+      <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+    </div>
+  </section>
+  <section class="section" id="catalog">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="tools">工作流</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="works">主体项目</button>
+    </div>
+    <div id="panel-tools" class="grid"></div>
+    <div id="panel-works" class="grid hidden"></div>
+    <p class="note">/*__NOTE__*/<span class="built">目录更新于 /*__BUILT__*/</span></p>
+  </section>
+  <script src="/assets/site.js"></script>
+  <script>
+    // 由 b-Code/build.mjs 从各仓库 README 自动生成，请勿手改
+    const tools = /*__TOOLS__*/;
+    const works = /*__WORKS__*/;
+    const card = ([id,name,note,url]) => `<a class="card" href="${url}"><span class="id">${id}</span><h3>${name}</h3><p>${note}</p></a>`;
+    document.getElementById("panel-tools").innerHTML = tools.map(card).join("");
+    document.getElementById("panel-works").innerHTML = works.map(card).join("");
+    document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+      document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === b));
+      const id = b.dataset.tab;
+      document.getElementById("panel-tools").classList.toggle("hidden", id !== "tools");
+      document.getElementById("panel-works").classList.toggle("hidden", id !== "works");
+    });
+  </script>
+</body>
+</html>
