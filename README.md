@@ -61,6 +61,15 @@ npm run build      # 生成 b-Site/index.html、p/**、projects.json
 npm run dry        # 只抓取和解析，不写文件
 ```
 
+### 首次部署（只需一次）
+
+1. 打开 `https://github.com/cyx3705/2026-031/settings/pages`
+2. **Source** 选 **GitHub Actions**
+3. 回到 Actions 页面重跑一次 workflow
+
+> workflow 里虽然写了 `enablement: true`，但该参数要求具备 admin 权限的 PAT，
+> Actions 默认的 `GITHUB_TOKEN` 权限不够，所以第一次仍得手动开启。开启后即可全自动。
+
 ### 自动发布
 
 `.github/workflows/build-site.yml`：
