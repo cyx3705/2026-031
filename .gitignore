@@ -1,0 +1,42 @@
+# HistoryJanus baseline begin
+*.bak
+*.cache
+*.eod
+*.eox
+*.elk
+*.flk
+*.lck
+*.log
+*.obj
+*.pdb
+*.slk
+*.tmp
+*.xlk
+# HistoryJanus baseline end
+
+# HistoryJanus managed begin
+*.bak
+*.buildwithskipanalyzers
+*.cache
+*.dwl
+*.dwl2
+*.elk
+*.eod
+*.eox
+*.flk
+*.idb
+*.ilk
+*.lck
+*.log
+*.lref
+*.obj
+*.pdb
+*.slk
+*.suo
+*.tlog
+*.tmp
+*.up2date
+*.user
+*.vsidx
+*.xlk
+# HistoryJanus managed end
