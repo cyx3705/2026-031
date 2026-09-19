@@ -229,7 +229,9 @@ console.log("写入 b-Site/index.html");
 await writeFile(
   path.join(SITE, "projects.json"),
   JSON.stringify(
-    { builtAt: new Date().toISOString(), tools: tools.map(strip), works: works.map(strip) },
+    // builtAt 只精确到天：用完整时间戳的话每次构建都有差异，
+    // "只提交差异" 会退化成跑一次就多一个提交
+    { builtAt: new Date().toISOString().slice(0, 10), tools: tools.map(strip), works: works.map(strip) },
     null, 2
   ),
   "utf8"
