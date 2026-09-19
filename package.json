@@ -1,0 +1,14 @@
+{
+  "name": "onehistory-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OneHistory 公开项目目录站，内容由各项目仓库 README 自动生成",
+  "scripts": {
+    "build": "node b-Code/build.mjs",
+    "dry": "node b-Code/build.mjs --dry"
+  },
+  "dependencies": {
+    "marked": "^14.1.3"
+  }
+}
