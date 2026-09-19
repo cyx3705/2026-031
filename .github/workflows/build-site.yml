@@ -56,7 +56,10 @@ jobs:
             echo "目录无变化，跳过提交"
           else
             git commit -m "chore(site): 刷新项目目录 $(date -u +%Y-%m-%d)"
-            git push
+            # 重跑历史 run 时远端可能已被之前的运行推进，先同步再推，
+            # 否则 push 会因 non-fast-forward 直接失败
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
       - uses: actions/configure-pages@v5
