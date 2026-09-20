@@ -508,10 +508,43 @@ html.js .card.in {
 }
 html.js .card.in:hover { transition-delay:0s; }
 
+/* 纯淡入，给「减少动效」用的温和版入场 */
+@keyframes fade { from { opacity:0; } to { opacity:1; } }
+/* 书页仍然展开，但转角幅度减半，去掉大开大合 */
+@keyframes openLSoft {
+  from { opacity:0; transform:translateY(-50%) perspective(1100px) rotateY(30deg); }
+  to   { opacity:.5; transform:translateY(-50%) perspective(1100px) rotateY(15deg); }
+}
+@keyframes openRSoft {
+  from { opacity:0; transform:translateY(-50%) perspective(1100px) rotateY(-30deg); }
+  to   { opacity:.5; transform:translateY(-50%) perspective(1100px) rotateY(-15deg); }
+}
+
+/* 温和降级：留住「页面活过来」的那一下，去掉真正会让人不适的部分——
+   持续不停的循环动画、跟着滚动走的视差、大幅位移。入场与书页仍然播放，
+   但都改成一次性的淡入（书页转角减半），不跟手、不重复。 */
 @media (prefers-reduced-motion: reduce) {
   html.js { scroll-behavior:auto; }
-  html.js .hero-in > *, html.js .book .pg, html.js .cue svg { animation:none !important; }
+
+  /* 入场只淡入，不再从下方位移 */
+  html.js .hero-in > * { animation-name:fade; animation-duration:.5s; }
+
+  /* 书页展开保留，幅度减半、略微加快 */
+  html.js .book .pg.l { animation-name:openLSoft; animation-duration:1s; }
+  html.js .book .pg.r { animation-name:openRSoft; animation-duration:1s; }
+
+  /* 关掉：跟随滚动的视差、下拉箭头的循环浮动 */
   html.js .hero-in, html.js .book { transform:none !important; opacity:1 !important; }
-  html.js .card { opacity:1; transform:none; }
-  * { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+  html.js .cue svg { animation:none; }
+
+  /* 卡片保留浮现，但只淡入、不位移，错峰间隔减半 */
+  html.js .card { opacity:0; transform:none; }
+  html.js .card.in {
+    opacity:1; transform:none;
+    transition:opacity .45s ease, border-color .2s ease, box-shadow .2s ease;
+    transition-delay:calc(min(var(--i, 0), 11) * 16ms);
+  }
+  html.js .card.in:hover { transition-delay:0s; }
+  /* hover 不再抬起，只留边框与阴影的变化 */
+  .card:hover { transform:none; }
 }

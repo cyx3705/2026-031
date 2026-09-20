@@ -73,6 +73,11 @@
   function reveal(nodes) {
     var list = Array.prototype.slice.call(nodes || []);
     if (!io) {
+      // 「减少动效」下不跟随滚动，整批一起淡入。
+      // 先强制一次布局，让 opacity:0 的初始态真正被计算过，否则 0→1 会被合并掉、看不到过渡。
+      // 这里不能用 requestAnimationFrame 延后：页面在后台标签时 rAF 不触发，
+      // 卡片会一直停在 opacity:0，等于整个列表消失。
+      void document.body.offsetWidth;
       list.forEach(function (n) { n.classList.add("in"); });
       return;
     }
