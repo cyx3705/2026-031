@@ -6,7 +6,10 @@
 # 才由提交链路逐个征求人工同意后按精确路径追加。
 * text=auto
 
-Logo.png filter=lfs diff=lfs merge=lfs -text
+# 必须锚定到根目录：不带斜杠的 Logo.png 会匹配任意层级的同名文件，
+# 在大小写不敏感的文件系统上连 b-Site/assets/logo.png 都会被吃进 LFS，
+# 结果站点发出去的是 130 字节的指针文本而不是图片。
+/Logo.png filter=lfs diff=lfs merge=lfs -text
 Unused/b-Altium-Designer/History/11-Altium-Designer1.~(1).PrjPcb.Zip filter=lfs diff=lfs merge=lfs -text
 Unused/b-Altium-Designer/History/Project.~(1).PrjPcb.Zip filter=lfs diff=lfs merge=lfs -text
 Unused/b-Altium-Designer/History/SCH.~(1).SchDoc.Zip filter=lfs diff=lfs merge=lfs -text
