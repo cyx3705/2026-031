@@ -15,9 +15,13 @@
 
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { setDefaultResultOrder } from "node:dns";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
+
+// 有些网络里 GitHub 的 IPv6 地址连不上、只能等超时，优先走 IPv4 能省掉这段空等
+setDefaultResultOrder("ipv4first");
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = path.join(ROOT, "b-Site");
@@ -30,10 +34,15 @@ const UA = { "User-Agent": "onehistory-site-builder", Accept: "application/vnd.g
 // Actions 里会注入 GITHUB_TOKEN，带上可把限额提到 5000/小时；本地不带也能跑
 if (process.env.GITHUB_TOKEN) UA.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 
-/** 带重试的 fetch —— 本机出网链路不稳，宁可慢也不要半路失败 */
+/**
+ * 带重试的 fetch —— 本机出网链路不稳，宁可慢也不要半路失败。
+ * 失败仍然抛出（而不是跳过）：悄悄少抓一个 README 会让站点静默掉一个项目，
+ * 那比构建失败更糟。
+ */
+const BACKOFF = [1000, 2000, 3500, 6000, 10000];
 async function get(url, { asJson = false, allow404 = false } = {}) {
   let lastErr;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i <= BACKOFF.length; i++) {
     try {
       const r = await fetch(url, { headers: UA });
       if (r.status === 404 && allow404) return null;
@@ -41,7 +50,8 @@ async function get(url, { asJson = false, allow404 = false } = {}) {
       return asJson ? await r.json() : await r.text();
     } catch (e) {
       lastErr = e;
-      await new Promise((s) => setTimeout(s, 800 * (i + 1)));
+      if (i === BACKOFF.length) break;
+      await new Promise((s) => setTimeout(s, BACKOFF[i]));
     }
   }
   throw lastErr;
@@ -190,13 +200,34 @@ for (const r of picked) {
 // 编号倒序：新项目在前
 projects.sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0));
 
-const tools = projects.filter((p) => cfg.toolsIds.includes(p.id));
-const works = projects.filter((p) => !cfg.toolsIds.includes(p.id));
+/**
+ * 站点是一个统一列表，不再分「工作流 / 主体项目」。
+ * 页面上的年份筛选由 id 前四位自行推导，这里不产出任何分组名单，
+ * 新年份的项目一出现就自动生效。
+ */
+const cards = projects.map((p) => ({
+  id: p.id,
+  name: p.name,
+  note: p.note || "",
+  url: p.url,
+  repo: p.repo,
+  pushed: p.pushedAt || "",
+}));
+
+// 不在 owner 名下的条目没有说明页，卡片直接链到 GitHub 仓库（ext:1 让前端标出外链）
 for (const e of cfg.extraTools) {
-  tools.push({ ...e, url: `/p/${e.id}/`, slug: e.id, html: null });
+  cards.push({
+    id: e.id,
+    name: e.name,
+    note: e.note || "",
+    url: `https://github.com/${e.repo}`,
+    repo: e.repo,
+    pushed: "",
+    ext: 1,
+  });
 }
 
-console.log(`工作流 ${tools.length} 项 / 主体项目 ${works.length} 项`);
+console.log(`目录共 ${cards.length} 项（含 ${cfg.extraTools.length} 个外挂条目）`);
 
 if (unwritten.length) {
   console.log(`\n⚠ 下列仓库的 README 仍是模板占位，站点只能显示仓库名：`);
@@ -205,23 +236,20 @@ if (unwritten.length) {
 }
 
 if (DRY) {
-  console.log(JSON.stringify({ tools: tools.map((t) => [t.id, t.name, t.note]) }, null, 1));
+  console.log(JSON.stringify(cards.map((c) => [c.id, c.name, c.note]), null, 1));
   process.exit(0);
 }
 
 // ---------------------------------------------------------------- 生成
 
-const tuple = (p) => JSON.stringify([p.id, p.name, p.note || "", p.url]);
-const arr = (list) => "[" + list.map(tuple).join(", ") + "]";
-
 const tpl = await readFile(path.join(SITE, "index.template.html"), "utf8");
 const indexHtml = tpl
-  .replaceAll("/*__LEDE__*/", esc(cfg.lede))
   .replaceAll("/*__NOTE__*/", esc(cfg.note))
   .replaceAll("/*__OWNER__*/", cfg.owner)
-  .replace("/*__TOOLS__*/", arr(tools))
-  .replace("/*__WORKS__*/", arr(works))
-  .replace("/*__BUILT__*/", new Date().toISOString().slice(0, 10));
+  // 对象数组而非元组：以后给卡片加字段不会错位。
+  // 转义 < ：万一哪个 README 的描述里出现 </script>，内联脚本会被就地截断
+  .replace("/*__PROJECTS__*/", JSON.stringify(cards).replace(/</g, "\\u003c"))
+  .replaceAll("/*__BUILT__*/", new Date().toISOString().slice(0, 10));
 
 await writeFile(path.join(SITE, "index.html"), indexHtml, "utf8");
 console.log("写入 b-Site/index.html");
@@ -231,12 +259,11 @@ await writeFile(
   JSON.stringify(
     // builtAt 只精确到天：用完整时间戳的话每次构建都有差异，
     // "只提交差异" 会退化成跑一次就多一个提交
-    { builtAt: new Date().toISOString().slice(0, 10), tools: tools.map(strip), works: works.map(strip) },
+    { builtAt: new Date().toISOString().slice(0, 10), count: cards.length, projects: cards },
     null, 2
   ),
   "utf8"
 );
-function strip({ html, ...rest }) { return rest; }
 
 // 详情页：整个 p/ 重建，删掉的项目不会留下孤儿页
 const pDir = path.join(SITE, "p");
@@ -249,10 +276,11 @@ for (const p of projects) {
   const dir = path.join(pDir, p.slug);
   await mkdir(dir, { recursive: true });
   const html = pageTpl
-    .replace(/\/\*__TITLE__\*\//g, esc(`${p.id} ${p.name}`))
-    .replace("/*__DESC__*/", esc(p.note || ""))
-    .replace("/*__ID__*/", esc(p.id))
-    .replace("/*__REPO__*/", esc(p.repo))
+    .replaceAll("/*__TITLE__*/", esc(`${p.id} ${p.name}`))
+    .replaceAll("/*__NAME__*/", esc(p.name))
+    .replaceAll("/*__DESC__*/", esc(p.note || ""))
+    .replaceAll("/*__ID__*/", esc(p.id))
+    .replaceAll("/*__REPO__*/", esc(p.repo))
     .replace("/*__BODY__*/", p.html);
   await writeFile(path.join(dir, "index.html"), html, "utf8");
   n++;

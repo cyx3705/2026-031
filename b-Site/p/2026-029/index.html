@@ -5,27 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-029 HistoryJuno · OneHistory</title>
   <meta name="description" content="一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的">
+  <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
 </head>
-<body>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
   <header class="nav">
-    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
-    <span class="grow"></span>
-    <a href="https://exc0.top">exc0</a>
-    <button type="button" id="theme">深色</button>
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-029" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
   </header>
-  <main class="page">
-    <p class="page-meta">
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
       <span class="id">2026-029</span>
-      <a href="/">返回目录</a>
-      <a href="https://github.com/cyx3705/2026-029">GitHub 仓库</a>
-    </p>
-    <article class="doc">
+      <span class="crumb-name">HistoryJuno</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
 <h1>HistoryJuno</h1>
 <p>HistoryJuno 0.4.1 是一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的
 Sub2API 账号与服务控制面板。<code>Juno</code> 页面提供启动、代理重连、关闭和刷新，
@@ -71,12 +97,36 @@ easyTOOL/SU2API 查找 sub2api-tool.ps1 与 proxy-reconnect.ps1，供停止和�
 凭据目录可由 SUB2API_DEPLOY_ROOT 指定，默认使用 %USERPROFILE%/Projects/sub2api-deploy。
 账号 JSON、管理密码、令牌和原始响应只在内存及 127.0.0.1 回环中使用，不进入日志或页面数据。</p>
 
-    </article>
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
     <p class="page-end">
-      <a href="/">返回目录</a>
-      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-029" rel="noopener">GitHub 仓库 ↗</a>
     </p>
   </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-029" rel="noopener">cyx3705/2026-029</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
   <script src="/assets/site.js"></script>
 </body>
 </html>

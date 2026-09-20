@@ -5,53 +5,332 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OneHistory</title>
   <meta name="description" content="OneHistory 公开项目目录。">
+  <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    // 主题在首帧前定好，避免刷新时闪一下白底
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
 </head>
 <body>
+  <a class="skip" href="#library">跳到项目库</a>
+
   <header class="nav">
-    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
-    <span class="grow"></span>
-    <a href="https://exc0.top">exc0</a>
-    <button type="button" id="theme">深色</button>
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="#library">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705" rel="noopener">GitHub</a>
+      <a class="nav-link" href="https://exc0.top" rel="noopener">exc0</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
   </header>
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="lede">个人小品牌。History 线是项目管理和工作流工具，xxxx-xxx 是公开的主体项目。公司未公开资料不在这里。</p>
-      <p><a href="https://github.com/cyx3705">github.com/cyx3705</a></p>
+
+  <main>
+    <!-- 首屏：书页意象 + 搜索入口 -->
+    <section class="hero" id="top">
+      <div class="book" aria-hidden="true">
+        <span class="pg l"></span>
+        <span class="pg r"></span>
+        <span class="spine"></span>
+      </div>
+
+      <div class="wrap hero-in">
+        <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+
+        <p class="stat" id="stat">
+          <span class="stat-n" id="stat-count">—</span> 个公开项目
+          <span class="dot"></span>
+          最近更新 <span id="stat-fresh">—</span>
+          <span class="dot"></span>
+          <a href="https://github.com/cyx3705" rel="noopener">github.com/cyx3705</a>
+        </p>
+
+        <form class="search big" id="hero-form" role="search" autocomplete="off">
+          <svg class="i-search" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
+          <input type="search" id="hero-q" placeholder="搜索项目名、编号或关键词" aria-label="搜索项目" enterkeyhint="search">
+          <kbd class="hint">/</kbd>
+        </form>
+
+        <a class="cue" href="#library">
+          <span>项目库</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- 项目库 -->
+    <section class="library" id="library">
+      <div class="bar" id="bar">
+        <div class="wrap bar-in">
+          <form class="search" id="bar-form" role="search" autocomplete="off">
+            <svg class="i-search" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
+            <input type="search" id="bar-q" placeholder="搜索项目" aria-label="在项目库中搜索" enterkeyhint="search">
+          </form>
+          <div class="chips" id="chips" role="group" aria-label="按年份筛选"></div>
+          <div class="sort">
+            <button type="button" class="sort-btn is-on" data-sort="fresh">最近更新</button>
+            <button type="button" class="sort-btn" data-sort="id">编号</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap lib-body">
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="grid" id="grid"></div>
+        <div class="empty hidden" id="empty">
+          <p class="empty-t">没有匹配的项目</p>
+          <p class="empty-s">换个关键词，或者清空当前筛选。</p>
+          <button type="button" class="ghost-btn" id="reset">清空筛选</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">只列出 GitHub 上公开可见的仓库。</p>
+      <p class="foot-meta">
+        <span>目录更新于 2026-09-20</span>
+        <span class="dot"></span>
+        <a href="https://github.com/cyx3705" rel="noopener">GitHub</a>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
     </div>
-    <div class="hero-mark">
-      <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
-      <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
-    </div>
-  </section>
-  <section class="section" id="catalog">
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" aria-selected="true" data-tab="tools">工作流</button>
-      <button class="tab" role="tab" aria-selected="false" data-tab="works">主体项目</button>
-    </div>
-    <div id="panel-tools" class="grid"></div>
-    <div id="panel-works" class="grid hidden"></div>
-    <p class="note">只列出 GitHub 上公开可见的仓库。<span class="built">目录更新于 2026-09-19</span></p>
-  </section>
+  </footer>
+
   <script src="/assets/site.js"></script>
   <script>
+  (function () {
     // 由 b-Code/build.mjs 从各仓库 README 自动生成，请勿手改
-    const tools = [["2026-031","OneHistorySite","OneHistory 公开项目目录站，内容由各项目仓库的 README 自动生成","/p/2026-031/"], ["2026-030","HistoryApollo","注册到 HistoryVulcan 的模型调用模块","/p/2026-030/"], ["2026-029","HistoryJuno","一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的","/p/2026-029/"], ["2026-027","HistoryPortunus","体系的对外传输。把 HistoryVulcan 的指令注册表投影给进程外的消费者","/p/2026-027/"], ["2026-026","HistoryAurora","OneHistory 体系的 宿主前端界面模块","/p/2026-026/"], ["2026-024","HistoryMinerva","CAD 模块，注册到 Vulcan","/p/2026-024/"], ["2026-023","HistoryVulcan","宿主、命令总线、模块生命周期","/p/2026-023/"], ["2026-021","HistoryMercury","活动坞、快捷键、命令工作台","/p/2026-021/"], ["2026-020","HistoryJanus","项目与 Git 治理","/p/2026-020/"], ["2026-019","HistoryDiana","AI 工作区与模块开发管线","/p/2026-019/"], ["2026-018","MyAPI","后端模块运行时探索","/p/2026-018/"], ["0000-001","AIReady","OneHistory AI 优先项目模板","/p/0000-001-AIReady/"], ["0000-000","Template","OneHistory 标准项目模板","/p/0000-000-Template/"], ["HistoryVesta","HistoryVesta","多项目仓库，分支 + worktree","/p/HistoryVesta/"]];
-    const works = [["2026-028","LocalChat","在微信上跑一条端到端加密的对话通道","/p/2026-028/"], ["2026-022","WBall","一个基于 .NET 8、WPF 与 OneHistory AppShell 的可配置落球对战…","/p/2026-022/"], ["2026-017","Unity学习","Unity 入门学习工程，用于编辑器界面认识与基础场景搭建练习，包含教学场景、预制体","/p/2026-017/"], ["2026-016","AD学习","本仓库是一个 Altium Designer 学习与实验资料归档集合，主要包含实验工程","/p/2026-016/"], ["2026-015","Mastercam学习","Mastercam 学习仓库，收录 UG NX 测试模型","/p/2026-015/"], ["2026-014","Csharp学习","C# 学习资料与实践代码，包含课程练习、Solid Edge 二次开发监视器","/p/2026-014/"], ["2026-013","NXUG学习","NX/UG 学习资料，包含将 YD-ESP32-S3 开发板 STEP 导入 Siemens…","/p/2026-013/"], ["2026-012","便携式自动冷萃咖啡机","一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵","/p/2026-012/"], ["2026-011","顺时针环岛交通导流系统","一种顺时针环岛交通导流系统及通行方法，通过进岛车道预选出口","/p/2026-011/"], ["2026-010","西门子PLC实践","西门子 PLC 实践项目","/p/2026-010/"], ["2026-009","ABB机器人实践","ABB RobotStudio 实习实践项目","/p/2026-009/"], ["2026-008","英语四级学习","大学英语四级学习资料，涵盖单词单元、翻译短篇抄写与近年真题试卷","/p/2026-008/"], ["2026-007","三维坐标机器","三轴直角坐标机器人","/p/2026-007/"], ["2026-006","伟立杯手套","基于绳传动 + 力控舵机的无传感器力反馈数据手套方案设计","/p/2026-006/"], ["2026-005","小型作业集合","机械设计制造及其自动化专业的课程作业与课余练习归档，按文件夹收录传感器、机械设计、控制工程","/p/2026-005/"], ["2026-004","警务机器人","基于思岚 Athena 2.0 底盘（三元锂电池标准版）的警务机器人，含钣金上车体","/p/2026-004/"], ["2026-003","中型AGV小车","中型智能自主导航AGV搬运机器人（2025-005 项目）","/p/2026-003/"], ["2026-002","陪伴智能小车","陪伴智能小车三维设计资料，包含 Siemens NX 整车装配与零件","/p/2026-002/"], ["2026-001","大AGV","大型 AGV 整车设计资料，含悬挂底盘、电源模块、钣金外壳","/p/2026-001/"], ["2025-015","弹簧测试机械","液压与气动 PLC 综合实训装置，面向机电、自动化专业教学实操设备","/p/2025-015/"], ["2025-014","减速机课程设计","带式输送机用两级圆柱齿轮减速器设计（电动机 + V带 + 二级齿轮减速）","/p/2025-014/"], ["2025-013","三十年战争研究","一场影响欧洲近代格局的宗教与政治战争（1618-1648）","/p/2025-013/"], ["2025-012","小型作业集合","小型作业统一管理模板，所有作业分支继承本项目结构规范","/p/2025-012/"], ["2025-011","资本化读书汇报","读书汇报","/p/2025-011/"], ["2025-010","墙面瓷砖自动铺设装置","面向建筑行业劳动力短缺的瓷砖自动化铺设解决方案 —— 2025 项目","/p/2025-010/"], ["2025-009","沙拉售卖机","基于轻食沙拉市场的全自动营养快餐机设计","/p/2025-009/"], ["2025-008","机器人手部快换装置","人形机器人手腕快换接头设计 —— 第一届“均普杯”迷你科技竞赛作品","/p/2025-008/"], ["2025-007","仿生风滚草","基于风滚草仿生的荒漠化防治移动机器人设计 —— 仿生学课程大作业","/p/2025-007/"], ["2025-006","机器人学作业","机器人的过去现在和未来","/p/2025-006/"], ["2025-005","颠覆式创新","文化课作业","/p/2025-005/"], ["2025-004","迎宾机器人","智能多功能迎宾引导机器人（2025 项目）","/p/2025-004/"], ["2025-003","光伏货架车","便携式可滑动多层光伏组件展示与运输货架车（2025-003 项目）","/p/2025-003/"], ["2025-002","轻型 AGV 小车","轻型 AGV","/p/2025-002/"], ["2025-001","AGV洗轮机","AGV 小车底轮自动清洗设备","/p/2025-001/"]];
-    const card = ([id,name,note,url]) => `<a class="card" href="${url}"><span class="id">${id}</span><h3>${name}</h3><p>${note}</p></a>`;
-    document.getElementById("panel-tools").innerHTML = tools.map(card).join("");
-    document.getElementById("panel-works").innerHTML = works.map(card).join("");
-    document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
-      document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === b));
-      const id = b.dataset.tab;
-      document.getElementById("panel-tools").classList.toggle("hidden", id !== "tools");
-      document.getElementById("panel-works").classList.toggle("hidden", id !== "works");
+    var PROJECTS = [{"id":"2026-031","name":"OneHistorySite","note":"OneHistory 公开项目目录站，内容由各项目仓库的 README 自动生成","url":"/p/2026-031/","repo":"cyx3705/2026-031","pushed":"2026-09-19T22:06:53Z"},{"id":"2026-030","name":"HistoryApollo","note":"注册到 HistoryVulcan 的模型调用模块","url":"/p/2026-030/","repo":"cyx3705/2026-030","pushed":"2026-09-15T02:00:34Z"},{"id":"2026-029","name":"HistoryJuno","note":"一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的","url":"/p/2026-029/","repo":"cyx3705/2026-029","pushed":"2026-09-13T14:01:04Z"},{"id":"2026-028","name":"LocalChat","note":"在微信上跑一条端到端加密的对话通道","url":"/p/2026-028/","repo":"cyx3705/2026-028","pushed":"2026-09-19T11:31:28Z"},{"id":"2026-027","name":"HistoryPortunus","note":"体系的对外传输。把 HistoryVulcan 的指令注册表投影给进程外的消费者","url":"/p/2026-027/","repo":"cyx3705/2026-027","pushed":"2026-09-13T11:18:26Z"},{"id":"2026-026","name":"HistoryAurora","note":"OneHistory 体系的 宿主前端界面模块","url":"/p/2026-026/","repo":"cyx3705/2026-026","pushed":"2026-09-19T10:01:16Z"},{"id":"2026-024","name":"HistoryMinerva","note":"CAD 模块，注册到 Vulcan","url":"/p/2026-024/","repo":"cyx3705/2026-024","pushed":"2026-09-18T01:45:26Z"},{"id":"2026-023","name":"HistoryVulcan","note":"宿主、命令总线、模块生命周期","url":"/p/2026-023/","repo":"cyx3705/2026-023","pushed":"2026-09-19T10:54:12Z"},{"id":"2026-022","name":"WBall","note":"一个基于 .NET 8、WPF 与 OneHistory AppShell 的可配置落球对战…","url":"/p/2026-022/","repo":"cyx3705/2026-022","pushed":"2026-08-17T18:11:58Z"},{"id":"2026-021","name":"HistoryMercury","note":"活动坞、快捷键、命令工作台","url":"/p/2026-021/","repo":"cyx3705/2026-021","pushed":"2026-09-13T14:38:25Z"},{"id":"2026-020","name":"HistoryJanus","note":"项目与 Git 治理","url":"/p/2026-020/","repo":"cyx3705/2026-020","pushed":"2026-09-19T10:58:28Z"},{"id":"2026-019","name":"HistoryDiana","note":"AI 工作区与模块开发管线","url":"/p/2026-019/","repo":"cyx3705/2026-019","pushed":"2026-09-10T15:28:22Z"},{"id":"2026-018","name":"MyAPI","note":"后端模块运行时探索","url":"/p/2026-018/","repo":"cyx3705/2026-018","pushed":"2026-08-17T18:11:46Z"},{"id":"2026-017","name":"Unity学习","note":"Unity 入门学习工程，用于编辑器界面认识与基础场景搭建练习，包含教学场景、预制体","url":"/p/2026-017/","repo":"cyx3705/2026-017","pushed":"2026-08-19T10:13:47Z"},{"id":"2026-016","name":"AD学习","note":"本仓库是一个 Altium Designer 学习与实验资料归档集合，主要包含实验工程","url":"/p/2026-016/","repo":"cyx3705/2026-016","pushed":"2026-08-17T18:11:22Z"},{"id":"2026-015","name":"Mastercam学习","note":"Mastercam 学习仓库，收录 UG NX 测试模型","url":"/p/2026-015/","repo":"cyx3705/2026-015","pushed":"2026-08-19T10:13:45Z"},{"id":"2026-014","name":"Csharp学习","note":"C# 学习资料与实践代码，包含课程练习、Solid Edge 二次开发监视器","url":"/p/2026-014/","repo":"cyx3705/2026-014","pushed":"2026-08-19T10:13:47Z"},{"id":"2026-013","name":"NXUG学习","note":"NX/UG 学习资料，包含将 YD-ESP32-S3 开发板 STEP 导入 Siemens…","url":"/p/2026-013/","repo":"cyx3705/2026-013","pushed":"2026-08-19T10:13:45Z"},{"id":"2026-012","name":"便携式自动冷萃咖啡机","note":"一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵","url":"/p/2026-012/","repo":"cyx3705/2026-012","pushed":"2026-09-15T03:51:58Z"},{"id":"2026-011","name":"顺时针环岛交通导流系统","note":"一种顺时针环岛交通导流系统及通行方法，通过进岛车道预选出口","url":"/p/2026-011/","repo":"cyx3705/2026-011","pushed":"2026-08-19T10:13:44Z"},{"id":"2026-010","name":"西门子PLC实践","note":"西门子 PLC 实践项目","url":"/p/2026-010/","repo":"cyx3705/2026-010","pushed":"2026-08-17T18:10:23Z"},{"id":"2026-009","name":"ABB机器人实践","note":"ABB RobotStudio 实习实践项目","url":"/p/2026-009/","repo":"cyx3705/2026-009","pushed":"2026-08-19T10:13:51Z"},{"id":"2026-008","name":"英语四级学习","note":"大学英语四级学习资料，涵盖单词单元、翻译短篇抄写与近年真题试卷","url":"/p/2026-008/","repo":"cyx3705/2026-008","pushed":"2026-09-19T11:16:44Z"},{"id":"2026-007","name":"三维坐标机器","note":"三轴直角坐标机器人","url":"/p/2026-007/","repo":"cyx3705/2026-007","pushed":"2026-08-17T18:09:47Z"},{"id":"2026-006","name":"伟立杯手套","note":"基于绳传动 + 力控舵机的无传感器力反馈数据手套方案设计","url":"/p/2026-006/","repo":"cyx3705/2026-006","pushed":"2026-08-17T18:09:36Z"},{"id":"2026-005","name":"小型作业集合","note":"机械设计制造及其自动化专业的课程作业与课余练习归档，按文件夹收录传感器、机械设计、控制工程","url":"/p/2026-005/","repo":"cyx3705/2026-005","pushed":"2026-08-19T10:13:52Z"},{"id":"2026-004","name":"警务机器人","note":"基于思岚 Athena 2.0 底盘（三元锂电池标准版）的警务机器人，含钣金上车体","url":"/p/2026-004/","repo":"cyx3705/2026-004","pushed":"2026-08-19T10:13:37Z"},{"id":"2026-003","name":"中型AGV小车","note":"中型智能自主导航AGV搬运机器人（2025-005 项目）","url":"/p/2026-003/","repo":"cyx3705/2026-003","pushed":"2026-09-19T11:16:28Z"},{"id":"2026-002","name":"陪伴智能小车","note":"陪伴智能小车三维设计资料，包含 Siemens NX 整车装配与零件","url":"/p/2026-002/","repo":"cyx3705/2026-002","pushed":"2026-08-19T10:13:42Z"},{"id":"2026-001","name":"大AGV","note":"大型 AGV 整车设计资料，含悬挂底盘、电源模块、钣金外壳","url":"/p/2026-001/","repo":"cyx3705/2026-001","pushed":"2026-08-19T10:13:41Z"},{"id":"2025-015","name":"弹簧测试机械","note":"液压与气动 PLC 综合实训装置，面向机电、自动化专业教学实操设备","url":"/p/2025-015/","repo":"cyx3705/2025-015","pushed":"2026-08-17T18:08:37Z"},{"id":"2025-014","name":"减速机课程设计","note":"带式输送机用两级圆柱齿轮减速器设计（电动机 + V带 + 二级齿轮减速）","url":"/p/2025-014/","repo":"cyx3705/2025-014","pushed":"2026-08-17T18:08:25Z"},{"id":"2025-013","name":"三十年战争研究","note":"一场影响欧洲近代格局的宗教与政治战争（1618-1648）","url":"/p/2025-013/","repo":"cyx3705/2025-013","pushed":"2026-08-17T18:08:14Z"},{"id":"2025-012","name":"小型作业集合","note":"小型作业统一管理模板，所有作业分支继承本项目结构规范","url":"/p/2025-012/","repo":"cyx3705/2025-012","pushed":"2026-08-17T18:08:02Z"},{"id":"2025-011","name":"资本化读书汇报","note":"读书汇报","url":"/p/2025-011/","repo":"cyx3705/2025-011","pushed":"2026-08-17T18:07:51Z"},{"id":"2025-010","name":"墙面瓷砖自动铺设装置","note":"面向建筑行业劳动力短缺的瓷砖自动化铺设解决方案 —— 2025 项目","url":"/p/2025-010/","repo":"cyx3705/2025-010","pushed":"2026-08-17T18:07:39Z"},{"id":"2025-009","name":"沙拉售卖机","note":"基于轻食沙拉市场的全自动营养快餐机设计","url":"/p/2025-009/","repo":"cyx3705/2025-009","pushed":"2026-08-17T18:07:26Z"},{"id":"2025-008","name":"机器人手部快换装置","note":"人形机器人手腕快换接头设计 —— 第一届“均普杯”迷你科技竞赛作品","url":"/p/2025-008/","repo":"cyx3705/2025-008","pushed":"2026-08-17T18:07:14Z"},{"id":"2025-007","name":"仿生风滚草","note":"基于风滚草仿生的荒漠化防治移动机器人设计 —— 仿生学课程大作业","url":"/p/2025-007/","repo":"cyx3705/2025-007","pushed":"2026-08-17T18:07:02Z"},{"id":"2025-006","name":"机器人学作业","note":"机器人的过去现在和未来","url":"/p/2025-006/","repo":"cyx3705/2025-006","pushed":"2026-08-17T18:06:51Z"},{"id":"2025-005","name":"颠覆式创新","note":"文化课作业","url":"/p/2025-005/","repo":"cyx3705/2025-005","pushed":"2026-08-17T18:06:39Z"},{"id":"2025-004","name":"迎宾机器人","note":"智能多功能迎宾引导机器人（2025 项目）","url":"/p/2025-004/","repo":"cyx3705/2025-004","pushed":"2026-08-17T18:06:28Z"},{"id":"2025-003","name":"光伏货架车","note":"便携式可滑动多层光伏组件展示与运输货架车（2025-003 项目）","url":"/p/2025-003/","repo":"cyx3705/2025-003","pushed":"2026-08-17T18:06:15Z"},{"id":"2025-002","name":"轻型 AGV 小车","note":"轻型 AGV","url":"/p/2025-002/","repo":"cyx3705/2025-002","pushed":"2026-08-17T18:06:03Z"},{"id":"2025-001","name":"AGV洗轮机","note":"AGV 小车底轮自动清洗设备","url":"/p/2025-001/","repo":"cyx3705/2025-001","pushed":"2026-08-17T18:05:52Z"},{"id":"0000-001","name":"AIReady","note":"OneHistory AI 优先项目模板","url":"/p/0000-001-AIReady/","repo":"cyx3705/0000-001-AIReady","pushed":"2026-08-17T18:05:40Z"},{"id":"0000-000","name":"Template","note":"OneHistory 标准项目模板","url":"/p/0000-000-Template/","repo":"cyx3705/0000-000-Template","pushed":"2026-08-17T18:05:29Z"},{"id":"HistoryVesta","name":"HistoryVesta","note":"多项目仓库，分支 + worktree","url":"https://github.com/cyx3705/HistoryVesta","repo":"cyx3705/HistoryVesta","pushed":"","ext":1}];
+    var BUILT = "2026-09-20";
+
+    var grid = document.getElementById("grid");
+    var chipsBox = document.getElementById("chips");
+    var countEl = document.getElementById("count");
+    var emptyEl = document.getElementById("empty");
+    var heroQ = document.getElementById("hero-q");
+    var barQ = document.getElementById("bar-q");
+
+    var state = { q: "", group: "all", sort: "fresh" };
+
+    // ---- 分组：全部由编号推导，新年份自动出现，不维护任何名单 ----
+    function groupOf(p) {
+      var m = String(p.id).match(/^(\d{4})/);
+      if (!m) return { key: "other", label: "其他", rank: 1 };
+      if (m[1] === "0000") return { key: "0000", label: "模板", rank: 2 };
+      return { key: m[1], label: m[1], rank: 0 };
+    }
+
+    function buildChips() {
+      var seen = {};
+      PROJECTS.forEach(function (p) {
+        var g = groupOf(p);
+        if (!seen[g.key]) seen[g.key] = { key: g.key, label: g.label, rank: g.rank, n: 0 };
+        seen[g.key].n++;
+      });
+      var list = Object.keys(seen).map(function (k) { return seen[k]; });
+      // 年份倒序在前，模板与其他垫后
+      list.sort(function (a, b) {
+        if (a.rank !== b.rank) return a.rank - b.rank;
+        return a.key < b.key ? 1 : a.key > b.key ? -1 : 0;
+      });
+      list.unshift({ key: "all", label: "全部", n: PROJECTS.length });
+
+      chipsBox.innerHTML = list.map(function (g) {
+        return '<button type="button" class="chip' + (g.key === state.group ? " is-on" : "") +
+          '" data-group="' + g.key + '" aria-pressed="' + (g.key === state.group) + '">' +
+          g.label + '<span class="chip-n">' + g.n + '</span></button>';
+      }).join("");
+    }
+
+    // ---- 相对时间 ----
+    function ago(iso) {
+      if (!iso) return "";
+      var t = Date.parse(iso);
+      if (isNaN(t)) return "";
+      var d = Math.floor((Date.now() - t) / 86400000);
+      if (d <= 0) return "今天";
+      if (d === 1) return "昨天";
+      if (d < 30) return d + " 天前";
+      if (d < 365) return Math.floor(d / 30) + " 个月前";
+      return Math.floor(d / 365) + " 年前";
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    var ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-1-.9-1.2-.9-1.2-.7-.5 0-.5 0-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.4.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-3.9 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.6 7.6 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.5 1.1.2 1.9.1 2.1.5.5.8 1.2.8 2.1 0 3-1.8 3.7-3.6 3.9.3.3.6.8.6 1.6v2.3c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg>';
+    var ICON_ARROW = '<svg class="i-ext" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 17.5L17.5 6.5M9 6.5h8.5V15"/></svg>';
+
+    function card(p, i) {
+      var t = ago(p.pushed);
+      var meta = p.ext
+        ? '<span class="tag">外部仓库</span>'
+        : (t ? '<time datetime="' + esc(p.pushed) + '">' + t + '</time>' : '<span></span>');
+      return '<article class="card" style="--i:' + i + '">' +
+        '<a class="card-link" href="' + esc(p.url) + '"' + (p.ext ? ' rel="noopener"' : '') + '>' +
+          '<span class="id">' + esc(p.id) + '</span>' +
+          '<h3>' + esc(p.name) + '</h3>' +
+          '<p>' + esc(p.note) + '</p>' +
+        '</a>' +
+        '<footer class="card-foot">' + meta +
+          '<a class="repo" href="https://github.com/' + esc(p.repo) + '" rel="noopener" ' +
+            'aria-label="在 GitHub 打开 ' + esc(p.name) + '" title="在 GitHub 打开">' +
+            (p.ext ? ICON_ARROW : ICON_GH) +
+          '</a>' +
+        '</footer>' +
+      '</article>';
+    }
+
+    // ---- 过滤 / 排序 / 渲染 ----
+    function match(p, q) {
+      if (!q) return true;
+      return (p.id + " " + p.name + " " + p.note + " " + p.repo).toLowerCase().indexOf(q) >= 0;
+    }
+
+    function render() {
+      var q = state.q.trim().toLowerCase();
+      var list = PROJECTS.filter(function (p) {
+        if (state.group !== "all" && groupOf(p).key !== state.group) return false;
+        return match(p, q);
+      });
+
+      list.sort(function (a, b) {
+        if (state.sort === "fresh") {
+          var ta = Date.parse(a.pushed || "") || 0, tb = Date.parse(b.pushed || "") || 0;
+          if (ta !== tb) return tb - ta;
+        }
+        return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
+      });
+
+      grid.innerHTML = list.map(card).join("");
+      emptyEl.classList.toggle("hidden", list.length > 0);
+      countEl.textContent = (q || state.group !== "all")
+        ? "匹配 " + list.length + " / " + PROJECTS.length + " 个项目"
+        : "共 " + PROJECTS.length + " 个项目";
+
+      if (window.OH && window.OH.reveal) window.OH.reveal(grid.children);
+    }
+
+    function setQ(v, from) {
+      state.q = v;
+      if (from !== "hero" && heroQ.value !== v) heroQ.value = v;
+      if (from !== "bar" && barQ.value !== v) barQ.value = v;
+      render();
+      syncUrl();
+    }
+
+    function syncUrl() {
+      if (!history.replaceState) return;
+      var p = new URLSearchParams();
+      if (state.q.trim()) p.set("q", state.q.trim());
+      if (state.group !== "all") p.set("g", state.group);
+      var s = p.toString();
+      history.replaceState(null, "", s ? "?" + s + location.hash : location.pathname + location.hash);
+    }
+
+    // ---- 首屏数据条 ----
+    (function stats() {
+      document.getElementById("stat-count").textContent = PROJECTS.length;
+      var newest = "";
+      PROJECTS.forEach(function (p) { if (p.pushed && p.pushed > newest) newest = p.pushed; });
+      document.getElementById("stat-fresh").textContent = newest ? ago(newest) : BUILT;
+    })();
+
+    // ---- 事件 ----
+    heroQ.addEventListener("input", function () { setQ(this.value, "hero"); });
+    barQ.addEventListener("input", function () { setQ(this.value, "bar"); });
+
+    // 首屏里一开始打字就滑到项目库，省掉一次手动下拉
+    var jumped = false;
+    heroQ.addEventListener("input", function () {
+      if (jumped || !this.value) return;
+      jumped = true;
+      document.getElementById("library").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "start" });
     });
+    heroQ.addEventListener("blur", function () { if (!this.value) jumped = false; });
+
+    document.getElementById("hero-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("library").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "start" });
+    });
+    document.getElementById("bar-form").addEventListener("submit", function (e) { e.preventDefault(); });
+
+    chipsBox.addEventListener("click", function (e) {
+      var b = e.target.closest(".chip");
+      if (!b) return;
+      state.group = b.dataset.group;
+      chipsBox.querySelectorAll(".chip").forEach(function (x) {
+        var on = x === b;
+        x.classList.toggle("is-on", on);
+        x.setAttribute("aria-pressed", on);
+      });
+      render();
+      syncUrl();
+    });
+
+    document.querySelectorAll(".sort-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        state.sort = b.dataset.sort;
+        document.querySelectorAll(".sort-btn").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        render();
+      });
+    });
+
+    document.getElementById("reset").addEventListener("click", function () {
+      state.group = "all";
+      buildChips();
+      setQ("");
+      barQ.focus();
+    });
+
+    // `/` 聚焦搜索，Esc 清空
+    document.addEventListener("keydown", function (e) {
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        var top = window.scrollY < window.innerHeight * 0.6;
+        (top ? heroQ : barQ).focus();
+      } else if (e.key === "Escape" && typing) {
+        setQ("");
+        document.activeElement.blur();
+      }
+    });
+
+    // ---- 起始状态：允许用 ?q= / ?g= 分享一个筛好的视图 ----
+    (function boot() {
+      var p = new URLSearchParams(location.search);
+      state.q = p.get("q") || "";
+      state.group = p.get("g") || "all";
+      heroQ.value = barQ.value = state.q;
+      buildChips();
+      render();
+    })();
+  })();
   </script>
 </body>
 </html>

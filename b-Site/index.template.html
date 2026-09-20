@@ -5,53 +5,332 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OneHistory</title>
   <meta name="description" content="OneHistory 公开项目目录。">
+  <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    // 主题在首帧前定好，避免刷新时闪一下白底
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
 </head>
 <body>
+  <a class="skip" href="#library">跳到项目库</a>
+
   <header class="nav">
-    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
-    <span class="grow"></span>
-    <a href="https://exc0.top">exc0</a>
-    <button type="button" id="theme">深色</button>
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="#library">项目库</a>
+      <a class="nav-link" href="https://github.com//*__OWNER__*/" rel="noopener">GitHub</a>
+      <a class="nav-link" href="https://exc0.top" rel="noopener">exc0</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
   </header>
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="lede">/*__LEDE__*/</p>
-      <p><a href="https://github.com//*__OWNER__*/">github.com//*__OWNER__*/</a></p>
+
+  <main>
+    <!-- 首屏：书页意象 + 搜索入口 -->
+    <section class="hero" id="top">
+      <div class="book" aria-hidden="true">
+        <span class="pg l"></span>
+        <span class="pg r"></span>
+        <span class="spine"></span>
+      </div>
+
+      <div class="wrap hero-in">
+        <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+
+        <p class="stat" id="stat">
+          <span class="stat-n" id="stat-count">—</span> 个公开项目
+          <span class="dot"></span>
+          最近更新 <span id="stat-fresh">—</span>
+          <span class="dot"></span>
+          <a href="https://github.com//*__OWNER__*/" rel="noopener">github.com//*__OWNER__*/</a>
+        </p>
+
+        <form class="search big" id="hero-form" role="search" autocomplete="off">
+          <svg class="i-search" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
+          <input type="search" id="hero-q" placeholder="搜索项目名、编号或关键词" aria-label="搜索项目" enterkeyhint="search">
+          <kbd class="hint">/</kbd>
+        </form>
+
+        <a class="cue" href="#library">
+          <span>项目库</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- 项目库 -->
+    <section class="library" id="library">
+      <div class="bar" id="bar">
+        <div class="wrap bar-in">
+          <form class="search" id="bar-form" role="search" autocomplete="off">
+            <svg class="i-search" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
+            <input type="search" id="bar-q" placeholder="搜索项目" aria-label="在项目库中搜索" enterkeyhint="search">
+          </form>
+          <div class="chips" id="chips" role="group" aria-label="按年份筛选"></div>
+          <div class="sort">
+            <button type="button" class="sort-btn is-on" data-sort="fresh">最近更新</button>
+            <button type="button" class="sort-btn" data-sort="id">编号</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap lib-body">
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="grid" id="grid"></div>
+        <div class="empty hidden" id="empty">
+          <p class="empty-t">没有匹配的项目</p>
+          <p class="empty-s">换个关键词，或者清空当前筛选。</p>
+          <button type="button" class="ghost-btn" id="reset">清空筛选</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">/*__NOTE__*/</p>
+      <p class="foot-meta">
+        <span>目录更新于 /*__BUILT__*/</span>
+        <span class="dot"></span>
+        <a href="https://github.com//*__OWNER__*/" rel="noopener">GitHub</a>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
     </div>
-    <div class="hero-mark">
-      <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
-      <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
-    </div>
-  </section>
-  <section class="section" id="catalog">
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" aria-selected="true" data-tab="tools">工作流</button>
-      <button class="tab" role="tab" aria-selected="false" data-tab="works">主体项目</button>
-    </div>
-    <div id="panel-tools" class="grid"></div>
-    <div id="panel-works" class="grid hidden"></div>
-    <p class="note">/*__NOTE__*/<span class="built">目录更新于 /*__BUILT__*/</span></p>
-  </section>
+  </footer>
+
   <script src="/assets/site.js"></script>
   <script>
+  (function () {
     // 由 b-Code/build.mjs 从各仓库 README 自动生成，请勿手改
-    const tools = /*__TOOLS__*/;
-    const works = /*__WORKS__*/;
-    const card = ([id,name,note,url]) => `<a class="card" href="${url}"><span class="id">${id}</span><h3>${name}</h3><p>${note}</p></a>`;
-    document.getElementById("panel-tools").innerHTML = tools.map(card).join("");
-    document.getElementById("panel-works").innerHTML = works.map(card).join("");
-    document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
-      document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === b));
-      const id = b.dataset.tab;
-      document.getElementById("panel-tools").classList.toggle("hidden", id !== "tools");
-      document.getElementById("panel-works").classList.toggle("hidden", id !== "works");
+    var PROJECTS = /*__PROJECTS__*/;
+    var BUILT = "/*__BUILT__*/";
+
+    var grid = document.getElementById("grid");
+    var chipsBox = document.getElementById("chips");
+    var countEl = document.getElementById("count");
+    var emptyEl = document.getElementById("empty");
+    var heroQ = document.getElementById("hero-q");
+    var barQ = document.getElementById("bar-q");
+
+    var state = { q: "", group: "all", sort: "fresh" };
+
+    // ---- 分组：全部由编号推导，新年份自动出现，不维护任何名单 ----
+    function groupOf(p) {
+      var m = String(p.id).match(/^(\d{4})/);
+      if (!m) return { key: "other", label: "其他", rank: 1 };
+      if (m[1] === "0000") return { key: "0000", label: "模板", rank: 2 };
+      return { key: m[1], label: m[1], rank: 0 };
+    }
+
+    function buildChips() {
+      var seen = {};
+      PROJECTS.forEach(function (p) {
+        var g = groupOf(p);
+        if (!seen[g.key]) seen[g.key] = { key: g.key, label: g.label, rank: g.rank, n: 0 };
+        seen[g.key].n++;
+      });
+      var list = Object.keys(seen).map(function (k) { return seen[k]; });
+      // 年份倒序在前，模板与其他垫后
+      list.sort(function (a, b) {
+        if (a.rank !== b.rank) return a.rank - b.rank;
+        return a.key < b.key ? 1 : a.key > b.key ? -1 : 0;
+      });
+      list.unshift({ key: "all", label: "全部", n: PROJECTS.length });
+
+      chipsBox.innerHTML = list.map(function (g) {
+        return '<button type="button" class="chip' + (g.key === state.group ? " is-on" : "") +
+          '" data-group="' + g.key + '" aria-pressed="' + (g.key === state.group) + '">' +
+          g.label + '<span class="chip-n">' + g.n + '</span></button>';
+      }).join("");
+    }
+
+    // ---- 相对时间 ----
+    function ago(iso) {
+      if (!iso) return "";
+      var t = Date.parse(iso);
+      if (isNaN(t)) return "";
+      var d = Math.floor((Date.now() - t) / 86400000);
+      if (d <= 0) return "今天";
+      if (d === 1) return "昨天";
+      if (d < 30) return d + " 天前";
+      if (d < 365) return Math.floor(d / 30) + " 个月前";
+      return Math.floor(d / 365) + " 年前";
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    var ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-1-.9-1.2-.9-1.2-.7-.5 0-.5 0-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.4.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-3.9 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.6 7.6 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.5 1.1.2 1.9.1 2.1.5.5.8 1.2.8 2.1 0 3-1.8 3.7-3.6 3.9.3.3.6.8.6 1.6v2.3c0 .2.1.5.6.4A8 8 0 0 0 8 .2z"/></svg>';
+    var ICON_ARROW = '<svg class="i-ext" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 17.5L17.5 6.5M9 6.5h8.5V15"/></svg>';
+
+    function card(p, i) {
+      var t = ago(p.pushed);
+      var meta = p.ext
+        ? '<span class="tag">外部仓库</span>'
+        : (t ? '<time datetime="' + esc(p.pushed) + '">' + t + '</time>' : '<span></span>');
+      return '<article class="card" style="--i:' + i + '">' +
+        '<a class="card-link" href="' + esc(p.url) + '"' + (p.ext ? ' rel="noopener"' : '') + '>' +
+          '<span class="id">' + esc(p.id) + '</span>' +
+          '<h3>' + esc(p.name) + '</h3>' +
+          '<p>' + esc(p.note) + '</p>' +
+        '</a>' +
+        '<footer class="card-foot">' + meta +
+          '<a class="repo" href="https://github.com/' + esc(p.repo) + '" rel="noopener" ' +
+            'aria-label="在 GitHub 打开 ' + esc(p.name) + '" title="在 GitHub 打开">' +
+            (p.ext ? ICON_ARROW : ICON_GH) +
+          '</a>' +
+        '</footer>' +
+      '</article>';
+    }
+
+    // ---- 过滤 / 排序 / 渲染 ----
+    function match(p, q) {
+      if (!q) return true;
+      return (p.id + " " + p.name + " " + p.note + " " + p.repo).toLowerCase().indexOf(q) >= 0;
+    }
+
+    function render() {
+      var q = state.q.trim().toLowerCase();
+      var list = PROJECTS.filter(function (p) {
+        if (state.group !== "all" && groupOf(p).key !== state.group) return false;
+        return match(p, q);
+      });
+
+      list.sort(function (a, b) {
+        if (state.sort === "fresh") {
+          var ta = Date.parse(a.pushed || "") || 0, tb = Date.parse(b.pushed || "") || 0;
+          if (ta !== tb) return tb - ta;
+        }
+        return a.id < b.id ? 1 : a.id > b.id ? -1 : 0;
+      });
+
+      grid.innerHTML = list.map(card).join("");
+      emptyEl.classList.toggle("hidden", list.length > 0);
+      countEl.textContent = (q || state.group !== "all")
+        ? "匹配 " + list.length + " / " + PROJECTS.length + " 个项目"
+        : "共 " + PROJECTS.length + " 个项目";
+
+      if (window.OH && window.OH.reveal) window.OH.reveal(grid.children);
+    }
+
+    function setQ(v, from) {
+      state.q = v;
+      if (from !== "hero" && heroQ.value !== v) heroQ.value = v;
+      if (from !== "bar" && barQ.value !== v) barQ.value = v;
+      render();
+      syncUrl();
+    }
+
+    function syncUrl() {
+      if (!history.replaceState) return;
+      var p = new URLSearchParams();
+      if (state.q.trim()) p.set("q", state.q.trim());
+      if (state.group !== "all") p.set("g", state.group);
+      var s = p.toString();
+      history.replaceState(null, "", s ? "?" + s + location.hash : location.pathname + location.hash);
+    }
+
+    // ---- 首屏数据条 ----
+    (function stats() {
+      document.getElementById("stat-count").textContent = PROJECTS.length;
+      var newest = "";
+      PROJECTS.forEach(function (p) { if (p.pushed && p.pushed > newest) newest = p.pushed; });
+      document.getElementById("stat-fresh").textContent = newest ? ago(newest) : BUILT;
+    })();
+
+    // ---- 事件 ----
+    heroQ.addEventListener("input", function () { setQ(this.value, "hero"); });
+    barQ.addEventListener("input", function () { setQ(this.value, "bar"); });
+
+    // 首屏里一开始打字就滑到项目库，省掉一次手动下拉
+    var jumped = false;
+    heroQ.addEventListener("input", function () {
+      if (jumped || !this.value) return;
+      jumped = true;
+      document.getElementById("library").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "start" });
     });
+    heroQ.addEventListener("blur", function () { if (!this.value) jumped = false; });
+
+    document.getElementById("hero-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("library").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "start" });
+    });
+    document.getElementById("bar-form").addEventListener("submit", function (e) { e.preventDefault(); });
+
+    chipsBox.addEventListener("click", function (e) {
+      var b = e.target.closest(".chip");
+      if (!b) return;
+      state.group = b.dataset.group;
+      chipsBox.querySelectorAll(".chip").forEach(function (x) {
+        var on = x === b;
+        x.classList.toggle("is-on", on);
+        x.setAttribute("aria-pressed", on);
+      });
+      render();
+      syncUrl();
+    });
+
+    document.querySelectorAll(".sort-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        state.sort = b.dataset.sort;
+        document.querySelectorAll(".sort-btn").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+        render();
+      });
+    });
+
+    document.getElementById("reset").addEventListener("click", function () {
+      state.group = "all";
+      buildChips();
+      setQ("");
+      barQ.focus();
+    });
+
+    // `/` 聚焦搜索，Esc 清空
+    document.addEventListener("keydown", function (e) {
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        var top = window.scrollY < window.innerHeight * 0.6;
+        (top ? heroQ : barQ).focus();
+      } else if (e.key === "Escape" && typing) {
+        setQ("");
+        document.activeElement.blur();
+      }
+    });
+
+    // ---- 起始状态：允许用 ?q= / ?g= 分享一个筛好的视图 ----
+    (function boot() {
+      var p = new URLSearchParams(location.search);
+      state.q = p.get("q") || "";
+      state.group = p.get("g") || "all";
+      heroQ.value = barQ.value = state.q;
+      buildChips();
+      render();
+    })();
+  })();
   </script>
 </body>
 </html>

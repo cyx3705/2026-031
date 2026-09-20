@@ -5,27 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2025-002 轻型 AGV 小车 · OneHistory</title>
   <meta name="description" content="轻型 AGV">
+  <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
 </head>
-<body>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
   <header class="nav">
-    <a href="/"><img class="logo logo-light" src="/assets/logo.png" alt="OneHistory"><img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory"></a>
-    <span class="grow"></span>
-    <a href="https://exc0.top">exc0</a>
-    <button type="button" id="theme">深色</button>
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2025-002" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
   </header>
-  <main class="page">
-    <p class="page-meta">
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
       <span class="id">2025-002</span>
-      <a href="/">返回目录</a>
-      <a href="https://github.com/cyx3705/2025-002">GitHub 仓库</a>
-    </p>
-    <article class="doc">
+      <span class="crumb-name">轻型 AGV 小车</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
 <h3>轻型 AGV 小车</h3>
 <blockquote>
 <p>本项目设计了一款<strong>轻型 AGV 小车</strong>，作为迎宾机器人的移动底盘。整车尺寸 <strong>517×468.5×242mm</strong>，采用非承载式底盘 + 悬挂设计，注重结构紧凑性和集成度。</p>
@@ -67,12 +93,36 @@
 <p><img src="https://raw.githubusercontent.com/cyx3705/2025-002/HEAD/Logo.png" alt="logo">
 <em>OneHistory</em></p>
 
-    </article>
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
     <p class="page-end">
-      <a href="/">返回目录</a>
-      <a href="https://github.com//*__REPO__*/">GitHub 仓库</a>
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2025-002" rel="noopener">GitHub 仓库 ↗</a>
     </p>
   </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2025-002" rel="noopener">cyx3705/2025-002</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
   <script src="/assets/site.js"></script>
 </body>
 </html>
