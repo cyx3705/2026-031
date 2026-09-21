@@ -130,9 +130,13 @@ function parseReadme(md, id) {
   return { title, note, cardNote };
 }
 
-/** README 里的相对路径要指到 GitHub raw / blob 上才显示得出来 */
+/**
+ * README 里的相对路径要指到 GitHub raw / blob 上才显示得出来。
+ * 图片走 github.com/<repo>/raw/：它对 LFS 文件重定向到 media.githubusercontent.com，
+ * 对普通文件重定向到 raw CDN。直接用 raw.githubusercontent.com 时 LFS 图片只拿到指针文本。
+ */
 function rewriteLinks(md, repoFull) {
-  const raw = `https://raw.githubusercontent.com/${repoFull}/HEAD/`;
+  const raw = `https://github.com/${repoFull}/raw/HEAD/`;
   const blob = `https://github.com/${repoFull}/blob/HEAD/`;
   return md
     .replace(/(!\[[^\]]*\]\()(?!https?:|#|mailto:)\.?\/?([^)]+)(\))/g,
