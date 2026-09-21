@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-031 OneHistorySite · OneHistory</title>
+  <meta name="description" content="OneHistory 公开项目目录站，内容由各项目仓库的 README 自动生成">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-031" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-031</span>
+      <span class="crumb-name">OneHistorySite</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>OneHistorySite</h1>
+<blockquote>
+<p>OneHistory 公开项目目录站，内容由各项目仓库的 README 自动生成</p>
+</blockquote>
+<h2>项目效果图</h2>
+<p><img src="https://github.com/cyx3705/2026-031/raw/HEAD/b-Picture/%E9%A6%96%E9%A1%B5.png" alt="站点首页"></p>
+<h2>项目内容</h2>
+<p>对外站点 <code>onehistory.exc0.top</code> 的源码与生成管线。站点上每一张项目卡片、每一个说明页，都是从 GitHub 上各个<strong>有编号的公开仓库</strong>的 <code>README.md</code> 里读出来的，不手工维护内容。</p>
+<h3>目录结构</h3>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Site/index.template.html</code></td>
+<td>首页模板，<code>/*__PROJECTS__*/</code> 等占位符由脚本填充</td>
+</tr>
+<tr>
+<td><code>b-Site/p.template.html</code></td>
+<td>项目说明页模板</td>
+</tr>
+<tr>
+<td><code>b-Site/assets/</code></td>
+<td>样式、脚本、图标（手工维护）</td>
+</tr>
+<tr>
+<td><code>b-Site/CNAME</code></td>
+<td>自定义域名 <code>onehistory.exc0.top</code></td>
+</tr>
+<tr>
+<td><code>b-Site/index.html</code></td>
+<td><strong>生成产物</strong>，勿手改</td>
+</tr>
+<tr>
+<td><code>b-Site/p/&lt;仓库名&gt;/index.html</code></td>
+<td><strong>生成产物</strong>，每个项目一页</td>
+</tr>
+<tr>
+<td><code>b-Site/projects.json</code></td>
+<td><strong>生成产物</strong>，结构化数据</td>
+</tr>
+<tr>
+<td><code>b-Code/build.mjs</code></td>
+<td>生成脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/site.config.json</code></td>
+<td>配置：收录规则、外挂条目、人工覆盖</td>
+</tr>
+</tbody></table>
+<h3>页面结构</h3>
+<p>首页分两段：<strong>首屏</strong>是字标、一行统计和搜索框；往下是<strong>项目库</strong>，一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 <code>?q=</code> 和 <code>?g=</code>，可以直接把筛好的视图分享出去。</p>
+<p>项目说明页在桌面端右侧带一个自动生成的目录（取正文的 <code>##</code> / <code>###</code>，少于两条就不显示），手机端折叠成顶部一个「目录」按钮。</p>
+<h3>分类是算出来的，不是配出来的</h3>
+<p>年份筛选项由编号前四位推导：<code>2026-xxx</code> 归 2026，<code>0000-xxx</code> 归「模板」，编号不是四位数字的（例如手工挂上去的 <code>extraTools</code>）归「其他」。<strong>新的一年出现第一个项目时筛选项自动多一条，配置文件里不需要维护任何名单。</strong></p>
+<p>卡片数据以对象数组内联进首页（<code>{id, name, note, url, repo, pushed}</code>），以后加字段不会影响已有字段。</p>
+<h3>数据从哪来</h3>
+<p>脚本读的是<strong>标准项目模型</strong>约定的两个字段：</p>
+<pre><code class="language-markdown"># 项目全称          ← 卡片标题
+&gt; 一句话描述        ← 卡片副标题
+</code></pre>
+<p>README 正文整体渲染成该项目的说明页，其中的相对路径图片会重写到 <code>raw.githubusercontent.com</code>，相对链接重写到仓库的 blob 页。</p>
+<p><strong>所以：想改站点上某个项目的名称或描述，去改那个项目仓库的 README，不要改这里。</strong></p>
+<h3>配额说明</h3>
+<ul>
+<li>仓库列表走 <code>api.github.com</code>，<strong>每次构建仅 1 次请求</strong></li>
+<li>每个项目的 README 走 <code>raw.githubusercontent.com</code>，属于 CDN，<strong>不计入 API 限额</strong></li>
+</ul>
+<p>因此项目数量增长不会触发限速。Actions 中还会带上 <code>GITHUB_TOKEN</code>，限额进一步提到 5000/小时。</p>
+<h3>人工覆盖</h3>
+<p><code>b-Code/site.config.json</code> 的 <code>overrides</code> 只在两种情况下使用：</p>
+<ol>
+<li>该仓库 README 仍是模板占位，解析不出内容；</li>
+<li>README 标题适合做文档标题，但太长不适合做卡片标题。</li>
+</ol>
+<p><strong>把对应仓库的 README 写好之后，删掉该条覆盖即可恢复全自动。</strong> 构建时会把仍是模板占位的仓库列在日志里。</p>
+<h3>本地构建</h3>
+<pre><code class="language-bash">npm install
+npm run build      # 生成 b-Site/index.html、p/**、projects.json
+npm run dry        # 只抓取和解析，不写文件
+</code></pre>
+<h3>首次部署（只需一次）</h3>
+<ol>
+<li>打开 <code>https://github.com/cyx3705/2026-031/settings/pages</code></li>
+<li><strong>Source</strong> 选 <strong>GitHub Actions</strong></li>
+<li>回到 Actions 页面重跑一次 workflow</li>
+</ol>
+<blockquote>
+<p>workflow 里虽然写了 <code>enablement: true</code>，但该参数要求具备 admin 权限的 PAT，
+Actions 默认的 <code>GITHUB_TOKEN</code> 权限不够，所以第一次仍得手动开启。开启后即可全自动。</p>
+</blockquote>
+<h3>自动发布</h3>
+<p><code>.github/workflows/build-site.yml</code>：</p>
+<ul>
+<li>每天 UTC 20:00（北京时间 04:00）刷新一次</li>
+<li>改模板/脚本/样式后 push 立即重建</li>
+<li>也可在 Actions 页面手动触发</li>
+<li>生成结果提交回 <code>main</code>（<strong>只提交有差异的部分</strong>），随后发布到 GitHub Pages</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-031/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-031" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-031" rel="noopener">cyx3705/2026-031</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>
