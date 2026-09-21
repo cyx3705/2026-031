@@ -1,33 +1,29 @@
-# 极保守 LFS 策略：不按扩展名批量套 LFS。
-# 旧的按扩展名通配（*.asm / *.baml 这类文本也在内）是 11GB LFS 占用
-# 与推送被 GitHub pre-receive 拒收的根因。
-# 下面只逐条列出**已经是 LFS 指针**的现存文件，保证这些指针不失效；
-# 新文件一律不自动进 LFS——只有单个文件超过 GitHub 100MB 硬限时，
-# 才由提交链路逐个征求人工同意后按精确路径追加。
+# LFS 规则：不到 100MB 的文件一律不走 LFS。
+# ≥100MB 的具体文件由下面的 HistoryJanus lfs 托管块逐条列出，其余行不得出现 filter=lfs。
 * text=auto
 
 # 必须锚定到根目录：不带斜杠的 Logo.png 会匹配任意层级的同名文件，
 # 在大小写不敏感的文件系统上连 b-Site/assets/logo.png 都会被吃进 LFS，
 # 结果站点发出去的是 130 字节的指针文本而不是图片。
-/Logo.png filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/History/11-Altium-Designer1.~(1).PrjPcb.Zip filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/History/Project.~(1).PrjPcb.Zip filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/History/SCH.~(1).SchDoc.Zip filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/History/SCH.~(2).SchDoc.Zip filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/PCB.PcbDoc filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/PCBL.PcbLib filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/SCH.SchDoc filter=lfs diff=lfs merge=lfs -text
-Unused/b-Altium-Designer/SCHL.SchLib filter=lfs diff=lfs merge=lfs -text
-Unused/b-EPLAN/N0000.edb/Images/EPLAN.jpg filter=lfs diff=lfs merge=lfs -text
-Unused/b-EPLAN/N0000.edb/Images/EPLAN_LOGO.BMP filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-2D/工程图.dwg filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-NX/_model.prt filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-SE/0-装配体.asm filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-SE/0-装配体.cfg filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-SE/零件.par filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-SW/0-装配体.SLDASM filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-SW/零件.SLDPRT filter=lfs diff=lfs merge=lfs -text
-Unused/b-Module-cam/T.mcam filter=lfs diff=lfs merge=lfs -text
-Unused/b-Office/BOM表.xlsx filter=lfs diff=lfs merge=lfs -text
-Unused/b-Office/立项报告.doc filter=lfs diff=lfs merge=lfs -text
-Unused/b-Office/项目报告.pptx filter=lfs diff=lfs merge=lfs -text
+/Logo.png -text
+Unused/b-Altium-Designer/History/11-Altium-Designer1.~(1).PrjPcb.Zip -text
+Unused/b-Altium-Designer/History/Project.~(1).PrjPcb.Zip -text
+Unused/b-Altium-Designer/History/SCH.~(1).SchDoc.Zip -text
+Unused/b-Altium-Designer/History/SCH.~(2).SchDoc.Zip -text
+Unused/b-Altium-Designer/PCB.PcbDoc -text
+Unused/b-Altium-Designer/PCBL.PcbLib -text
+Unused/b-Altium-Designer/SCH.SchDoc -text
+Unused/b-Altium-Designer/SCHL.SchLib -text
+Unused/b-EPLAN/N0000.edb/Images/EPLAN.jpg -text
+Unused/b-EPLAN/N0000.edb/Images/EPLAN_LOGO.BMP -text
+Unused/b-Module-2D/工程图.dwg -text
+Unused/b-Module-NX/_model.prt -text
+Unused/b-Module-SE/0-装配体.asm -text
+Unused/b-Module-SE/0-装配体.cfg -text
+Unused/b-Module-SE/零件.par -text
+Unused/b-Module-SW/0-装配体.SLDASM -text
+Unused/b-Module-SW/零件.SLDPRT -text
+Unused/b-Module-cam/T.mcam -text
+Unused/b-Office/BOM表.xlsx -text
+Unused/b-Office/立项报告.doc -text
+Unused/b-Office/项目报告.pptx -text
