@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-027 HistoryPortunus · OneHistory</title>
-  <meta name="description" content="体系的对外传输。把 HistoryVulcan 的指令注册表投影给进程外的消费者">
+  <meta name="description" content="对外传输模块：把宿主指令总线投影为本机 MCP 与回环 Web">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -53,65 +53,166 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>HistoryPortunus</h1>
-<p>体系的<strong>对外传输</strong>。把 HistoryVulcan 的指令注册表投影给进程外的消费者，自己不产生任何业务能力。</p>
-<p>Portunus 是罗马的钥匙、门户与港口之神。它在 1.0 中完整持有对外传输：宿主只提供权威命令总线，
-Portunus 负责将其投影为 Web 与 MCP，并在模块内以默认拒绝的策略控制外部可见性。</p>
-<h2>装了几条航线</h2>
+<blockquote>
+<p>对外传输模块：把宿主指令总线投影为本机 MCP 与回环 Web</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-027/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryPortunus 把 HistoryVulcan 的指令注册表投影给进程外的消费者，自己不产生任何业务能力。
+名字取自罗马的钥匙、门户与港口之神。</p>
+<ul>
+<li>宿主只提供权威命令总线；Web 与 MCP 两条传输、外部可见性策略（默认拒绝）、会话与设置都由本模块持有。</li>
+<li>两条传输共享回环绑定、会话身份和总线执行，所以合成一个模块：拆开要付两份 manifest 与发布，隔离却是假的。</li>
+<li>它是别的模块的 AI 面得以存在的那一层，<strong>不是别的模块该调用的东西</strong>。</li>
+</ul>
+<h2>概况</h2>
 <table>
 <thead>
 <tr>
-<th>航线</th>
-<th>状态</th>
-<th>服务对象</th>
+<th>项</th>
+<th>值</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>Web</td>
-<td>1.0</td>
-<td>回环 HTTP：<code>/api/health</code>、<code>/api/commands</code>、<code>/api/command</code></td>
+<td>编号</td>
+<td><code>2026-027</code></td>
 </tr>
 <tr>
-<td>MCP</td>
-<td>1.0</td>
-<td>agent（Claude Code / Cursor 等）按 MCP 协议调用指令</td>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>portunus</code>（全部带 <code>HiddenReason</code>，不进 MCP、不能经 <code>--runtime</code> 执行）</td>
+</tr>
+<tr>
+<td>界面</td>
+<td>无（<code>ui: false</code>）</td>
+</tr>
+<tr>
+<td>传输</td>
+<td>MCP <code>127.0.0.1:8777</code>（不持券）；Web <code>127.0.0.1:8938</code>（Bearer + 客户端头）</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Code-Portunus/PortunusVersion.props"><code>PortunusVersion.props</code></a></td>
 </tr>
 </tbody></table>
-<p>两者共享回环绑定、会话身份和对总线的执行，所以合成一个模块而不是两个——
-拆开要付两份 manifest 与发布，换来的隔离却是假的：它们编译到同一份宿主快照，
-宿主 API 一动一起坏。Web 仍对前端持券；MCP 对本机 agent 不持券。</p>
-<h2>客户端契约</h2>
-<h3>1.0.5 本机 MCP 不持券</h3>
-<p>Portunus 1.0.5 随宿主启动自动开启 MCP 与回环 Web。默认固定端口为 MCP <code>8777</code>、Web <code>8938</code>，两者只绑定 <code>127.0.0.1</code>，端口被占用时不会自动换端口。
-MCP 不校验 Bearer。监听成功后把 <code>%USERPROFILE%\\.cursor\\mcp.json</code> 的 <code>history-vulcan</code> 写成当前 url，并去掉鉴权头——带 <code>Authorization</code> 时 Cursor 会走 <code>mcp_auth</code>，工具发现失败。
-配置保存在 <code>%APPDATA%\\HistoryVulcan\\state\\portunus-settings.json</code>：<code>mcp.autostart</code> / <code>web.autostart</code> 控制自启动，<code>mcp.port</code> / <code>web.port</code> 固定端口；将任一自启动键设为 <code>false</code> 可关闭对应监听。默认 <code>mcp.policy=standard</code>。</p>
-<p><strong>每次调用前重读 <code>%APPDATA%\HistoryVulcan\service\endpoint.json</code>。</strong></p>
-<p>Web 请求同时需要 <code>Authorization: Bearer &lt;accessToken&gt;</code> 与 <code>X-HistoryVulcan-Client: Shell</code>。
-只发送 Bearer 仍会返回 401。健康检查使用 <code>GET /api/health</code>，命令目录使用
-<code>GET /api/commands</code>，执行命令使用 <code>POST /api/command</code>，JSON 为 <code>{&quot;text&quot;:&quot;vulcan.module.list&quot;}</code>。</p>
-<p>它由本模块独占：启动成功后写入，<code>Dispose</code> 时删除。里面的 <code>accessToken</code> 是<strong>本次监听</strong>的
-一次性凭据，而本模块随宿主的每一轮模块热重载重启，所以令牌的换发频率是「每次重载」，
-不是「每次宿主启动」。把令牌缓存在客户端进程里，下一次重载就会拿到 401。</p>
-<p>文件不存在 = 本机此刻没有可用的 Web 入口。这是如实的，不是异常。</p>
-<h3>会触发模块重载的指令拿不到响应</h3>
-<p><code>vulcan.module.install</code>、<code>vulcan.module.reload</code> 这类指令<strong>会拆掉正在服务它们的监听器</strong>，
-客户端看到的是连接被关闭，而指令本身已经执行成功。</p>
-<p>这不是缺陷，是传输住在被重载的快照里的必然结果。断开窗口约 1 秒。
-客户端应当：重读 endpoint.json → 重试查询确认结果，而不是把断连当成失败。</p>
-<h2>它坏掉的时候</h2>
-<p><strong>不影响修复自己。</strong> 把好包拷进 <code>%APPDATA%\HistoryVulcan\Modules\HistoryPortunus</code>，
-宿主的文件监视会自己重载——恢复路径是文件系统，不是传输。</p>
-<p>代价只有两条，都可降级：查活状态改读日志，解文件锁改停服起服。</p>
-<h2>对宿主的硬性要求</h2>
-<p><code>MinimumHistoryVulcanVersion = 5.1.0</code>。Portunus 1.0 只支持 HistoryVulcan 5.1 及以上的发布快照：</p>
-<p>5.1 将模块公开面收敛为命令总线和命令注册器，并从宿主移除了 MCP/schema/client 的领域类型。
-Portunus 因此自行持有传输实现、MCP 投影策略与持久配置；它不再引用宿主源码工程或已删除的
-<code>HistoryVulcan.Extensibility.dll</code>。部署包仍不携带任何 <code>HistoryVulcan.*.dll</code>，运行时只使用宿主提供的
-Core 公开面。</p>
-<p>热重载仍要求宿主在拆除阶段 <code>Dispose</code> 模块实例。模块持有 <code>HttpListener</code>，必须在旧快照
-卸载前关闭监听器；否则旧监听器会继续占端口并保留权威命令总线引用。</p>
-<h2>迁移背景</h2>
-<p>Portunus 1.0 不再依赖历史宿主的 MCP/Extensibility 程序集。它只引用宿主的发布快照
-<code>HistoryVulcan.Core.dll</code> 与 <code>HistoryVulcan.Services.dll</code>，且这些引用在模块包中保持 <code>Private=false</code>。</p>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>portunus.mcp.status</code></td>
+<td>运行状态、端口、策略、暴露工具数与最近调用</td>
+</tr>
+<tr>
+<td><code>portunus.mcp.start</code> / <code>stop</code></td>
+<td>启停 MCP 服务，启动时对齐 Cursor <code>mcp.json</code></td>
+</tr>
+<tr>
+<td><code>portunus.mcp.autostart</code></td>
+<td>查看或设置随宿主自动监听</td>
+</tr>
+<tr>
+<td><code>portunus.mcp.schema</code></td>
+<td>查看指令投影成的 MCP 工具形态</td>
+</tr>
+<tr>
+<td><code>portunus.mcp.parse</code></td>
+<td>调试：把 JSON <code>arguments</code> 反向组装成指令文本</td>
+</tr>
+</tbody></table>
+<p>模块作者关心的「你的指令怎么变成 MCP 工具」见 <a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-027/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-Portunus/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code-Verify/</code></td>
+<td><code>Contracts</code> 合同测试</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet restore .\HistoryPortunus.sln --locked-mode -p:NuGetAudit=false
+dotnet build .\HistoryPortunus.sln -c Release --no-restore -p:NuGetAudit=false
+dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Release -p:NuGetAudit=false
+</code></pre>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li><strong>客户端每次调用前重读 <code>%APPDATA%\HistoryVulcan\service\endpoint.json</code>。</strong> Web 令牌随每一轮模块热重载换发，缓存令牌下一次重载就会 401；文件不存在即此刻没有 Web 入口。</li>
+<li><code>vulcan.module.install</code> / <code>reload</code> 会拆掉正在服务它们的监听器：客户端看到断连（约 1 秒），指令本身已成功。应重读 endpoint 再查询确认，不要当成失败。</li>
+<li>设置在 <code>%APPDATA%\HistoryVulcan\state\portunus-settings.json</code>：<code>mcp.autostart</code> / <code>web.autostart</code> 控制自启动，端口固定、占用即失败不漂移。</li>
+<li>它坏了不影响修复自己：把好包拷进 <code>%APPDATA%\HistoryVulcan\Modules\HistoryPortunus</code>，宿主文件监视会自己重载。</li>
+<li>部署包不携带任何 <code>HistoryVulcan.*.dll</code>；热重载要求 <code>Dispose</code> 时关闭 <code>HttpListener</code>，否则旧监听器继续占端口。</li>
+</ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

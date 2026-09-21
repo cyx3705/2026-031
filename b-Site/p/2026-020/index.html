@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-020 HistoryJanus · OneHistory</title>
-  <meta name="description" content="项目与 Git 治理">
+  <meta name="description" content="项目、Git 与 GitHub 治理：项目库、提交同步与分支图谱">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -53,66 +53,187 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>HistoryJanus</h1>
-<p>HistoryJanus 5.8.1 是运行在 HistoryVulcan 中的项目与 Git 治理模块。HistoryVulcan 独立负责 Shell、命令总线、模块生命周期、ServiceHost 和 MCP/Web 基础设施；Janus 只注册业务命令和页面。</p>
-<h2>结构</h2>
+<blockquote>
+<p>项目、Git 与 GitHub 治理：项目库、提交同步与分支图谱</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-020/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryJanus 是运行在 HistoryVulcan 中的项目与 Git 治理模块：管理 HistoryClio 项目库的登记、提交、同步、归档，
+Git 文件规则与 LFS，GitHub 账号与远端，以及分支图谱与提交历史。</p>
+<ul>
+<li>宿主负责 Shell、命令总线、模块生命周期与 MCP；Janus 只注册业务命令和描述化页面（由 HistoryAurora 渲染）。</li>
+<li>模块不自建窗口：提交预览、差异预览等一律走 <code>aurora.ui.dialog</code>。</li>
+</ul>
+<h2>概况</h2>
 <table>
 <thead>
 <tr>
-<th>目录</th>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-020</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>janus</code>（<code>janus.&lt;类&gt;.&lt;方法&gt;</code> 三段式）</td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述化页面</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code>；写命令不进 MCP</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Code-Studio/JanusVersion.props"><code>JanusVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>proj</code></td>
+<td><code>list</code> / <code>scan</code> / <code>tree</code> / <code>diff</code> / <code>metas</code> …</td>
+<td>项目库只读查询</td>
+</tr>
+<tr>
+<td><code>proj</code></td>
+<td><code>create</code> / <code>commit</code> / <code>push</code> / <code>pull</code> / <code>sync</code> / <code>archive</code> …</td>
+<td>项目写操作（需确认，不进 MCP）</td>
+</tr>
+<tr>
+<td><code>history</code></td>
+<td><code>list</code> / <code>show</code> / <code>diff</code> / <code>rollback</code> / <code>reset</code> …</td>
+<td>提交历史查看与回退</td>
+</tr>
+<tr>
+<td><code>graph</code></td>
+<td><code>summary</code> / <code>branches</code> / <code>commits</code> / <code>node</code></td>
+<td>分支图谱</td>
+</tr>
+<tr>
+<td><code>gitrule</code></td>
+<td><code>list</code> / <code>lfs</code> / <code>excludes</code></td>
+<td>Git 文件规则与本仓实际 LFS 文件</td>
+</tr>
+<tr>
+<td><code>github</code></td>
+<td><code>accounts</code> / <code>status</code> / <code>test</code> / <code>remote</code> / <code>login</code> …</td>
+<td>GitHub 账号与远端</td>
+</tr>
+<tr>
+<td><code>ui</code></td>
+<td><code>describe</code> / <code>actions</code> / <code>data</code> …</td>
+<td>页面协议（内部）</td>
+</tr>
+</tbody></table>
+<p>完整命令目录（运行时共 51 条）、参数与返回见 <a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E6%8C%87%E4%BB%A4%E4%BC%98%E5%8C%96%E8%A7%84%E8%8C%83.md">指令优化规范</a></td>
+<td>命令命名规则与旧名映射</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
 <th>职责</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>b-Code-Studio</code></td>
-<td>Janus 业务源码、模块入口与候选构建脚本</td>
+<td><code>b-Code-Studio/</code></td>
+<td>业务源码、模块入口与 <code>eng/</code> 构建门禁脚本</td>
 </tr>
 <tr>
-<td><code>b-Code-Verify</code></td>
+<td><code>b-Code-Verify/</code></td>
 <td>Contracts、功能 Smoke 与 ModuleSmoke</td>
 </tr>
 <tr>
-<td><code>b-Office/current</code></td>
-<td>四份核心元文档、指令规范与 AI/图谱专题计划</td>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
 </tr>
 <tr>
-<td><code>b-Office/package</code></td>
-<td>唯一跨项目模块 API 文档</td>
-</tr>
-<tr>
-<td><code>b-Office/history</code></td>
-<td>只读版本记录，不是现行开发输入</td>
-</tr>
-<tr>
-<td><code>z-Publish</code></td>
-<td>当前 <code>HistoryJanus-vX.Y.Z/</code> 候选与 <code>history/</code> 历史包</td>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
 </tr>
 </tbody></table>
-<p>文档入口：<a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a>；跨模块入口：<a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
 <h2>构建与验证</h2>
 <pre><code class="language-powershell">dotnet restore .\HistoryJanus.sln --locked-mode -p:NuGetAudit=false
-dotnet build .\HistoryJanus.sln -c Debug --no-restore -p:NuGetAudit=false
-dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Debug --no-build --no-restore -p:NuGetAudit=false
-.\b-Code-Studio\eng\Test-QualityGate.ps1
+dotnet build .\HistoryJanus.sln -c Release --no-restore -p:NuGetAudit=false
+dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code-Studio\eng\Test-QualityGate.ps1
 dotnet run --project .\b-Code-Verify\ModuleSmoke\ModuleSmoke.csproj -c Release -- .\z-Publish
 </code></pre>
-<p>日常开发执行质量门禁、相关 Contracts、Debug 构建、定向功能 Smoke 与 ModuleSmoke；<code>Test-QualityGate.ps1</code>
-把抑制标记、千行文件、版本链一致性、Git/规则交互、模块 API 投影、正式树边界和宿主合同七项漂移检查日常化（代码管道化条件 4：
-漂移由检查自动阻断，不积累到发布）。推送到 <code>2026-020-HistoryJanus</code> 分支时，GitHub Actions 门禁
-（<code>.github/workflows/historyjanus-gate.yml</code>）并行复验锁定还原、双配置构建、Contracts、格式与同一门禁脚本。
-候选验证和正式提升只走宿主 <code>vulcan.dev.submit</code> / <code>finish</code>。Diana 不发布。</p>
-<pre><code class="language-powershell">.\b-Code-Studio\eng\Build-HistoryJanusPackage.ps1
-</code></pre>
-<p>正式快照含 <code>HistoryJanus.dll</code>、XML、module manifest、checksum 与 <code>docs/</code> 中已发布 Markdown；
-模块 API 的编辑源是 <code>b-Office/package</code>，跨项目读取走 <code>diana.docs.read domain=janus</code>。正式包不含 Janus EXE
-或 HistoryVulcan 运行库。Janus 本地构建脚本不测试开机自启动，也不启动 HistoryVulcan。</p>
-<h2>AI 工作边界</h2>
+<p><code>Test-QualityGate.ps1</code> 日常化七项漂移检查：抑制标记、千行文件、版本链一致性、Git/规则交互、模块 API 投影、
+正式树边界与宿主合同。推送时 <a href="https://github.com/cyx3705/2026-020/blob/HEAD/.github/workflows/historyjanus-gate.yml"><code>historyjanus-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>Build-HistoryJanusPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
 <ul>
-<li>当前事实以源码、测试、<code>b-Office/current</code>、<code>b-Office/package</code> 和最新 z 级正式快照为准。</li>
-<li>默认不列举、搜索或读取 <code>b-Office/history</code>；只有用户明确追溯版本时才读取指定文件。</li>
-<li>HistoryVulcan 合同只从平级 <code>2026-023-HistoryVulcan/z-Publish</code> 消费，不复制其源码或文档。</li>
-<li>不提交 <code>bin</code>、<code>obj</code>、<code>.vs</code> 或 <code>z-Publish</code>；z 级正式快照进入 Git。</li>
-<li>根目录 <code>AGENTS.md</code> 是仓库 AI 工作合同；本节保留 Janus 特有的事实边界。</li>
+<li>正式快照含 <code>HistoryJanus.dll</code>、XML、module manifest、checksum 与 <code>docs/</code>，不含 Janus EXE 或 HistoryVulcan 运行库。</li>
+<li>跨项目读取已发布 API 走 <code>diana.docs.read domain=janus</code>；HistoryVulcan 合同只从平级 <code>2026-023-HistoryVulcan/z-Publish</code> 消费。</li>
+<li>默认不读 <code>b-Office/history</code>，只有明确追溯版本时才读指定文件。</li>
 </ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

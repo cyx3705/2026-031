@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-024 HistoryMinerva · OneHistory</title>
-  <meta name="description" content="CAD 模块，注册到 Vulcan">
+  <meta name="description" content="CAD 转换模块：Solid Edge 转 SolidWorks、属性整备改名与零件采购打包">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -53,78 +53,177 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>HistoryMinerva</h1>
-<p>HistoryMinerva 是注册到 HistoryVulcan 宿主的单一 CAD 转换模块。当前源码为 <code>4.11.2</code>。</p>
+<blockquote>
+<p>CAD 转换模块：Solid Edge 转 SolidWorks、属性整备改名与零件采购打包</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-024/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryMinerva 是注册到 HistoryVulcan 的单一 CAD 转换模块，在 Aurora 中央页面 <code>Minerva</code> 上提供五种转换：</p>
 <ul>
-<li><strong>前端</strong>：<code>HistoryMinerva.dll</code>——通过 Aurora 描述式协议提供中央页面 <code>Minerva</code>（<code>.par → .SLDPRT</code>、<code>.asm → .SLDASM</code>、
-SolidWorks 特征整备、属性整备改名与整体打包），模块名为 <code>HistoryMinerva</code>、命令域为 <code>minerva</code>（全部取自
-<code>HistoryMinervaIdentity</code> 唯一权威源）。Worker 查询通过 <code>minerva.worker.*</code> 进入 Vulcan 命令总线与 MCP。</li>
-<li><strong>后端</strong>：单一 <code>HistoryMinerva.Worker.exe</code>（x64 STA）只接受
-<code>&lt;verb&gt; &lt;json&gt; --cancel &lt;signal&gt;</code> 转换协议。历史 SWuse 建模链已删除。</li>
-<li><strong>整体打包</strong>（4.10.0，4.11.0 改版）：选总装配体，在它旁边生成一个 <code>&lt;前缀&gt; 零件采购/</code>：
-两张 BOM 与同名 PNG 截图在最外层，机加件的 DWG / PDF / STEP 在 <code>图纸/</code>。
-BOM 按嵌在模块里的现场模板生成，不经过 Worker——SolidWorks 起不来时采购的清单照样拿得到。
-4.10.4 起外购件清单带品牌：打包时经 HistoryApollo 按规格联网查询，查不到写 N/A。</li>
-<li><strong>件别</strong>（4.11.0）：属性整备与打包两张表的「件别」格点一下在 机加件 / 外购件 / 参考 之间轮换，两张表共用。</li>
-<li><strong>测试</strong>：<code>b-Code-HistoryMinerva-Tests</code> 下 Smoke、UiSmoke 与三个 CAD 真机门禁。</li>
+<li><code>.par → .SLDPRT</code>、<code>.asm → .SLDASM</code>；</li>
+<li><code>.SLDASM</code> 特征整备（导出 XT → 特征识别 → 按源层级重建）；</li>
+<li><code>.SLDASM</code> 属性整备（按装配层级改名、写属性）；</li>
+<li><code>.SLDASM</code> 整体打包：在总装旁生成 <code>&lt;前缀&gt; 零件采购/</code>，含两张 BOM、同名 PNG 与机加件 DWG / PDF / STEP。</li>
 </ul>
-<p>内部程序集、命名空间与 JSON 协议为 <code>HistoryMinerva.*</code>，不保留 <code>mapping.*</code> / <code>swuse.*</code> 兼容别名。
-源 CAD 文件保持只读，转换产物写入来源目录下的 <code>XT/</code> 与 <code>SW/</code>，打包产物写入 <code>&lt;前缀&gt; 零件采购/</code>。</p>
+<p>转换由单一 <code>HistoryMinerva.Worker.exe</code>（x64 STA）执行。源 CAD 文件保持只读，产物写入来源目录下的 <code>XT/</code>、<code>SW/</code> 与 <code>&lt;前缀&gt; 零件采购/</code>。</p>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-024</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>minerva</code>（身份唯一权威源 <code>HistoryMinervaIdentity</code>）</td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述化页面 <code>Minerva</code></td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code>；<code>minerva.conversion.*</code> 只从前端执行</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva/build/HistoryMinerva.Version.props"><code>HistoryMinerva.Version.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>面</th>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码面</td>
+<td><code>HistoryMinerva.Contracts.dll</code></td>
+<td>图号、改名计划、打包计划、路径布局、Worker 协议等纯函数与 DTO</td>
+</tr>
+<tr>
+<td>总线面</td>
+<td><code>minerva.plan.package</code> / <code>rename</code></td>
+<td>无状态入口：给装配体路径，拿回完整打包计划 / 改名计划</td>
+</tr>
+<tr>
+<td>总线面</td>
+<td><code>minerva.conversion.probe</code> / <code>run</code> / <code>cancel</code></td>
+<td>解析装配体、执行当前转换、取消</td>
+</tr>
+<tr>
+<td>总线面</td>
+<td><code>minerva.ui.content</code> / <code>source</code> / <code>options</code></td>
+<td>页面状态：转换内容、来源、选项</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td><code>minerva.worker.status</code> / <code>path</code> / <code>capabilities</code> / <code>show</code> / <code>hide</code></td>
+<td>Worker 就绪查询</td>
+</tr>
+</tbody></table>
+<p>跨模块与 AI 消费优先走无状态的 <code>plan.*</code>。完整能力总表见 <a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
 <h2>入口</h2>
 <table>
 <thead>
 <tr>
-<th>内容</th>
-<th>位置</th>
+<th>入口</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>项目身份、路径和命令</td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
 <td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
 </tr>
 <tr>
-<td>项目状态</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md"><code>b-Office/current/项目概览.md</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
 </tr>
 <tr>
-<td>需求与架构</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md"><code>b-Office/current/技术合同.md</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
 </tr>
 <tr>
-<td>验证方式</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md"><code>b-Office/current/验证合同.md</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
 </tr>
 <tr>
-<td>生产模块源码</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva/README.md"><code>b-Code-HistoryMinerva/README.md</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
 </tr>
 <tr>
-<td>独立测试与 CAD 门禁</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva-Tests/README.md"><code>b-Code-HistoryMinerva-Tests/README.md</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
 </tr>
 <tr>
-<td>模块清单权威源（当前 4.11.2）</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva/module.manifest.json"><code>b-Code-HistoryMinerva/module.manifest.json</code></a></td>
-</tr>
-<tr>
-<td>模块对外 API</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md"><code>b-Office/package/模块API.md</code></a></td>
-</tr>
-<tr>
-<td>SWuse V0.1 历史档案</td>
-<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/history/swuse-v0.1/docs"><code>b-Office/history/swuse-v0.1/docs</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
 </tr>
 </tbody></table>
-<h2>快速验证</h2>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-HistoryMinerva/</code></td>
+<td>生产模块：前端、Worker、Contracts 与 <code>eng/</code> 门禁脚本，见 <a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva/README.md">README</a></td>
+</tr>
+<tr>
+<td><code>b-Code-HistoryMinerva-Tests/</code></td>
+<td>Smoke、UiSmoke 与三个 CAD 真机门禁，见 <a href="https://github.com/cyx3705/2026-024/blob/HEAD/b-Code-HistoryMinerva-Tests/README.md">README</a></td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
 <pre><code class="language-powershell">dotnet restore .\HistoryMinerva.sln --locked-mode -p:NuGetAudit=false
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code-HistoryMinerva\eng\Test-QualityGate.ps1
 dotnet build .\HistoryMinerva.sln -c Release --no-restore -warnaserror -p:NuGetAudit=false
 dotnet run --project .\b-Code-HistoryMinerva-Tests\tests\HistoryMinerva.Smoke\HistoryMinerva.Smoke.csproj -c Release -p:NuGetAudit=false
 dotnet run --project .\b-Code-HistoryMinerva-Tests\tests\HistoryMinerva.UiSmoke\HistoryMinerva.UiSmoke.csproj -c Release -p:NuGetAudit=false
 </code></pre>
-<p>推送或向 <code>2026-024-HistoryMinerva</code> 提交 PR 时，<code>.github/workflows/historyminerva-gate.yml</code> 会在
-Windows 托管机上复验锁定还原、静态质量门禁、Debug/Release 构建与 Smoke、双尺寸 UI Smoke、
-格式和候选包边界。</p>
-<p>真实 CAD 门禁需要专用样件和受控 Solid Edge / SolidWorks 会话，不能用离线 Smoke 代替。</p>
+<p>推送或提交 PR 时 <a href="https://github.com/cyx3705/2026-024/blob/HEAD/.github/workflows/historyminerva-gate.yml"><code>historyminerva-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>真实 CAD 门禁需要专用样件和受控 Solid Edge / SolidWorks 会话，不能用离线 Smoke 代替。</li>
+<li>打包的 BOM 不经过 Worker，SolidWorks 起不来时清单照样能出；外购件品牌经 HistoryApollo 联网查询，查不到写 N/A。</li>
+<li>内部程序集、命名空间与 JSON 协议均为 <code>HistoryMinerva.*</code>，不保留 <code>mapping.*</code> / <code>swuse.*</code> 兼容别名。</li>
+</ul>
+<hr>
 <p>作者：Pinavia</p>
 
       </article>

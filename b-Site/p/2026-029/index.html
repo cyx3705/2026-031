@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-029 HistoryJuno · OneHistory</title>
-  <meta name="description" content="一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的">
+  <meta name="description" content="Sub2API 账号与服务控制面板：启动、代理重连、账号管理与导入">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -53,12 +53,81 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>HistoryJuno</h1>
-<p>HistoryJuno 0.4.1 是一个加载到 HistoryVulcan 并显示在 HistoryAurora 主页面中的
-Sub2API 账号与服务控制面板。<code>Juno</code> 页面提供启动、代理重连、关闭和刷新，
-并在账号管理/服务状态/账号导入三个子页间切换；账号管理支持按分组和状态检索。
-Juno 内的“账号导入”子页复用 Aurora 通用 JSON 来源组件，可选择导入分组，并在导入后
-自动绑定本机唯一的活动代理 IP，不创建独立网页。</p>
-<h2>项目入口</h2>
+<blockquote>
+<p>Sub2API 账号与服务控制面板：启动、代理重连、账号管理与导入</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-029/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryJuno 是加载到 HistoryVulcan、显示在 HistoryAurora 中的 Sub2API 控制面板。<code>Juno</code> 页面提供启动、代理重连、
+关闭和刷新，并在「账号管理 / 服务状态 / 账号导入」三个子页间切换。</p>
+<ul>
+<li>复用现有 Sub2API PowerShell 工具，不重写 Sub2API 服务本体或代理内核。</li>
+<li>不创建独立网页或自建控件；账号导入子页复用 Aurora 通用 JSON 来源组件。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-029</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>juno</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述化页面 <code>Juno</code></td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code>；<code>juno.ui.*</code> 与 <code>juno.import.select</code> 对远程模型隐藏</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Code/HistoryJuno/HistoryJunoVersion.props"><code>HistoryJunoVersion.props</code></a>；宿主下限见 <a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>juno.sub2api.start</code></td>
+<td>分阶段启动 Ubuntu Docker 与 Sub2API compose，8080/9090 就绪才算成功</td>
+</tr>
+<tr>
+<td><code>juno.sub2api.stop</code></td>
+<td>确认后停止服务</td>
+</tr>
+<tr>
+<td><code>juno.sub2api.status</code></td>
+<td>探测 8080、9090、7890、17890 端口</td>
+</tr>
+<tr>
+<td><code>juno.proxy.connect</code></td>
+<td>更新端口转发、Sub2API 全局代理与代理 IP</td>
+</tr>
+<tr>
+<td><code>juno.accounts.import</code></td>
+<td>导入账号并绑定所选分组与唯一全局代理</td>
+</tr>
+</tbody></table>
+<p>页面协议与导入流程见 <a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>入口</h2>
 <table>
 <thead>
 <tr>
@@ -67,35 +136,85 @@ Juno 内的“账号导入”子页复用 Aurora 通用 JSON 来源组件，可�
 </tr>
 </thead>
 <tbody><tr>
-<td>AGENTS.md</td>
-<td>修改边界与验证规则</td>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
 </tr>
 <tr>
-<td>project.manifest.json</td>
-<td>项目身份、活动目录和构建命令</td>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
 </tr>
 <tr>
-<td>b-Code/HistoryJuno</td>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryJuno/</code></td>
 <td>模块源码与 manifest</td>
 </tr>
 <tr>
-<td>b-Office/current</td>
-<td>当前需求、决策和验证合同</td>
+<td><code>b-Code/HistoryJuno.Tests/</code></td>
+<td>自动验证</td>
 </tr>
 <tr>
-<td>b-Office/package/模块API.md</td>
-<td>模块命令与页面协议</td>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照，由宿主管线写入</td>
 </tr>
 </tbody></table>
-<h2>构建</h2>
-<p>在 F 盘工作树中运行 project.manifest.json 的 build 命令。当前工作树的默认
-obj 目录受文件系统策略限制，构建命令已将中间文件和输出放到 C 盘 .build。</p>
-<p>模块依赖 HistoryVulcan 5.1.2 发布快照，并从 SUB2API_TOOL_ROOT 或桌面
-easyTOOL/SU2API 查找 sub2api-tool.ps1 与 proxy-reconnect.ps1，供停止和代理连接动作使用。
-启动动作直接分阶段启动 Ubuntu Docker 服务和 Sub2API compose，拒绝重复启动，并以
-8080/9090 实际监听作为成功条件。账号、分组、代理和导入操作走本机 Sub2API 管理接口；
-凭据目录可由 SUB2API_DEPLOY_ROOT 指定，默认使用 %USERPROFILE%/Projects/sub2api-deploy。
-账号 JSON、管理密码、令牌和原始响应只在内存及 127.0.0.1 回环中使用，不进入日志或页面数据。</p>
+<h2>构建与验证</h2>
+<p>构建命令以 <a href="https://github.com/cyx3705/2026-029/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a> 的 <code>commands.build</code> 为准：它把中间文件与输出重定向到
+<code>C:\Users\Administrator\Desktop\easyTOOL\SU2API\.build</code>（F 盘工作树的默认 <code>obj</code> 受文件系统策略限制）。</p>
+<pre><code class="language-powershell">dotnet run --project .\b-Code\HistoryJuno.Tests\HistoryJuno.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>停止与代理动作依赖 <code>sub2api-tool.ps1</code> 与 <code>proxy-reconnect.ps1</code>，从 <code>SUB2API_TOOL_ROOT</code> 或桌面 <code>easyTOOL/SU2API</code> 查找。</li>
+<li>账号、分组、代理和导入走本机 Sub2API 管理接口；凭据目录由 <code>SUB2API_DEPLOY_ROOT</code> 指定，默认 <code>%USERPROFILE%/Projects/sub2api-deploy</code>。</li>
+<li>账号 JSON、管理密码、令牌和原始响应只在内存及 127.0.0.1 回环中使用，不进日志或页面数据。</li>
+</ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

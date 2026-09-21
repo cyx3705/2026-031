@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-021 HistoryMercury · OneHistory</title>
-  <meta name="description" content="活动坞、快捷键、命令工作台">
+  <meta name="description" content="项目与入口的调度台：桌面项目坞、全局快捷键与资源管理器入口">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -53,42 +53,184 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>HistoryMercury</h1>
-<p>HistoryMercury owns the HistoryVulcan desktop project dock and Explorer entry for the <code>HistoryClio</code> project library.</p>
-<p>Current source: <code>5.0.5</code>, built against host <strong>HistoryVulcan 5.1.0</strong> and rendered by <strong>HistoryAurora 1.9.2</strong>
-(page-registration protocol V1; panel protocol V3 is a hard requirement). The dock tile reads <code>HC</code>, the Explorer namespace entry is <code>HistoryClio 项目</code>, and the project scan prefers
-<code>proj.libraryroot</code> (default <code>C:\OneHistory\HistoryClio</code>). Configured <code>HistoryVesta</code> roots are rewritten to Clio.
-Mutable shortcut files, state and logs live under <code>%APPDATA%\HistoryVulcan\HistoryMercury</code>, outside the
-manifest-verified runtime module package.</p>
-<p>5.0.0 follows the host&#39;s 5.0 removal of the module UI SDK. The module entry is <code>MercuryModule</code>
-(<code>IModuleContextAware</code> + <code>IDisposable</code>) and it constructs <strong>no frontend control</strong>: its page — the dock manager — is declared as data through <code>mercury.ui.describe</code> / <code>mercury.ui.actions</code> / <code>mercury.ui.data</code> and
-rendered by HistoryAurora. The desktop dock is unaffected: it is Mercury&#39;s own window, code-built on its own STA
-thread, and it stays on screen whether or not the frontend is running. The command workbench (catalog session,
-completion, detail page) left with the host mount point it was attached to; <code>mercury.go</code> now relays
-<code>aurora.log.source</code>.</p>
-<p>5.0.1 brings the page description back in line with the frontend. It had been written against Aurora 1.7, and
-Aurora has since retired page-level <code>button</code> / <code>input</code> / <code>select</code> (1.8.14), stopped scrolling tool pages (1.9.0) and
-booked table <code>view</code> options as a no-op declaration (1.9.0). The visible result was that the dock manager&#39;s whole row
-of actions rendered as retirement notices — the buttons were still there and still did nothing, with no error on
-either side. Row actions now go through the table&#39;s <code>rowActions</code> (inline buttons and the right-click menu from one
-declaration), the retention policy and refresh collapse into a single horizontal toolbar, and &quot;加入扩展坞&quot; moved off
-the page entirely into a right-click popup. That last one needed a capability Aurora did not have; it was added to
-Aurora&#39;s public component area as <code>popup.trigger</code> (1.9.1 / REQ-UI-056) by giving the existing flyout a second way to
-open, not by building a second flyout. The dock&#39;s pinned marker also changed from a <code>·</code> after the project number to a
-bright yellow ring on the tile.</p>
-<p>5.0.2 finishes that move and ships it. The 5.0.1 source had already been rewritten for Aurora 1.9.2&#39;s panel protocol
-V3 (<code>widgets</code> → <code>rows</code>) but was never published, so the running module still declared flat <code>widgets</code> and both panels —
-the toolbar at the top of the dock manager and the right-click &quot;加入扩展坞&quot; flyout — rendered as empty boards.
-On top of that the dock manager page is trimmed: the caption line is gone, so is the <code>lastopened</code> column, and every
-row action now declares <code>inline: false</code>, which removes the trailing 「操作」 column Aurora adds for in-row buttons.
-The page does not scroll, so each line and column removed is a table row or a column width the entries table gets
-back. The trade-off is that nothing on the page advertises the right-click: adding an entry and acting on a row are
-both right-click only.</p>
-<p>The module is developed in <code>b-Code-MercuryDock</code>. Its code namespace and command domain are <code>Mercury</code>; its module identity, assembly and consumer snapshot are <code>HistoryMercury</code>, <code>HistoryMercury.dll</code> and <code>z-Publish/HistoryMercury-vX.Y.Z</code>.</p>
-<h2>Commands</h2>
+<blockquote>
+<p>项目与入口的调度台：桌面项目坞、全局快捷键与资源管理器入口</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-021/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryMercury 为 <code>C:\OneHistory\HistoryClio</code> 项目库提供桌面项目坞（磁贴 <code>HC</code>）、全局快捷键、
+资源管理器托管入口（<code>HistoryClio 项目</code>）与使用历史。</p>
+<ul>
+<li>桌面坞是 Mercury 自己的窗口，跑在模块自有的 STA 线程上，前端在不在都照常显示。</li>
+<li>模块不构造任何前端控件；「扩展坞管理」页以描述化协议声明，由 HistoryAurora 渲染。</li>
+<li>不提供文件内容读写、Git 操作（归 Janus）或界面布局（归 Aurora）。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-021</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>mercury</code>（代码命名空间 <code>Mercury</code>，模块身份 <code>HistoryMercury</code>）</td>
+</tr>
+<tr>
+<td>界面</td>
+<td>桌面坞（自有窗口）+ Aurora 描述化页面「扩展坞管理」</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>standard</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Code-MercuryDock/HistoryMercury.csproj"><code>HistoryMercury.csproj</code></a>；宿主下限见 <a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>proj</code></td>
+<td><code>list</code> / <code>open</code> / <code>pin</code> / <code>exclude</code> / <code>add</code> / <code>refresh</code></td>
+<td>活动项目清单</td>
+</tr>
+<tr>
+<td><code>dock</code></td>
+<td><code>show</code> / <code>add</code> / <code>remove</code> / <code>policy</code> / <code>run</code></td>
+<td>项目坞与收录策略</td>
+</tr>
+<tr>
+<td><code>shortcut</code></td>
+<td><code>add</code> / <code>open</code> / <code>pick</code> / <code>wakeconsole</code></td>
+<td>快捷文件与唤起控制台</td>
+</tr>
+<tr>
+<td><code>hotkey</code></td>
+<td><code>list</code> / <code>register</code> / <code>unregister</code></td>
+<td>全局快捷键</td>
+</tr>
+<tr>
+<td><code>app</code> / <code>explorer</code></td>
+<td><code>app.open</code> / <code>app.status</code> / <code>explorer.register</code> / <code>explorer.remove</code></td>
+<td>主程序与资源管理器入口</td>
+</tr>
+<tr>
+<td><code>usage</code></td>
+<td><code>list</code> / <code>forget</code></td>
+<td>使用历史</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>mercury.go</code></td>
+<td>控制台域聚焦（转发 <code>aurora.log.source</code>）</td>
+</tr>
+</tbody></table>
+<p>完整参数与返回见 <a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-MercuryDock/</code></td>
+<td>模块源码：<code>Module</code>、<code>Commands</code>、<code>Dock</code>、<code>Explorer</code>、<code>State</code>、<code>Ui</code>、<code>Input</code>、<code>Diagnostics</code></td>
+</tr>
+<tr>
+<td><code>b-Code-Tests/</code></td>
+<td><code>HistoryMercury.Smoke</code></td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>候选构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
 <pre><code class="language-powershell">dotnet run --project .\b-Code-Tests\HistoryMercury.Smoke\HistoryMercury.Smoke.csproj -c Release -p:NuGetAudit=false
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Build-HistoryMercuryPackage.ps1
 </code></pre>
-<p>The final command creates and verifies a candidate package in <code>z-Publish/HistoryMercury-vX.Y.Z</code>. Module development uses the host Console CLI: start, submit with an explicit worktree, then finish after approval. Diana does not publish.</p>
+<p>构建脚本在 <code>z-Publish/HistoryMercury-vX.Y.Z</code> 生成并校验候选包。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>快捷方式、状态与日志放在 <code>%APPDATA%\HistoryVulcan\HistoryMercury</code>，运行包目录 <code>Modules\HistoryMercury</code> 只放不可变、可校验的文件。</li>
+<li>项目扫描优先 <code>proj.libraryroot</code>（默认 <code>C:\OneHistory\HistoryClio</code>）；指向旧 <code>HistoryVesta</code> 的配置会被改写到 Clio。</li>
+<li>管理页的行操作只在右键菜单里（<code>rowActions</code> 一律 <code>inline: false</code>），「加入扩展坞」也是右键弹出。</li>
+</ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-019 HistoryDiana · OneHistory</title>
-  <meta name="description" content="AI 工作区与模块开发管线">
+  <meta name="description" content="OneHistory 的 AI 工具区：观察、巡检、文档读取与 MCP 中继">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -52,56 +52,53 @@
 
     <div class="page-grid">
       <article class="doc" id="doc">
-<h1>HistoryDiana — OneHistory 的 AI 工具区</h1>
-<p>HistoryDiana 是 OneHistory 的 <strong>AI 工具区</strong>：统一承接面向 AI 的跨项目观察、巡检、读取、转换和工具中继能力。
-当前工具包括前端图形查看、项目巡检、小工具、MCP 中继和 z 文档通道；后续新增的 AI 通用工具也默认归 Diana。</p>
-<p>业务模块仍拥有自己的领域能力，Diana 通过中继帮助 AI 发现和调用，不复制领域实现。唯一例外是已经冻结的
-模块开发管线：<code>vulcan.dev.start/submit/finish</code> 继续由 HistoryVulcan 拥有，只走 Console CLI，不进入 Diana 或 MCP。
-Diana 不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 HistoryVulcan 前端。</p>
+<h1>HistoryDiana</h1>
+<blockquote>
+<p>OneHistory 的 AI 工具区：观察、巡检、文档读取与 MCP 中继</p>
+</blockquote>
 <p><img src="https://raw.githubusercontent.com/cyx3705/2026-019/HEAD/Logo.png" alt="OneHistory Logo"></p>
-<h2>入口</h2>
+<h2>定位</h2>
+<p>HistoryDiana 是 OneHistory 的 <strong>AI 工具区</strong>：统一承接面向 AI 的跨项目观察、巡检、读取、转换和工具中继能力。
+新增的 AI 通用工具，只要不属于某个业务模块的领域合同，默认归 Diana。</p>
+<ul>
+<li>业务模块仍拥有自己的领域能力；Diana 只中继调用，不复制、不接管领域实现。</li>
+<li>不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 HistoryVulcan 前端。</li>
+<li>不拥有模块开发管线：<code>vulcan.dev.start/submit/finish</code> 由 HistoryVulcan 独占，只走 Console CLI，不进入 Diana 或 MCP。</li>
+</ul>
+<h2>概况</h2>
 <table>
 <thead>
 <tr>
-<th>入口</th>
-<th>用途</th>
+<th>项</th>
+<th>值</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
-<td>项目身份、活动目录、文档与命令的机器可读清单</td>
+<td>编号</td>
+<td><code>2026-019</code></td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
-<td>AI 工作合同：读取顺序、真值判定、边界</td>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/"><code>b-Office-Diana/</code></a></td>
-<td>Diana 自身的项目合同</td>
+<td>指令域</td>
+<td><code>diana</code></td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/current/%E5%8E%9F%E7%94%9F%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B%E9%9C%80%E6%B1%82%E4%B9%A6.md"><code>原生控制台日志查看需求书</code></a></td>
-<td><code>diana.log.read</code> 的数据源、接口与验收</td>
+<td>界面</td>
+<td>无（<code>ui: false</code>）</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/package/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E8%A7%82%E5%AF%9F%E6%89%8B%E5%86%8C.md"><code>模块开发观察手册</code></a></td>
-<td>开发任一模块时，一轮里在哪三处用 Diana 取证</td>
+<td>MCP 投影</td>
+<td><code>standard</code>；写命令只有 <code>diana.relay.call</code> 与 <code>diana.view.capture</code></td>
 </tr>
 <tr>
-<td>HistoryVulcan <code>b-Office/package/模块开发手册.md</code></td>
-<td>模块开发工作区、送审和并回流程</td>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Code-HistoryDiana/HistoryDianaVersion.props"><code>HistoryDianaVersion.props</code></a></td>
 </tr>
 </tbody></table>
-<h2>从这里开始</h2>
-<ol>
-<li>AI 需要通用工具时，先从 <code>diana.*</code> 查找；新能力若不属于某个业务模块的领域合同，默认在 Diana 实现。</li>
-<li>需要跨项目说明书时，先执行 <code>diana.docs.catalog</code>，把索引留在对话中，再读取对应 z 通道。</li>
-<li>只有开发模块时例外：读宿主《模块开发手册》，通过 Console CLI 走
-<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code> → <code>vulcan.dev.finish</code>；宿主自身禁止走这三条。</li>
-</ol>
-<h2>指令</h2>
-<p>七类。文档查看使用固定的 <code>diana.docs.read</code>，每次按现场 z 动态解析模块域。
-<code>standard</code> 写命令是 <code>diana.relay.call</code> 与写入运行态 PNG 的 <code>diana.view.capture</code>。</p>
+<h2>能力</h2>
 <table>
 <thead>
 <tr>
@@ -113,12 +110,12 @@ Diana 不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 H
 <tbody><tr>
 <td><code>log</code></td>
 <td><code>diana.log.read</code></td>
-<td>读取当前前端控制台内存日志；默认只返回 Error/Fatal</td>
+<td>读取前端控制台内存日志；默认只返回 Error/Fatal</td>
 </tr>
 <tr>
 <td><code>host</code></td>
-<td><code>diana.host.modules</code> / <code>ready</code></td>
-<td>只读转发活宿主装载状态：版本、实例 ID、指令数、附着失败</td>
+<td><code>diana.host.modules</code> / <code>ready</code> / <code>observe</code></td>
+<td>只读转发活宿主装载状态，<code>observe</code> 可对比基线</td>
 </tr>
 <tr>
 <td><code>project</code></td>
@@ -128,7 +125,7 @@ Diana 不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 H
 <tr>
 <td><code>project</code></td>
 <td><code>diana.project.manifest</code> / <code>docs</code> / <code>align</code></td>
-<td>当前已实现范围内四个项目的 manifest、现行文档与对齐检查</td>
+<td>项目 manifest、现行文档与入口对齐检查</td>
 </tr>
 <tr>
 <td><code>kit</code></td>
@@ -138,44 +135,113 @@ Diana 不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 H
 <tr>
 <td><code>relay</code></td>
 <td><code>diana.relay.list</code> / <code>describe</code> / <code>call</code></td>
-<td>按当前 MCP 策略实时列举与调用工具</td>
+<td>按当前 MCP 策略列举与调用工具</td>
 </tr>
 <tr>
 <td><code>docs</code></td>
-<td><code>diana.docs.catalog</code></td>
-<td>现场扫描全部 z 通道</td>
-</tr>
-<tr>
-<td><code>docs</code></td>
-<td><code>diana.docs.read domain=&lt;域&gt;</code></td>
-<td>按当前 z 快照读取任意模块文档</td>
+<td><code>diana.docs.catalog</code> / <code>read</code></td>
+<td>现场扫描 z 通道，按模块域读取已发布文档</td>
 </tr>
 <tr>
 <td><code>view</code></td>
-<td><code>diana.view.windows</code></td>
-<td>列出可捕获的 HistoryVulcan 前端窗口</td>
+<td><code>diana.view.windows</code> / <code>capture</code></td>
+<td>列出并原尺寸捕获 HistoryVulcan 前端窗口</td>
+</tr>
+</tbody></table>
+<p>跨项目读文档：先 <code>diana.docs.catalog</code>，再 <code>diana.docs.read domain=&lt;域&gt;</code>。完整参数与返回见 <a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
 </tr>
 <tr>
-<td><code>view</code></td>
-<td><code>diana.view.capture [handle=]</code></td>
-<td>原尺寸捕获前端客户区，返回 PNG 路径、尺寸、哈希和像素统计</td>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/package/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E8%A7%82%E5%AF%9F%E6%89%8B%E5%86%8C.md">模块开发观察手册</a></td>
+<td>开发任一模块时，一轮里在哪三处用 Diana 取证</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-HistoryDiana/</code></td>
+<td>模块源码、manifest 与 <code>tests/</code> 下的 Smoke</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查与候选构建辅助脚本</td>
+</tr>
+<tr>
+<td><code>b-Office-Diana/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>b-References/</code></td>
+<td>参考图</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
 </tr>
 </tbody></table>
 <h2>构建与验证</h2>
-<pre><code class="language-bash">dotnet build ./b-Code-HistoryDiana/HistoryDiana.csproj -c Release
+<pre><code class="language-powershell">dotnet restore .\b-Code-HistoryDiana\HistoryDiana.csproj
+dotnet build .\b-Code-HistoryDiana\HistoryDiana.csproj -c Release
+dotnet run --project .\b-Code-HistoryDiana\tests\HistoryDiana.Smoke\HistoryDiana.Smoke.csproj -c Release
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
 </code></pre>
-<pre><code class="language-bash">dotnet run --project ./b-Code-HistoryDiana/tests/HistoryDiana.Smoke/HistoryDiana.Smoke.csproj -c Release
-</code></pre>
-<h2>部署</h2>
-<p>宿主只扫描 <code>%AppData%\HistoryVulcan\Modules</code>。候选提交、安装与热重载统一由宿主模块开发管线执行。</p>
-<p>当前源码版本为 <code>2.5.0</code>，适配 HistoryVulcan <code>5.1.2</code>。</p>
-<h2>开发管线例外</h2>
-<p>Diana 不拥有发布器，也不登记 <code>diana.worktree.*</code>、<code>diana.release.*</code> 或 <code>diana.trial.*</code>。
-已冻结的模块开发管线及 z 写入由 HistoryVulcan 独占。已登记 <code>HistoryDiana</code>、<code>HistoryJanus</code>、
-<code>HistoryMercury</code>、<code>HistoryMinerva</code>、<code>HistoryAurora</code>、<code>HistoryPortunus</code>（<code>kind=module</code>）；
-<code>HistoryVulcan</code> 是 <code>kind=host</code>，禁止走模块开发管线。
-登记表位于宿主仓 <code>2026-023-HistoryVulcan/b-Code-Eng/pipeline/module-publish.manifest.json</code>。
-写入 z 只走 <code>vulcan.dev.submit</code> / <code>finish</code>（模块）或 <code>vulcan.release.cycle</code>（宿主）。本仓不发布。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+宿主只扫描 <code>%AppData%\HistoryVulcan\Modules</code>，本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>Diana 不登记 <code>diana.worktree.*</code>、<code>diana.release.*</code>、<code>diana.trial.*</code>，也不经 <code>diana.relay.call</code> 绕行开发管线。</li>
+<li>模块发布登记表在宿主仓 <code>2026-023-HistoryVulcan/b-Code-Eng/pipeline/module-publish.manifest.json</code>；
+<code>HistoryVulcan</code> 是 <code>kind=host</code>，走 <code>vulcan.release.cycle</code>，禁止走模块开发管线。</li>
+<li><code>diana.project.docs</code> 只用于已授权项目的维护；跨项目消费一律走 <code>diana.docs.catalog/read</code>。</li>
+</ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

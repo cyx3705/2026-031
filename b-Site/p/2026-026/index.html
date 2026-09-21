@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-026 HistoryAurora · OneHistory</title>
-  <meta name="description" content="OneHistory 体系的 宿主前端界面模块">
+  <meta name="description" content="宿主前端界面模块：窗口、场景、布局、控制台与主题">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -52,58 +52,145 @@
 
     <div class="page-grid">
       <article class="doc" id="doc">
-<h1>HistoryAurora 1.21.0</h1>
-<p>OneHistory 体系的 <strong>宿主前端界面模块</strong>。名字取自罗马黎明女神 Aurora——本模块是宿主对用户
-可见的那一面：窗口、布局、控制台与主题。</p>
-<p>本仓库是 HistoryVulcan 的界面模块，不是独立应用。宿主合同以
-<code>../2026-023-HistoryVulcan/b-Office/package/</code> 为准。</p>
-<h2>存在的理由</h2>
-<p>HistoryVulcan 的目标是「只保留指令总线与 MCP，越轻越好」。3.13.0 实测其 <code>vulcan</code> 域
-81 条命令中：</p>
+<h1>HistoryAurora</h1>
+<blockquote>
+<p>宿主前端界面模块：窗口、场景、布局、控制台与主题</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cyx3705/2026-026/HEAD/Logo.png" alt="OneHistory Logo"></p>
+<h2>定位</h2>
+<p>HistoryAurora 是 HistoryVulcan 的界面模块，经 <code>RegisterFrontend</code> 登记为宿主唯一前端：主窗口、场景、布局、
+控制台、命令集、弹窗与页面宿主都在这里。名字取自罗马黎明女神——它是体系对用户可见的那一面。</p>
+<ul>
+<li>不是独立应用：启动与显隐走注册指令，发布只有模块包。没装 Aurora 的宿主没有界面。</li>
+<li>别的模块不自建控件，而是以描述化页面协议注册页面，由 Aurora 的组件层渲染。</li>
+<li>它的由来是把宿主前端进程自持的 39 条界面命令搬出宿主，让宿主只剩指令总线（MCP 工具一个不少）。</li>
+</ul>
+<h2>概况</h2>
 <table>
 <thead>
 <tr>
-<th>注册方</th>
-<th>条数</th>
-<th>构成</th>
-<th>投影为 MCP 工具</th>
+<th>项</th>
+<th>值</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>frontend:HistoryVulcan.Frontend</code></td>
-<td><strong>39</strong></td>
-<td>ui 21、log 10、app 4、command 4</td>
-<td><strong>0</strong></td>
+<td>编号</td>
+<td><code>2026-026</code></td>
 </tr>
 <tr>
-<td><code>framework:service</code></td>
-<td>42</td>
-<td>mcp 12、prompt 8、app 7、module 7、command 4、svc 4</td>
-<td>24</td>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>），宿主唯一前端</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>aurora</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>本模块即界面</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Code-Studio/AuroraVersion.props"><code>AuroraVersion.props</code></a></td>
 </tr>
 </tbody></table>
-<p>那 39 条占着服务进程注册表近一半条目，参与每次 schema 导出与目录快照，却对 MCP 面零贡献。
-HistoryAurora 的任务就是把它们从宿主搬出来——搬走之后 MCP 工具一个不少。</p>
-<h2>现状</h2>
-<p>当前版本 <strong>1.21.0</strong>。命令按钮显示运行进度、阻止重复执行并等待刷新，栅格表格可滚动，图谱隐藏滚动条。</p>
-<p>1.20.4：表格统一表头底板、虚拟化回收与增量更新接口，刷新保留原内容并常驻显示状态、数量、更新时间（REQ-UI-108 ～ 110）。</p>
-<p>1.17.0：启动期的界面发现不再靠「注册表安静 150ms」这个猜测：
-登记 <code>aurora.host.ready</code>，宿主（5.1.3 起）装完全部模块后按命令名通知，界面在钩子里
-做整轮重拉，防抖定时器降为兜底（DEC-030 / REQ-UI-075）。本版不抬宿主下限，
-在 5.1.2 及以前那条命令永远不会被调用，行为与 1.16.0 一致。</p>
-<p>1.16.0：界面的三层（外加中立层与装配根）从「测试里的一张字典」收回到目录本身：
-<code>Shell/</code> 下只有五个层目录，命名空间跟着目录走，没分层的目录不参与编译。收目录的同时
-暴露并修掉了三处此前门禁看不见的反向依赖（DEC-029），界面行为零变化。</p>
-<p>Aurora 已承载宿主前端的窗口、布局、控制台与主题能力；1.14.0 起有隐藏只读
-<code>aurora.log.snapshot</code>，从控制台实际使用的内存日志缓冲区提供有界结构化快照，供
-HistoryDiana 的 <code>diana.log.read</code> 在当前进程命令总线上调用。日志进入缓冲前统一净化
-账号、密码、令牌、密钥和凭据 URI 等敏感文本，控制台与 AI 查询共享同一份净化结果。</p>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ui</code></td>
+<td><code>show</code> / <code>dock</code> / <code>max</code> / <code>layouts</code> / <code>panels</code> / <code>dialog</code> / <code>selectfile</code> …</td>
+<td>窗口、布局、面板、弹窗与文件选择</td>
+</tr>
+<tr>
+<td><code>scene</code></td>
+<td><code>list</code> / <code>open</code> / <code>go</code> / <code>save</code> / <code>reset</code> / <code>delete</code></td>
+<td>场景</td>
+</tr>
+<tr>
+<td><code>log</code></td>
+<td><code>source</code> / <code>level</code> / <code>keyword</code> / <code>clear</code> / <code>export</code> …</td>
+<td>控制台筛选与导出</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td><code>history</code> / <code>copyexample</code> / <code>runreadonly</code></td>
+<td>命令集</td>
+</tr>
+<tr>
+<td><code>app</code></td>
+<td><code>about</code> / <code>window</code></td>
+<td>关于与主窗口</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td><code>ready</code> 等</td>
+<td>宿主装载完成钩子（内部）</td>
+</tr>
+</tbody></table>
+<p>模块在界面里露面的两条路（描述化页面 / 带注解命令交出窗格）见 <a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>，
+可用组件见 <a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/package/HistoryAurora_%E7%BB%84%E4%BB%B6%E6%B8%85%E5%8D%95%E4%B8%8E%E7%94%A8%E6%B3%95.md">组件清单与用法</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/current/HistoryAurora_UI%E9%A3%8E%E6%A0%BC%E4%B8%8E%E5%B5%8C%E5%85%A5%E9%A1%B5%E9%9D%A2%E8%A7%84%E8%8C%83.md">UI 风格与嵌入页面规范</a></td>
+<td>视觉与嵌入页结构</td>
+</tr>
+</tbody></table>
 <h2>目录</h2>
 <table>
 <thead>
 <tr>
 <th>路径</th>
-<th>用途</th>
+<th>职责</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -112,7 +199,7 @@ HistoryDiana 的 <code>diana.log.read</code> 在当前进程命令总线上调�
 </tr>
 <tr>
 <td><code>b-Code-Studio/Shell/</code></td>
-<td>界面源码，<strong>按层分目录</strong>，见下</td>
+<td>界面源码，按层分目录（见「要点」）</td>
 </tr>
 <tr>
 <td><code>b-Code-Studio/eng/</code></td>
@@ -123,69 +210,69 @@ HistoryDiana 的 <code>diana.log.read</code> 在当前进程命令总线上调�
 <td><code>Contracts</code> 合同测试、<code>ModuleSmoke</code> 模块装载冒烟</td>
 </tr>
 <tr>
-<td><code>b-Office/current/</code></td>
-<td>现行合同：项目概览、技术合同、有效决策、验证合同</td>
-</tr>
-<tr>
-<td><code>b-Office/package/</code></td>
-<td>对外消费合同编辑源</td>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
 </tr>
 <tr>
 <td><code>z-Publish/</code></td>
-<td>根部为当前候选，<code>history/</code> 为不可变发布归档。<strong>纳入 git，排除规则不得触碰</strong></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入；纳入 git，排除规则不得触碰</td>
 </tr>
 </tbody></table>
-<h2>分层</h2>
-<p><code>Shell/</code> 下只有五个层目录，编号越大越靠上，<strong>依赖只能向下</strong>。目录名即层，
-命名空间跟着目录走，根部不放任何散文件（REQ-UI-074、DEC-029）。</p>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet restore .\HistoryAurora.sln --locked-mode -p:NuGetAudit=false
+dotnet build .\HistoryAurora.sln -c Release --no-restore -p:NuGetAudit=false
+dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code-Studio\eng\Test-QualityGate.ps1
+</code></pre>
+<p>宿主快照按相对路径解析（假定本仓与 <code>2026-023-HistoryVulcan</code> 在同一库根下）。
+推送时 <a href="https://github.com/cyx3705/2026-026/blob/HEAD/.github/workflows/historyaurora-gate.yml"><code>historyaurora-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<p><code>Shell/</code> 下只有五个层目录，编号越大越靠上，<strong>依赖只能向下</strong>；目录名即层，命名空间跟着目录走（REQ-UI-074、DEC-029）。</p>
 <table>
 <thead>
 <tr>
 <th>目录</th>
 <th>命名空间</th>
-<th>装的是什么</th>
+<th>内容</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>0-Neutral/</code></td>
 <td><code>HistoryAurora.Shell.Neutral</code></td>
-<td>指令面、日志、纯工具。不认识任何一层界面</td>
+<td>指令面、日志、纯工具</td>
 </tr>
 <tr>
 <td><code>1-Base/</code></td>
 <td><code>.Base</code></td>
-<td>页面外壳：停靠、顶栏、浮窗、拖出拖入、页面合并、弹窗。<strong>不知道页面里画的是什么</strong></td>
+<td>页面外壳：停靠、顶栏、拖出拖入、页面合并、弹窗</td>
 </tr>
 <tr>
 <td><code>2-Components/</code></td>
 <td><code>.Components</code></td>
-<td>演进层：风格令牌、表格、控制面板、泳道、页面描述与渲染器。别的模块注册页面就是在消费这一层</td>
+<td>风格令牌、表格、控制面板、泳道、页面描述与渲染器</td>
 </tr>
 <tr>
 <td><code>3-HostedPages/</code></td>
 <td><code>.HostedPages</code></td>
-<td>Aurora 自己托管的那几页。与模块页同一条路，没有特殊待遇</td>
+<td>Aurora 自己托管的页面，与模块页同一条路</td>
 </tr>
 <tr>
 <td><code>4-Composition/</code></td>
 <td><code>.Composition</code></td>
-<td>装配根：<code>ShellWindow</code> 与内置指令组。没有任何东西可以依赖它</td>
+<td>装配根：<code>ShellWindow</code> 与内置指令组</td>
 </tr>
 </tbody></table>
-<p>门禁有两道：<code>HistoryAurora.Module.csproj</code> 一层一组 <code>Include</code>——没分层的顶层目录不参与编译；
-<code>LayerContractTests</code> 四条守落点、命名空间对齐与依赖方向。</p>
-<blockquote>
-<p>改 <code>csproj</code> 时注意 <code>Link=&quot;%(RecursiveDir)…&quot;</code> 必须把层目录吃掉。写回
-<code>..\Shell\**\*.xaml</code> 会让资源名变成 <code>2-components/themes/…</code>，而 pack URI 找的是
-<code>themes/…</code>：编译期零征兆，运行期建窗时抛 <code>IOException</code>。</p>
-</blockquote>
-<h2>构建</h2>
-<p>宿主快照按相对路径解析（假定本仓与 <code>2026-023-HistoryVulcan</code> 在同一库根下）。AI 工作树落在
-库根之外时，由 <code>diana.worktree.create</code> 生成的 <code>Directory.Build.user.props</code> 把
-<code>HistoryVulcanPackageRoot</code> 指回来源仓绝对路径；该文件不入库。</p>
-<pre><code class="language-bash">dotnet restore .\HistoryAurora.sln --locked-mode -p:NuGetAudit=false
-</code></pre>
-<p>其余命令见 <code>project.manifest.json</code> 的 <code>commands</code> 段。</p>
+<ul>
+<li>门禁两道：<code>HistoryAurora.Module.csproj</code> 按层 <code>Include</code>（没分层的目录不参与编译）；<code>LayerContractTests</code> 守落点、命名空间与依赖方向。</li>
+<li>改 <code>csproj</code> 时 <code>Link=&quot;%(RecursiveDir)…&quot;</code> 必须吃掉层目录，否则资源名变成 <code>2-components/themes/…</code>：编译零征兆，运行期建窗抛 <code>IOException</code>。</li>
+<li>页面 owner 由指令域推出（<code>History</code> + 域名首字母大写），与模块名无关。</li>
+</ul>
+<hr>
+<p>作者：Pinavia</p>
 
       </article>
 

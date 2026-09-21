@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-030 HistoryApollo · OneHistory</title>
-  <meta name="description" content="注册到 HistoryVulcan 的模型调用模块">
+  <meta name="description" content="模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -52,20 +52,86 @@
 
     <div class="page-grid">
       <article class="doc" id="doc">
-<h1>HistoryApollo 模型调用</h1>
-<p>HistoryApollo 是注册到 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/2026-023-HistoryVulcan">HistoryVulcan</a> 的模型调用模块：
-把 OpenAI 兼容的对话补全接口变成宿主指令，首发内置 DeepSeek，可按需联网搜索（博查）。</p>
+<h1>HistoryApollo</h1>
+<blockquote>
+<p>模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令</p>
+</blockquote>
 <p><img src="https://raw.githubusercontent.com/cyx3705/2026-030/HEAD/Logo.png" alt="OneHistory Logo"></p>
-<p>它只做一件事——<strong>把一次模型调用说清楚</strong>。会话历史、提示词工程、重试编排和流式输出
-都属于调用方，不在这里。</p>
-<h2>快速使用</h2>
+<h2>定位</h2>
+<p>HistoryApollo 把 OpenAI 兼容的对话补全接口变成 HistoryVulcan 指令，首发内置 DeepSeek，可按需联网搜索（博查），
+每一轮往返实时写进控制台。</p>
+<ul>
+<li>它只做一件事——<strong>把一次模型调用说清楚</strong>。</li>
+<li>会话历史、提示词工程、重试编排和逐字流式输出都属于调用方，不在这里。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-030</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>apollo</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>无（<code>ui: false</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>standard</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Code/HistoryApollo/HistoryApolloVersion.props"><code>HistoryApolloVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>chat</code></td>
+<td><code>apollo.chat.ask</code> / <code>send</code></td>
+<td>单轮提问 / 完整消息数组；<code>web=true</code> 时模型自行决定是否联网</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td><code>apollo.model.list</code></td>
+<td>模型清单</td>
+</tr>
+<tr>
+<td><code>provider</code></td>
+<td><code>apollo.provider.list</code> / <code>use</code> / <code>config</code></td>
+<td>供应商、默认模型与接入点</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code>apollo.key.set</code> / <code>clear</code></td>
+<td>密钥读写（回执只出掩码）</td>
+</tr>
+</tbody></table>
 <pre><code>apollo.key.set token=&lt;密钥&gt; provider=deepseek
 apollo.chat.ask prompt=用一句话解释张量
-apollo.key.set token=&lt;博查密钥&gt; provider=bocha
 apollo.chat.ask prompt=&quot;CDQ2B20-10D 是哪个品牌的气缸&quot; web=true
-apollo.provider.list
 </code></pre>
-<p>指令、参数、返回载荷与密钥约定见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md"><code>b-Office/package/模块API.md</code></a>。</p>
+<p>参数、返回载荷与失败语义见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
 <h2>入口</h2>
 <table>
 <thead>
@@ -76,49 +142,84 @@ apollo.provider.list
 </thead>
 <tbody><tr>
 <td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
-<td>AI 读取顺序、真值规则、工作边界与完成要求</td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
 </tr>
 <tr>
 <td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
-<td>项目身份、活动目录、命令与上下文排除项</td>
+<td>项目身份、活动目录、文档与命令</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md"><code>b-Office/package/模块API.md</code></a></td>
-<td>模块消费合同（随发布包同行）</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md">文档中心</a></td>
+<td>文档索引与读取顺序</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md"><code>b-Office/current/项目概览.md</code></a></td>
-<td>目标、范围、状态和交付物</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88.md">项目概览</a></td>
+<td>目标、范围与状态</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md"><code>b-Office/current/技术合同.md</code></a></td>
-<td>现行需求和系统架构</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%8A%80%E6%9C%AF%E5%90%88%E5%90%8C.md">技术合同</a></td>
+<td>现行需求与架构</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md"><code>b-Office/current/有效决策.md</code></a></td>
-<td>当前仍然有效的关键决策</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E6%9C%89%E6%95%88%E5%86%B3%E7%AD%96.md">有效决策</a></td>
+<td>仍然有效的关键决策</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md"><code>b-Office/current/验证合同.md</code></a></td>
-<td>验证层级、命令和证据</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a></td>
+<td>验证层级、命令与证据</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md"><code>b-Office/文档中心.md</code></a></td>
-<td>文档索引及根目录 a/b/z 规范</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
+<td>跨模块消费合同</td>
 </tr>
 </tbody></table>
-<h2>常用命令</h2>
-<pre><code class="language-powershell">dotnet build .\b-Code\HistoryApollo\HistoryApollo.csproj -c Release
-dotnet run --project .\b-Code\HistoryApollo.Tests\HistoryApollo.Tests.csproj -c Release
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryApollo/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryApollo.Tests/</code></td>
+<td>自动验证</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryApollo\HistoryApollo.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\HistoryApollo.Tests\HistoryApollo.Tests.csproj -c Release -p:NuGetAudit=false
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
-powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\HistoryApollo\eng\Build-HistoryApolloPackage.ps1
 </code></pre>
-<p>自动验证全程离线：对话相关用例走假传输，不出网、不计费。需要联网实调时设
-<code>APOLLO_LIVE=1</code> 再跑测试，它会用本机真实配置发一次最小请求。</p>
-<h2>密钥</h2>
-<p>密钥只落在本机 <code>%AppData%\HistoryVulcan\Modules\HistoryApollo\data\providers.json</code>，
-或由环境变量 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code> 提供（环境变量优先）；博查是 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>。</p>
-<p><strong>密钥不入库。</strong> 项目合同检查会扫描全仓并拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</p>
+<p>自动验证全程离线：对话用例走假传输，不出网、不计费。需要联网实调时设 <code>APOLLO_LIVE=1</code> 再跑测试。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-HistoryApolloPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
+<ul>
+<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\Modules\HistoryApollo\data\providers.json</code>，或由环境变量提供（优先）：
+DeepSeek 为 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code>，博查为 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>。</li>
+<li><strong>密钥不入库。</strong> 项目合同检查会扫描全仓，拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</li>
+<li>嵌套调用的过程输出也逐轮进控制台；消费方不要再从载荷复述调用过程。</li>
+</ul>
+<hr>
 <p>作者：Pinavia</p>
 
       </article>
