@@ -114,7 +114,30 @@
       w.appendChild(t);
     });
 
+    numberSections();
     buildToc();
+  }
+
+  /** 一级小节编成 01、02…（Office 标题 1 的做法），墨色条由 CSS 接在后面。
+      README 里自带的编号（「1. 」「2、」）挪进编号位，不重复显示。 */
+  function numberSections() {
+    Array.prototype.forEach.call(doc.querySelectorAll("h2"), function (h, i) {
+      if (h.querySelector(".h-num")) return;
+      var n = i + 1;
+      var first = h.firstChild;
+      if (first && first.nodeType === 3) {
+        var m = first.nodeValue.match(/^\s*(\d{1,2})\s*[.、．]?\s+/);
+        if (m) { n = +m[1]; first.nodeValue = first.nodeValue.slice(m[0].length); }
+      }
+      var txt = document.createElement("span");
+      txt.className = "h-txt";
+      while (h.firstChild) txt.appendChild(h.firstChild);
+      var num = document.createElement("span");
+      num.className = "h-num";
+      num.textContent = (n < 10 ? "0" : "") + n;
+      h.appendChild(num);
+      h.appendChild(txt);
+    });
   }
 
   function slug(text, i) {
@@ -140,9 +163,13 @@
 
     var html = '<p class="toc-label">目录</p>';
     heads.forEach(function (h, i) {
-      if (!h.id) h.id = slug(h.textContent, i);
+      var num = h.querySelector(".h-num");
+      var txt = h.querySelector(".h-txt") || h;
+      var label = txt.textContent.replace(/[<>&]/g, "");
+      if (!h.id) h.id = slug(txt.textContent, i);
       html += '<a href="#' + h.id + '" class="' + (h.tagName === "H3" ? "lv3" : "lv2") + '">' +
-        h.textContent.replace(/[<>&]/g, "") + "</a>";
+        (num ? '<span class="toc-n">' + num.textContent + "</span>" : "") +
+        "<span>" + label + "</span></a>";
     });
     list.innerHTML = html;
     links = Array.prototype.slice.call(list.querySelectorAll("a"));

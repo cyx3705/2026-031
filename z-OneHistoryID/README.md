@@ -51,11 +51,12 @@
 | `hairline` | `#E5E3DE` | `#2A2D2C` | 常规分隔线、卡片边框 |
 | `hairline-2` | `#D5D1C8` | `#343936` | 较深的分隔线、虚线框 |
 | `code-bg` | `#EBE9E4` | `#171A19` | 代码底色 |
-| `shadow` | `0 10px 30px rgba(38,35,30,.06)` | `0 16px 40px rgba(0,0,0,.26)` | 卡片、大搜索框 |
-| `shadow-lift` | `0 16px 38px rgba(38,35,30,.12)` | `0 22px 52px rgba(0,0,0,.40)` | 卡片悬停 |
-| `ring` | `0 0 0 4px rgba(127,94,15,.16)` | `0 0 0 4px rgba(217,164,65,.18)` | 输入框聚焦光圈 |
+| `shadow` | `0 10px 30px rgba(38,35,30,.06)` | `0 16px 40px rgba(0,0,0,.26)` | 只给浮在上面的弹层（网站与 Office 都不用） |
+| `shadow-lift` | `0 16px 38px rgba(38,35,30,.12)` | `0 22px 52px rgba(0,0,0,.40)` | 同上，较高的弹层 |
+| `ring` | `0 0 0 4px rgba(127,94,15,.16)` | `0 0 0 4px rgba(217,164,65,.18)` | 暂不使用（网站聚焦改为边线变墨色） |
 
 - 主题色只用来强调，不做大面积底色。
+- 「墨色」（ink）就是 `text`：墨色条、粗细墨线、选中块都用它。墨色块上的反白字取另一套主题的对应值，见 [网站风格.md §2.4](网站风格.md)。
 - 不要引入令牌以外的颜色。
 
 ## 4. 字体
@@ -64,8 +65,8 @@
 |---|---|---|---|
 | 中文与正文 | Noto Sans SC | Microsoft YaHei | Office 里可变字体不可靠，发给别人也可能缺字体 |
 | 西文正文 | Noto Sans SC 自带 → Segoe UI | Segoe UI | |
-| 数字、编号、英文标签 | Outfit | Bahnschrift | 两者都偏几何；Bahnschrift 为 Windows 自带 |
-| 代码 | Outfit → Consolas / 等宽 | Consolas | |
+| 数字、编号、英文标签 | Outfit → Bahnschrift | Bahnschrift | 两者都偏几何；Bahnschrift 为 Windows 自带 |
+| 代码 | Consolas → 等宽 | Consolas | |
 
 - 网站字体经 Google Fonts 加载，字重 400 / 500 / 600 / 700。
 

@@ -57,13 +57,12 @@
         <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
         <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
 
-        <p class="stat" id="stat">
-          <span class="stat-n" id="stat-count">—</span> 个公开项目
-          <span class="dot"></span>
-          最近更新 <span id="stat-fresh">—</span>
-          <span class="dot"></span>
-          <a href="https://github.com/cyx3705" rel="noopener">github.com/cyx3705</a>
-        </p>
+        <!-- 标题栏：同 Office 封面的信息栏 -->
+        <dl class="tblock" id="stat">
+          <div><dt>公开项目</dt><dd class="n" id="stat-count">—</dd></div>
+          <div><dt>最近更新</dt><dd id="stat-fresh">—</dd></div>
+          <div><dt>GitHub</dt><dd><a href="https://github.com/cyx3705" rel="noopener">github.com/cyx3705</a></dd></div>
+        </dl>
 
         <form class="search big" id="hero-form" role="search" autocomplete="off">
           <svg class="i-search" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
@@ -95,7 +94,10 @@
       </div>
 
       <div class="wrap lib-body">
-        <p class="count" id="count" aria-live="polite"></p>
+        <header class="sec-head">
+          <h2>项目库</h2>
+          <span class="ink-bar" id="count" aria-live="polite"></span>
+        </header>
         <div class="grid" id="grid"></div>
         <div class="empty hidden" id="empty">
           <p class="empty-t">没有匹配的项目</p>
