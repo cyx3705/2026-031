@@ -215,7 +215,8 @@ const cards = projects.map((p) => ({
   note: p.note || "",
   url: p.url,
   repo: p.repo,
-  pushed: p.pushedAt || "",
+  // 本站仓库不写推送时间，否则每次推送都会引出一个机器人提交（见 site.config.json 的 self）
+  pushed: p.repo === cfg.self ? "" : p.pushedAt || "",
 }));
 
 // 不在 owner 名下的条目没有说明页，卡片直接链到 GitHub 仓库（ext:1 让前端标出外链）
