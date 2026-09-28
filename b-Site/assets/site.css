@@ -6,18 +6,18 @@
    ============================================================ */
 
 /* ---------------------------------------------- 令牌 */
-/* 浅色与 HistoryAurora 1.27.0(REQ-UI-129)同一套值:主题色字过 AA、文字与底色同一暖色相、
-   底色/卡片/条带拉开层次。改这里要同步 2026-026 的 AuroraTokens.xaml,反过来也一样。 */
+/* 浅色与 HistoryAurora 1.27.1(REQ-UI-129/130)同一套值:主题色字过 AA、文字与底色同一暖色相;
+   底色 → 卡片 → 条带是越往上越深的三层小台阶(层差与深色同量级)。改这里要同步 2026-026 的 AuroraTokens.xaml,反过来也一样。 */
 html[data-theme="light"] {
-  --canvas:#ECE9E2; --surface:#FFFFFF; --surface-2:#F4F2ED; --surface-hover:#EAE6DE;
+  --canvas:#FBFAF7; --surface:#F3F1EC; --surface-2:#EBE9E4; --surface-hover:#E5E3DE;
   --text:#26231E; --text-2:#6A6458;
-  --accent:#8A6411; --accent-hover:#6F500C;
-  --accent-soft:rgba(138,100,17,.34); --accent-wash:rgba(138,100,17,.08);
-  --hairline:#E6E2DA; --hairline-2:#D3CEC3;
-  --shadow:0 10px 30px rgba(38,35,30,.08);
-  --shadow-lift:0 16px 38px rgba(38,35,30,.14);
-  --ring:0 0 0 4px rgba(138,100,17,.16);
-  --code-bg:#F4F2ED;
+  --accent:#7F5E0F; --accent-hover:#6A4E0C;
+  --accent-soft:rgba(127,94,15,.34); --accent-wash:rgba(127,94,15,.08);
+  --hairline:#E5E3DE; --hairline-2:#D5D1C8;
+  --shadow:0 10px 30px rgba(38,35,30,.06);
+  --shadow-lift:0 16px 38px rgba(38,35,30,.12);
+  --ring:0 0 0 4px rgba(127,94,15,.16);
+  --code-bg:#EBE9E4;
 }
 html[data-theme="dark"] {
   --canvas:#121414; --surface:#1D201F; --surface-2:#191C1B; --surface-hover:#2A2D2C;
