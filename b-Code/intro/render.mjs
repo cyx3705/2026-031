@@ -3,11 +3,12 @@
 //   node b-Code/intro/render.mjs --serve              起本地预览：浏览器打开打印出的地址
 //   node b-Code/intro/render.mjs --at=3,20,31         只抽这几个时间点（秒）的静帧到 out/stills，检查画面
 //   node b-Code/intro/render.mjs                      渲染全部帧（已存在的帧跳过，可断点续渲）
-//   node b-Code/intro/render.mjs --encode             合成 out/OneHistory-intro.mp4（有 out/audio.wav 就带上）
-//   选项：--workers=6 并行页面数；--force 覆盖已有帧；--theme=light 深色版的浅色
+//   node b-Code/intro/render.mjs --encode             合成 out/OneHistory-intro-<主题>[-尺寸].mp4（有 out/audio.wav 就带上）
+//   选项：--workers=6 并行页面数；--force 覆盖已有帧；--theme=light 浅色（默认深色）
 //         --v=paper 纸本版；--size=2560x1440 输出尺寸（默认 1920x1080）
-//   版本与尺寸不同，帧目录、时间表、音轨、成片的文件名都分开，互不覆盖：
-//         out/timeline-paper.json、out/audio-paper.wav、out/OneHistory-intro-paper-2560x1440.mp4
+//   版本、主题与尺寸不同，帧目录、静帧、成片的文件名都分开，互不覆盖：
+//         out/OneHistory-intro-dark-2560x1440.mp4、out/OneHistory-intro-light-2560x1440.mp4、out/OneHistory-intro-paper-2560x1440.mp4
+//   时间表与音轨只按版本区分（深浅两版画面时间完全相同，共用 out/timeline.json、out/audio.wav）
 //
 // 帧序列放在系统临时目录（1080p PNG 约 1GB/分钟，2K 约 2GB），out/ 只放静帧、时间表、音轨和成片。
 // 环境变量 CHROME_PATH / FFMPEG 可指定可执行文件，默认找 C:\Tools 下的，再退回 PATH。
@@ -29,9 +30,10 @@ const args = Object.fromEntries(process.argv.slice(2).map(a => {
 }));
 
 const VARIANT = args.v === "paper" ? "paper" : "";
+const THEME = args.theme === "light" ? "light" : "dark";
 const [SW, SH] = String(args.size || "1920x1080").split("x").map(Number);
 const SIZE_TAG = SW === 1920 && SH === 1080 ? "" : `${SW}x${SH}`;
-const SUFFIX = [VARIANT, SIZE_TAG].filter(Boolean).join("-");        // 默认版本保持原文件名
+const SUFFIX = [VARIANT || THEME, SIZE_TAG].filter(Boolean).join("-");
 const tag = s => (VARIANT ? `-${VARIANT}` : "") + s;
 const STILLS = path.join(OUT, "stills" + (SUFFIX ? "-" + SUFFIX : ""));
 const FRAMES = path.join(os.tmpdir(), "onehistory-intro-frames" + (SUFFIX ? "-" + SUFFIX : ""));
@@ -134,7 +136,7 @@ async function grab(cdp, sessionId, frame) {
 
 async function renderFrames(base) {
   const workers = Math.max(1, parseInt(args.workers || "4", 10));
-  const url = `${base}/b-Code/intro/preview.html?render=1&w=${SW}&h=${SH}${VARIANT ? "&v=" + VARIANT : ""}${args.theme === "light" ? "&theme=light" : ""}`;
+  const url = `${base}/b-Code/intro/preview.html?render=1&w=${SW}&h=${SH}${VARIANT ? "&v=" + VARIANT : ""}${THEME === "light" && !VARIANT ? "&theme=light" : ""}`;
   const { cdp, close } = await launchChrome();
   try {
     const pages = [];

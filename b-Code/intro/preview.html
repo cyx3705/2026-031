@@ -29,7 +29,7 @@
     var q = new URLSearchParams(location.search);
     var paper = q.get("v") === "paper";
     var theme = paper || q.get("theme") === "light" ? "light" : "dark";
-    document.body.style.background = paper ? "#F5F0E8" : theme === "light" ? "#F7F5EF" : "#121414";
+    document.body.style.background = paper ? "#F5F0E8" : theme === "light" ? "#FBFAF7" : "#121414";
     var canvas = document.getElementById("c");
     canvas.width = parseInt(q.get("w") || "1920", 10);
     canvas.height = parseInt(q.get("h") || "1080", 10);

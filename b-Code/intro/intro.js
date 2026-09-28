@@ -1,5 +1,5 @@
 /*
- * OneHistory 首页介绍动画（约 64 秒，时长随 History 模块数量伸缩）
+ * OneHistory 首页介绍动画（约 68 秒，120 BPM，时长随 History 模块数量按小节伸缩）
  *
  * 纯 Canvas 2D，无依赖。每一帧只由时间 t 决定，可任意跳帧，也能逐帧离线渲染成视频。
  * 分组、计数、模块家族与模块介绍全部从站点生成物推导（规则与首页一致），新增项目不用改这里：
@@ -18,19 +18,23 @@
   var VW = 1920, VH = 1080;
   var CW = 332, CH = 172;           // 卡片基准尺寸
   var RAIL_Y = 990, RAIL_X0 = 250, RAIL_X1 = 1670;
-  var DWELL = 2.1;                  // 每个 History 模块的聚焦时长
+  // 节拍：120 BPM，一拍 0.5 秒、一小节 2 秒。各段起点都落在小节线上，配乐（synth.mjs）按同一张表下鼓点
+  var BEAT = 0.5, BAR = 2;
+  var DWELL = BAR;                  // 每个 History 模块的聚焦时长：一小节
+  var FOCUS0 = BAR;                 // 模块段开头留一小节给架构图成形
 
-  // 与 b-Site/assets/site.css 的设计变量一致
+  // 与 b-Site/assets/site.css 的设计变量一致（浅色 = HistoryAurora 1.27.1 三层台阶：底色 → 卡片 → 条带越往上越深）
+  // glow 是光晕/粒子/闪光用色：深色直接用主题色；浅色的主题色压到 #7F5E0F 过 AA，拿来做光会发脏，光晕改用原来的亮金
   var THEMES = {
     dark: {
       bg: "#121414", surface: "#1D201F", surface2: "#191C1B",
-      text: "#E2DAC6", text2: "#ACA593", accent: [217, 164, 65],
+      text: "#E2DAC6", text2: "#ACA593", accent: [217, 164, 65], glow: [217, 164, 65], glowK: 1,
       hair: "#2A2D2C", hair2: "#343936", shadow: "rgba(0,0,0,0.5)", bgRGB: [18, 20, 20]
     },
     light: {
-      bg: "#F7F5EF", surface: "#FFFFFF", surface2: "#F1EEE6",
-      text: "#1F2328", text2: "#6B7280", accent: [168, 122, 18],
-      hair: "#E4E7EB", hair2: "#D8D3C6", shadow: "rgba(31,35,40,0.16)", bgRGB: [247, 245, 239]
+      bg: "#FBFAF7", surface: "#F3F1EC", surface2: "#EBE9E4",
+      text: "#26231E", text2: "#6A6458", accent: [127, 94, 15], glow: [214, 160, 52], glowK: 0.9,
+      hair: "#E5E3DE", hair2: "#D5D1C8", shadow: "rgba(38,35,30,0.13)", bgRGB: [251, 250, 247]
     }
   };
 
@@ -112,22 +116,38 @@
     return d;
   }
 
-  // 各段起点（秒）。只有模块段的长度随模块数变化
+  // 各段起点（秒），全部落在小节线上。只有模块段的长度随模块数变化：成形 1 小节 + 每模块 1 小节 + 全员上线 2 小节
   function timeline(moduleCount) {
-    var S = { hero: 0, num: 6, y1: 12, mod: 19 };
-    S.modLen = 2.2 + moduleCount * DWELL + 1.2;
+    var S = { hero: 0, num: 6, y1: 12, mod: 20 };
+    S.modLen = FOCUS0 + moduleCount * DWELL + 2 * BAR;
     S.wall = S.mod + S.modLen;
-    S.search = S.wall + 5;
-    S.tpl = S.search + 5;
-    S.end = S.tpl + 6;
-    S.dur = S.end + 7;
+    S.search = S.wall + 2 * BAR;
+    S.tpl = S.search + 3 * BAR;
+    S.end = S.tpl + 3 * BAR;
+    S.drop = S.end + BAR;             // 汇聚落点：全片最重的一拍
+    S.dur = S.drop + 3 * BAR;
     return S;
+  }
+
+  // 底鼓时刻表。画面的脉动与配乐的底鼓共用这一张表
+  //   编号段：前 4 秒半拍（每秒一下），计数弹出后四拍，最后一小节让给军鼓滚奏
+  //   第一个年份 → 搜索前：四拍；搜索段：抽掉，命中落定那一拍回来、半拍；模板段：四拍直到汇聚
+  function kickTimes(S) {
+    var k = [], t;
+    for (t = S.num; t < S.num + 4 - 1e-6; t += 1) k.push(t);
+    for (t = S.num + 4; t < S.y1 - BAR / 2 - 1e-6; t += BEAT) k.push(t);
+    for (t = S.y1; t < S.search - 1e-6; t += BEAT) k.push(t);
+    for (t = S.search + 2.5; t < S.tpl - 1e-6; t += 1) k.push(t);
+    for (t = S.tpl; t < S.end - 1e-6; t += BEAT) k.push(t);
+    k.push(S.drop);
+    return k.map(function (x) { return +x.toFixed(3); });
   }
 
   function create(canvas, opts) {
     var ctx = canvas.getContext("2d");
     var C = THEMES[opts.theme] || THEMES.dark;
-    var ACC = C.accent;
+    var ACC = C.accent, GL = C.glow;
+    function glow(a) { return rgba(GL, a * C.glowK); }
     var logo = opts.logo;
     var gh = new Path2D(GH_PATH);
     var rnd = mulberry32(20260928);
@@ -166,6 +186,24 @@
     var spotlight = (hub ? [hub] : []).concat(sats);
     var S = timeline(spotlight.length);
     var DUR = S.dur;
+    var KICKS = kickTimes(S);
+    var MOD_END = S.mod + FOCUS0 + spotlight.length * DWELL;   // 全员上线小节的起点
+
+    // 底鼓脉动：最近一次底鼓后指数衰减，0..1
+    function kick(t) {
+      var last = -1;
+      for (var i = 0; i < KICKS.length && KICKS[i] <= t; i++) last = KICKS[i];
+      return last < 0 ? 0 : Math.exp(-(t - last) * 9);
+    }
+    // 段落落点的镜头冲击：[时刻, 强度]
+    var IMPACTS = [[S.y1, 1], [S.mod, 0.6], [S.wall, 0.7], [S.search + 2.5, 0.6], [S.tpl, 0.5], [S.drop, 1.6]]
+      .concat(spotlight.map(function (_, j) { return [S.mod + FOCUS0 + j * DWELL, 0.3]; }))
+      .concat([[MOD_END, 0.9], [MOD_END + BAR, 0.4]]);
+    function impact(t, rate) {
+      var s = 0;
+      IMPACTS.forEach(function (m) { if (t >= m[0]) s += m[1] * Math.exp(-(t - m[0]) * (rate || 7)); });
+      return s;
+    }
 
     // 时间轴上的位置：组与组之间留空
     (function () {
@@ -320,16 +358,20 @@
     // ---------- 背景 ----------
     function drawBackground(t, bookA) {
       ctx.fillStyle = C.bg; ctx.fillRect(0, 0, VW, VH);
-      var breathe = 1 + 0.12 * Math.sin(t * 0.7);
-      var g = ctx.createRadialGradient(960, 500, 0, 960, 500, 980);
-      g.addColorStop(0, rgba(ACC, (0.055 + 0.05 * bookA) * breathe));
-      g.addColorStop(1, rgba(ACC, 0));
+      var kp = kick(t), hit = impact(t, 5);
+      var breathe = 1 + 0.12 * Math.sin(t * 0.7) + 0.45 * kp + 0.5 * Math.min(1.2, hit);
+      var g = ctx.createRadialGradient(960, 500, 0, 960, 500, 980 + 60 * kp);
+      g.addColorStop(0, glow((0.055 + 0.05 * bookA) * breathe));
+      g.addColorStop(1, glow(0));
       ctx.fillStyle = g; ctx.fillRect(0, 0, VW, VH);
+      // 粒子：底鼓一下，往上窜一小段
+      var surge = 0;
+      for (var q = 0; q < KICKS.length && KICKS[q] <= t; q++) surge += 1 - Math.exp(-(t - KICKS[q]) * 6);
       for (var i = 0; i < dust.length; i++) {
         var d = dust[i];
-        var y = ((d.y - t * d.v) % VH + VH) % VH;
+        var y = ((d.y - t * d.v - surge * d.v * 0.9) % VH + VH) % VH;
         var x = d.x + Math.sin(t * d.f + d.ph) * 18;
-        ctx.fillStyle = rgba(ACC, d.a * (0.6 + 0.4 * Math.sin(t * 1.3 + d.ph)));
+        ctx.fillStyle = glow(d.a * (0.6 + 0.4 * Math.sin(t * 1.3 + d.ph)) * (1 + 0.8 * kp));
         ctx.beginPath(); ctx.arc(x, y, d.r, 0, Math.PI * 2); ctx.fill();
       }
     }
@@ -361,16 +403,21 @@
       if (t < S.num) { cy = 520; ang = Math.PI / 2; len = 560 * easeOut(seg(t, 0.2, 1.4)); peak = 0.6; }
       else if (t < S.num + 1) { var k = ease(seg(t, S.num, S.num + 1)); cy = mix(520, 700, k); ang = mix(Math.PI / 2, 0, k); len = mix(560, full, k); peak = 0.6; }
       else if (t < S.end) { var m = ease(seg(t, S.num + 5.2, S.num + 6.2)); cy = mix(700, RAIL_Y, m); ang = 0; len = full; peak = mix(0.6, 0.32, m); }
-      else if ((u = t - S.end) < 1.2) { cy = RAIL_Y; ang = 0; len = full * (1 - ease(seg(u, 0, 1.2))); peak = 0.32; }
-      else { cy = 520; ang = Math.PI / 2; len = 560 * easeOut(seg(u, 1.2, 2.2)); peak = 0.6; }
+      else if ((u = t - S.end) < 1.6) { cy = RAIL_Y; ang = 0; len = full * (1 - ease(seg(u, 0, 1.6))); peak = 0.32; }
+      else { cy = 520; ang = Math.PI / 2; len = 560 * easeOut(seg(t, S.drop, S.drop + 0.45)); peak = 0.6 + 0.4 * Math.exp(-(t - S.drop) * 2); }
       if (len < 1) return;
+      peak *= 1 + 0.5 * kick(t);
       var dx = Math.cos(ang) * len / 2, dy = Math.sin(ang) * len / 2;
-      var g = ctx.createLinearGradient(cx - dx, cy - dy, cx + dx, cy + dy);
-      g.addColorStop(0, rgba(ACC, 0)); g.addColorStop(0.18, rgba(ACC, peak)); g.addColorStop(0.5, rgba(ACC, peak * 1.15));
-      g.addColorStop(0.82, rgba(ACC, peak)); g.addColorStop(1, rgba(ACC, 0));
+      function grad(col) {
+        var g = ctx.createLinearGradient(cx - dx, cy - dy, cx + dx, cy + dy);
+        g.addColorStop(0, col(0)); g.addColorStop(0.18, col(peak)); g.addColorStop(0.5, col(peak * 1.15));
+        g.addColorStop(0.82, col(peak)); g.addColorStop(1, col(0));
+        return g;
+      }
       ctx.save();
-      ctx.strokeStyle = g; ctx.lineWidth = 1.6;
+      ctx.strokeStyle = grad(function (a) { return rgba(ACC, a); }); ctx.lineWidth = 1.6;
       ctx.beginPath(); ctx.moveTo(cx - dx, cy - dy); ctx.lineTo(cx + dx, cy + dy); ctx.stroke();
+      ctx.strokeStyle = grad(glow);
       ctx.filter = "blur(6px)"; ctx.globalAlpha = 0.6; ctx.lineWidth = 5; ctx.stroke();
       ctx.restore();
     }
@@ -425,28 +472,35 @@
     // 开卷（开场）与合卷（结尾）共用的首屏构图
     function heroAlpha(t) {
       if (t < S.num + 1) return smooth(0.8, 1.6, t) * (1 - smooth(5.2, 6, t));
-      if (t > S.end + 1) return smooth(S.end + 1.6, S.end + 2.4, t);
+      if (t >= S.drop) return smooth(S.drop, S.drop + 0.3, t);
       return 0;
     }
     function drawHero(t) {
-      var theta, bookA = heroAlpha(t), logoA, logoRise, statA, searchA = 0, cueA = 0, u;
+      var theta, bookA = heroAlpha(t), logoA, logoRise, logoScale = 1, statA, searchA = 0, cueA = 0, u;
       if (t < S.num + 1) {
         theta = mix(62, 15, easeOut(seg(t, 0.8, 2.8))) - 15 * ease(seg(t, 5.2, 6));
-        logoA = smooth(1.6, 2.8, t) * (1 - smooth(5.2, 5.9, t));
-        logoRise = 18 * (1 - easeOut(seg(t, 1.6, 3))) - 26 * ease(seg(t, 5.2, 5.9));
-        statA = smooth(2.8, 3.8, t) * (1 - smooth(5.1, 5.8, t));
-      } else if ((u = t - S.end) > 1) {
-        theta = mix(62, 15, easeOut(seg(u, 1.6, 3.4)));
-        logoA = smooth(2.6, 3.8, u);
-        logoRise = 18 * (1 - easeOut(seg(u, 2.6, 4)));
-        statA = smooth(3.4, 4.2, u);
-        searchA = smooth(3.9, 4.7, u);
-        cueA = smooth(4.4, 5.2, u);
+        logoA = smooth(1.5, 2.3, t) * (1 - smooth(5.2, 5.9, t));
+        logoRise = 18 * (1 - easeOut(seg(t, 1.5, 2.8))) - 26 * ease(seg(t, 5.2, 5.9));
+        logoScale = 1 + 0.035 * seg(t, 2, 5.2);               // 首屏缓推
+        statA = smooth(2.5, 3.3, t) * (1 - smooth(5.1, 5.8, t));
+      } else if (t >= S.drop) {
+        // 合卷落点：书页猛地弹开，字标带一点过冲砸下来
+        u = t - S.drop;
+        var k = seg(u, 0, 0.7);
+        theta = mix(70, 15, 1 - Math.pow(1 - k, 4) + Math.sin(Math.PI * k) * 0.12);
+        logoA = smooth(0.15, 0.55, u);
+        var lk = seg(u, 0.15, 0.9);
+        logoScale = 1 + 0.16 * Math.exp(-lk * 5) * Math.cos(lk * 9);
+        logoRise = 0;
+        statA = smooth(0.9, 1.5, u);
+        searchA = smooth(1.4, 2.0, u);
+        cueA = smooth(2.0, 2.6, u);
       } else return;
       drawBook(theta, bookA);
       if (logoA > 0.001) {
         ctx.save(); ctx.globalAlpha = logoA;
-        ctx.drawImage(logo, 960 - 300, 410 - 107 + logoRise, 600, 214);
+        ctx.translate(960, 410 + logoRise); ctx.scale(logoScale, logoScale);
+        ctx.drawImage(logo, -300, -107, 600, 214);
         ctx.restore();
       }
       drawStat(592, statA, (1 - statA) * 12);
@@ -465,15 +519,15 @@
     function drawNumbering(t) {
       var u = t - S.num;
       if (u < 0.6 || u > 6.6) return;
-      var capA = smooth(0.8, 1.5, u) * (1 - smooth(4.0, 4.5, u));
+      var capA = smooth(0.8, 1.5, u) * (1 - smooth(3.7, 4.0, u));
       ctx.save(); ctx.globalAlpha = capA;
       text("编号，就是历史", 960, 262 + (1 - capA) * 12, "600 50px " + FONT_CN, C.text, "center");
-      text("每个项目都有一个 年份-序号 形式的编号，按它排成一条时间线", 960, 318 + (1 - capA) * 12, "400 22px " + FONT_CN, C.text2, "center");
+      text("每个项目一个「年份-序号」，按编号排开，就是一条时间线", 960, 318 + (1 - capA) * 12, "400 22px " + FONT_CN, C.text2, "center");
       ctx.restore();
 
       var ID = "2026-031";
-      var n = Math.floor(seg(u, 1.2, 2.4) * ID.length + 0.0001);
-      var idA = 1 - smooth(4.0, 4.5, u);
+      var n = Math.floor(seg(u, 1.25, 2.25) * ID.length + 0.0001);   // 十六分音符一个字
+      var idA = 1 - smooth(3.7, 4.0, u);
       if (n > 0 && idA > 0) {
         ctx.save(); ctx.globalAlpha = idA;
         ctx.font = "600 150px " + FONT_NUM;
@@ -482,7 +536,7 @@
         text(shown, x0, 560, "600 150px " + FONT_NUM, C.text);
         if (u < 3.0 && Math.floor(u * 2.4) % 2 === 0) { ctx.fillStyle = rgba(ACC, 1); ctx.fillRect(x0 + ctx.measureText(shown).width + 8, 440, 4, 130); }
         var wYear = ctx.measureText("2026").width, wDash = ctx.measureText("2026-").width;
-        [[x0, x0 + wYear, "年份", 2.6], [x0 + wDash, x0 + full, "当年序号", 3.0]].forEach(function (b) {
+        [[x0, x0 + wYear, "年份", 2.5], [x0 + wDash, x0 + full, "当年序号", 3.0]].forEach(function (b) {
           var k = easeOut(seg(u, b[3], b[3] + 0.6));
           if (k <= 0) return;
           var mid = (b[0] + b[1]) / 2, half = (b[1] - b[0]) / 2 * k;
@@ -495,11 +549,14 @@
         ctx.restore();
       }
 
-      var cntA = smooth(4.1, 4.6, u) * (1 - smooth(5.2, 5.6, u));
+      var cntA = smooth(3.95, 4.15, u) * (1 - smooth(5.3, 5.7, u));
       if (cntA > 0) {
-        var shownN = Math.round(N * easeOut(seg(u, 4.1, 5.2)));
+        var shownN = Math.round(N * easeOut(seg(u, 4.0, 5.0)));
+        var pk = 1 + 0.22 * Math.exp(-Math.max(0, u - 4.0) * 7) + 0.06 * Math.exp(-Math.max(0, u - 5.0) * 8) * (u > 5 ? 1 : 0);
         ctx.save(); ctx.globalAlpha = cntA;
-        text(String(shownN), 960, 560, "600 150px " + FONT_NUM, rgba(ACC, 1), "center");
+        ctx.save(); ctx.translate(960, 510); ctx.scale(pk, pk);
+        text(String(shownN), 0, 50, "600 150px " + FONT_NUM, rgba(ACC, 1), "center");
+        ctx.restore();
         text("个公开项目", 960, 612, "400 24px " + FONT_CN, C.text2, "center");
         ctx.restore();
       }
@@ -507,7 +564,7 @@
 
     // ---------- 时间轨道 ----------
     function activeOf(key, t) {
-      if (key === firstYear.key) return smooth(S.y1, S.y1 + 0.6, t) * (1 - smooth(S.y1 + 6.2, S.y1 + 6.8, t));
+      if (key === firstYear.key) return smooth(S.y1, S.y1 + 0.4, t) * (1 - smooth(S.y1 + 7.0, S.y1 + 7.6, t));
       if (key === lastYear.key) return smooth(S.mod, S.mod + 0.6, t) * (1 - smooth(S.search - 0.4, S.search + 0.2, t));
       if (key === "0000") return smooth(S.tpl, S.tpl + 0.6, t) * (1 - smooth(S.tpl + 5.2, S.tpl + 6, t));
       if (key === "other") return smooth(S.tpl + 3.6, S.tpl + 4.2, t) * (1 - smooth(S.tpl + 5.2, S.tpl + 6, t));
@@ -519,9 +576,9 @@
     }
 
     function drawRail(t) {
-      var pop0 = S.num + 4.1;
+      var pop0 = S.num + 4.0;
       if (t < pop0 || t > S.end) return;
-      var y = railY(t);
+      var y = railY(t), kp = kick(t);
       var labelA = smooth(S.num + 5.0, S.num + 5.4, t) * (1 - smooth(S.end - 0.4, S.end + 0.2, t));
       groups.forEach(function (g) {
         var act = activeOf(g.key, t);
@@ -530,16 +587,16 @@
           var pop = seg(t, pop0 + i * 0.02, pop0 + i * 0.02 + 0.3);
           if (pop <= 0) return;
           var lit = act;
-          if (isModule(p)) lit = Math.max(lit, smooth(S.mod, S.mod + 0.6, t) * (1 - smooth(S.wall - 0.6, S.wall, t)));
-          if (hits.indexOf(p) >= 0) lit = Math.max(lit, smooth(S.search + 1.5, S.search + 2.1, t) * (1 - smooth(S.search + 4.2, S.search + 4.8, t)));
+          if (isModule(p)) lit = Math.max(lit, smooth(S.mod, S.mod + 0.4, t) * (1 - smooth(S.wall - 0.6, S.wall, t)));
+          if (hits.indexOf(p) >= 0) lit = Math.max(lit, smooth(S.search + 2.2, S.search + 2.5, t) * (1 - smooth(S.search + 5.0, S.search + 5.6, t)));
           lit = Math.max(lit, branchK(p, t) * (1 - smooth(S.tpl + 5.2, S.tpl + 6, t)));
-          var r = 3.2 * (1 + 0.8 * Math.sin(Math.PI * pop) * (pop < 1 ? 1 : 0)) + 1.2 * lit;
+          var r = 3.2 * (1 + 0.8 * Math.sin(Math.PI * pop) * (pop < 1 ? 1 : 0)) + (1.2 + 0.6 * kp) * lit;
           ctx.globalAlpha = pop;
           ctx.fillStyle = lit > 0.02 ? rgba(ACC, mix(0.5, 1, lit)) : rgba(ACC, 0.42);
           ctx.beginPath(); ctx.arc(p.rx, y, r, 0, Math.PI * 2); ctx.fill();
           if (lit > 0.05) {
-            ctx.fillStyle = rgba(ACC, 0.18 * lit);
-            ctx.beginPath(); ctx.arc(p.rx, y, r * 3.2, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = glow((0.18 + 0.12 * kp) * lit);
+            ctx.beginPath(); ctx.arc(p.rx, y, r * 2.6, 0, Math.PI * 2); ctx.fill();
           }
           ctx.globalAlpha = 1;
         });
@@ -553,20 +610,23 @@
     }
 
     // ---------- 第一个年份：网格 + 扫光 ----------
+    // 扫光从第二小节起、一张卡一个八分音符；卡太多就压到三小节内
+    var SWEEP0 = BAR;
+    function sweepStep(n) { return Math.min(BEAT / 2, 3 * BAR / Math.max(1, n)); }
     function drawFirstYear(t) {
       var u = t - S.y1;
-      if (u < 0 || u > 7.4) return;
+      if (u < 0 || u > 8.2) return;
       var items = firstYear.items, cols = 5, gap = 22;
       var gw = cols * CW + (cols - 1) * gap, left = (VW - gw) / 2;
       drawHeader({ x: left, chip: firstYear.label, n: items.length, title: firstYear.label, sub: "课程设计、竞赛作品，以及第一批 AGV" },
-        smooth(0.2, 1.0, u) * (1 - smooth(5.8, 6.4, u)));
-      var sweep = 3.8 / Math.max(1, items.length);
+        smooth(0.05, 0.6, u) * (1 - smooth(6.6, 7.2, u)));
+      var sweep = sweepStep(items.length);
       items.forEach(function (p, j) {
         var rect = { x: left + (j % cols) * (CW + gap), y: 290 + Math.floor(j / cols) * (CH + gap), w: CW, h: CH };
-        var kin = seg(u, 0.3 + j * 0.05, 1.2 + j * 0.05), kout = seg(u, 5.8 + j * 0.03, 6.7 + j * 0.03);
+        var kin = seg(u, 0.05 + j * 0.04, 0.85 + j * 0.04), kout = seg(u, 6.5 + j * 0.03, 7.3 + j * 0.03);
         var k = kin * (1 - kout);
         if (k <= 0) return;
-        drawCard(p, morph(railDot(p, t), rect, k), { alpha: Math.min(1, k * 4), lift: bump((u - 1.7) / sweep - j, 1.6) });
+        drawCard(p, morph(railDot(p, t), rect, k), { alpha: Math.min(1, k * 4), lift: bump((u - SWEEP0) / sweep - j, 1.6) });
       });
     }
 
@@ -577,66 +637,96 @@
       var a = -Math.PI / 2 + j * Math.PI * 2 / n;
       return { x: MOD_C.x + Math.cos(a) * MOD_R.x, y: MOD_C.y + Math.sin(a) * MOD_R.y };
     }
-    function focusIndex(u) { return Math.floor((u - 2.2) / DWELL); }
+    function focusIndex(u) { return Math.floor((u - FOCUS0) / DWELL); }
+
+    // 从宿主往外打一串光点（命令总线上的一次广播）
+    function burst(q, t0, t, n, amp) {
+      for (var b = 0; b < n; b++) {
+        var w = seg(t, t0 + b * 0.07, t0 + b * 0.07 + 0.38);
+        if (w <= 0 || w >= 1) continue;
+        var e = easeOut(w), px = mix(MOD_C.x, q.x, e), py = mix(MOD_C.y, q.y, e), pa = amp * (1 - w * 0.6);
+        var g = ctx.createRadialGradient(px, py, 0, px, py, 13);
+        g.addColorStop(0, glow(pa)); g.addColorStop(1, glow(0));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, 13, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    function shock(x, y, t0, t, r1, dur, amp) {
+      var k = seg(t, t0, t0 + dur);
+      if (k <= 0 || k >= 1) return;
+      ctx.save();
+      ctx.strokeStyle = glow(amp * (1 - k)); ctx.lineWidth = 2.5 * (1 - k) + 0.5;
+      ctx.beginPath(); ctx.arc(x, y, r1 * easeOut(k), 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
 
     function drawModules(t) {
       var u = t - S.mod, L = S.modLen;
-      if (u < 0 || u > L + 0.4 || !modules.length) return;
-      var out = 1 - smooth(L - 1.2, L - 0.6, u);
-      var K = sats.length;
+      if (u < -0.5 || u > L + 0.4 || !modules.length) return;
+      var out = 1 - smooth(L - 0.9, L - 0.3, u);
+      var K = sats.length, M = spotlight.length;
+      var uAll = FOCUS0 + M * DWELL;                                   // 全员上线小节
+      var all = smooth(uAll - 0.05, uAll + 0.25, u) * out;
+      var kp = kick(t);
       drawHeader({
         chip: lastYear.label, n: lastYear.items.length, title: "History 模块家族",
         sub: hub ? K + " 个模块装在宿主 " + hub.name + " 上，各管一件事" : modules.length + " 个模块，各管一件事"
-      }, smooth(0.2, 0.9, u) * out);
+      }, smooth(-0.2, 0.4, u) * out);
 
-      var fi = focusIndex(u), cur = fi >= 0 && fi < spotlight.length ? spotlight[fi] : null;
-      var local = u - 2.2 - fi * DWELL;        // 当前聚焦已经过去的时间
+      var fi = focusIndex(u), cur = fi >= 0 && fi < M ? spotlight[fi] : null;
+      var local = u - FOCUS0 - fi * DWELL;        // 当前聚焦已经过去的时间
       var focusOf = function (p) {
-        var j = spotlight.indexOf(p);
-        return smooth(2.2 + j * DWELL - 0.25, 2.2 + j * DWELL + 0.15, u) * (1 - smooth(2.2 + (j + 1) * DWELL - 0.25, 2.2 + (j + 1) * DWELL + 0.15, u));
+        var j = spotlight.indexOf(p), a = FOCUS0 + j * DWELL;
+        return smooth(a - 0.06, a + 0.1, u) * (1 - smooth(a + DWELL - 0.06, a + DWELL + 0.1, u));
       };
       var hubFocus = hub ? focusOf(hub) : 0;
 
       // 连线：宿主 ↔ 模块，当前模块那条最亮，上面有往返的光点（命令总线）
       sats.forEach(function (p, j) {
         var q = satPos(j, K);
-        var dk = easeOut(seg(u, 0.9 + j * 0.06, 1.7 + j * 0.06)) * out;
+        var dk = easeOut(seg(u, 0.3 + j * 0.06, 1.0 + j * 0.06)) * out;
         if (dk <= 0) return;
-        var f = Math.max(focusOf(p), hubFocus);
+        var f = Math.max(focusOf(p), hubFocus, all);
         ctx.save();
-        ctx.strokeStyle = rgba(ACC, 0.2 + 0.5 * f); ctx.lineWidth = 1.2 + 1.2 * f;
+        ctx.strokeStyle = rgba(ACC, 0.2 + 0.5 * f + 0.2 * all * kp); ctx.lineWidth = 1.2 + 1.2 * f + 1.2 * all * kp;
         ctx.beginPath(); ctx.moveTo(MOD_C.x, MOD_C.y); ctx.lineTo(mix(MOD_C.x, q.x, dk), mix(MOD_C.y, q.y, dk)); ctx.stroke();
+        var speed = 0.45 + 0.9 * all;
         for (var s = 0; s < 2; s++) {
-          var w = ((u - 1.4) * 0.45 + j * 0.29 + s * 0.5) % 1;
+          var w = ((u - 0.8) * speed + j * 0.29 + s * 0.5) % 1;
           if (w < 0) continue;
           if (s === 1) w = 1 - w;
           var px = mix(MOD_C.x, q.x, w), py = mix(MOD_C.y, q.y, w), pa = Math.sin(Math.PI * w) * dk * (0.35 + 0.65 * f);
           var g = ctx.createRadialGradient(px, py, 0, px, py, 10);
-          g.addColorStop(0, rgba(ACC, 0.95 * pa)); g.addColorStop(1, rgba(ACC, 0));
+          g.addColorStop(0, glow(0.95 * pa)); g.addColorStop(1, glow(0));
           ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, 10, 0, Math.PI * 2); ctx.fill();
         }
+        // 聚焦那一拍：宿主朝它连发一串；全员上线：每下底鼓朝所有模块广播
+        burst(q, S.mod + FOCUS0 + spotlight.indexOf(p) * DWELL, t, 3, 0.95 * out);
+        for (var b = 0; b < 8; b++) burst(q, S.mod + uAll + b * BEAT, t, 2, 0.8 * out);
         ctx.restore();
       });
 
       // 节点
       function node(p, rect, j, isHub) {
-        var kin = seg(u, 0.2 + j * 0.07, 1.2 + j * 0.07), kout = seg(u, L - 1.2 + j * 0.03, L - 0.3 + j * 0.03);
+        var kin = seg(u, -0.4 + j * 0.06, 0.5 + j * 0.06), kout = seg(u, L - 0.9 + j * 0.03, L - 0.15 + j * 0.03);
         var k = kin * (1 - kout);
         if (k <= 0) return;
-        var R = morph(railDot(p, t), rect, k), f = focusOf(p);
+        var R = morph(railDot(p, t), rect, k), f = focusOf(p), on = Math.max(f, all * (0.55 + 0.45 * kp));
         ctx.save(); ctx.globalAlpha = Math.min(1, k * 4);
         if (R.w < 16) { drawDot(R); ctx.restore(); return; }
+        var pop = 1 + 0.08 * Math.exp(-Math.max(0, u - FOCUS0 - spotlight.indexOf(p) * DWELL) * 8) * f;
+        var cx = R.x + R.w / 2, cy = R.y + R.h / 2;
+        ctx.translate(cx, cy); ctx.scale(pop, pop); ctx.translate(-cx, -cy);
         var y = R.y - 6 * f;
         if (f > 0.01) { ctx.shadowColor = C.shadow; ctx.shadowBlur = 40 * f; ctx.shadowOffsetY = 16 * f; }
         ctx.fillStyle = C.surface; ctx.beginPath(); ctx.roundRect(R.x, y, R.w, R.h, Math.min(R.r, 14)); ctx.fill();
         ctx.shadowColor = "transparent";
         ctx.strokeStyle = isHub ? rgba(ACC, 0.45) : C.hair; ctx.lineWidth = 1; ctx.stroke();
-        if (f > 0.01) { ctx.strokeStyle = rgba(ACC, 0.75 * f); ctx.lineWidth = 2; ctx.stroke(); }
+        if (on > 0.01) { ctx.strokeStyle = rgba(ACC, 0.75 * on); ctx.lineWidth = 2; ctx.stroke(); }
         if (R.content > 0.01) {
           ctx.globalAlpha *= R.content;
           ctx.translate(R.x, y); ctx.scale(R.w / rect.w, R.h / rect.h);
           var d = p.d || {};
-          text(p.name, 18, isHub ? 42 : 33, (isHub ? "600 26px " : "600 20px ") + FONT_NUM, f > 0.5 ? rgba(ACC, 1) : C.text);
+          text(p.name, 18, isHub ? 42 : 33, (isHub ? "600 26px " : "600 20px ") + FONT_NUM, on > 0.5 ? rgba(ACC, 1) : C.text);
           text((isHub ? "宿主 · " : "") + (d.domain || p.id), 18, isHub ? 72 : 56, "400 " + (isHub ? 16 : 14) + "px " + FONT_NUM, C.text2);
         }
         ctx.restore();
@@ -644,18 +734,24 @@
       sats.forEach(function (p, j) {
         var q = satPos(j, K);
         node(p, { x: q.x - 110, y: q.y - 34, w: 220, h: 68 }, j + 1, false);
+        shock(q.x, q.y, S.mod + FOCUS0 + spotlight.indexOf(p) * DWELL, t, 150, 0.6, 0.7 * out);
       });
       if (hub) {
-        // 宿主节点下垫一圈光
-        var hA = smooth(0.4, 1.2, u) * out;
-        var gl = ctx.createRadialGradient(MOD_C.x, MOD_C.y, 0, MOD_C.x, MOD_C.y, 220);
-        gl.addColorStop(0, rgba(ACC, 0.14 * hA)); gl.addColorStop(1, rgba(ACC, 0));
-        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(MOD_C.x, MOD_C.y, 220, 0, Math.PI * 2); ctx.fill();
+        // 宿主节点下垫一圈光，随底鼓呼吸；全员上线时整圈放大
+        var hA = smooth(0, 0.8, u) * out * (1 + 0.5 * kp + 0.8 * all);
+        var hr = 220 + 60 * all;
+        var gl = ctx.createRadialGradient(MOD_C.x, MOD_C.y, 0, MOD_C.x, MOD_C.y, hr);
+        gl.addColorStop(0, glow(0.14 * hA)); gl.addColorStop(1, glow(0));
+        ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(MOD_C.x, MOD_C.y, hr, 0, Math.PI * 2); ctx.fill();
+        shock(MOD_C.x, MOD_C.y, S.mod + FOCUS0 + spotlight.indexOf(hub) * DWELL, t, 200, 0.7, 0.7 * out);
+        shock(MOD_C.x, MOD_C.y, S.mod + uAll, t, 560, 1.0, 0.9 * out);
+        shock(MOD_C.x, MOD_C.y, S.mod + uAll + BAR / 2, t, 560, 1.0, 0.5 * out);
+        shock(MOD_C.x, MOD_C.y, S.mod + uAll + BAR, t, 560, 1.0, 0.7 * out);
         node(hub, { x: MOD_C.x - 140, y: MOD_C.y - 48, w: 280, h: 96 }, 0, true);
       }
 
       // 详情面板
-      var pA = smooth(1.6, 2.2, u) * out;
+      var pA = smooth(0.9, 1.5, u) * out;
       if (pA <= 0.001) return;
       var P = PANEL;
       ctx.save(); ctx.globalAlpha = pA;
@@ -663,18 +759,25 @@
       ctx.shadowColor = C.shadow; ctx.shadowBlur = 50; ctx.shadowOffsetY = 20;
       ctx.fillStyle = C.surface; ctx.beginPath(); ctx.roundRect(P.x, P.y, P.w, P.h, 22); ctx.fill();
       ctx.shadowColor = "transparent";
-      ctx.strokeStyle = rgba(ACC, 0.32); ctx.lineWidth = 1; ctx.stroke();
+      ctx.strokeStyle = rgba(ACC, 0.32 + 0.3 * all * kp); ctx.lineWidth = 1; ctx.stroke();
+      // 每次切换，顶边扫过一道光
+      var scanL = fi >= 0 ? (fi >= M ? u - uAll : local) : -1, sk = seg(scanL, 0, 0.4);
+      if (sk > 0 && sk < 1) {
+        var sx = P.x + 22 + (P.w - 44) * easeOut(sk), sg = ctx.createLinearGradient(sx - 220, 0, sx, 0);
+        sg.addColorStop(0, rgba(ACC, 0)); sg.addColorStop(1, rgba(ACC, 0.9 * (1 - sk)));
+        ctx.fillStyle = sg; ctx.fillRect(sx - 220, P.y, 220, 2);
+      }
       // 进度：第几个模块
       spotlight.forEach(function (p, j) {
-        ctx.fillStyle = j === fi ? rgba(ACC, 1) : j < fi ? rgba(ACC, 0.45) : C.hair2;
-        ctx.beginPath(); ctx.roundRect(P.x + P.w - 44 - (spotlight.length - 1 - j) * 22, P.y + 38, j === fi ? 16 : 8, 8, 4); ctx.fill();
+        var isCur = j === fi || fi >= M;
+        ctx.fillStyle = isCur ? rgba(ACC, 1) : j < fi ? rgba(ACC, 0.45) : C.hair2;
+        ctx.beginPath(); ctx.roundRect(P.x + P.w - 44 - (M - 1 - j) * 22, P.y + 38, j === fi ? 16 : 8, 8, 4); ctx.fill();
       });
       if (cur) {
-        var inA = smooth(0, 0.35, local), outA = 1 - smooth(DWELL - 0.3, DWELL, local);
-        if (fi === spotlight.length - 1) outA = 1;
-        var ca = inA * outA, dy = (1 - inA) * 18 - (1 - outA) * 14;
+        var inA = easeOut(seg(local, 0, 0.28)), outA = 1 - ease(seg(local, DWELL - 0.18, DWELL));
+        var ca = inA * outA, dx = (1 - inA) * 46 - (1 - outA) * 36;
         ctx.globalAlpha = pA * ca;
-        ctx.translate(P.x + 48, P.y + dy);
+        ctx.translate(P.x + 48 + dx, P.y);
         var d = cur.d || { role: "", domain: "", ui: "" };
         text(cur.id, 0, 52, "600 18px " + FONT_NUM, rgba(ACC, 1));
         text(cur.name, -2, 118, "600 58px " + FONT_NUM, C.text);
@@ -687,14 +790,47 @@
         ctx.fillStyle = C.hair; ctx.fillRect(0, y0, P.w - 96, 1);
         text("能力", 0, y0 + 40, "500 16px " + FONT_CN, C.text2);
         cur.capRows.forEach(function (c, r) {
-          var ry = y0 + 80 + r * 40, rk = smooth(0.15 + r * 0.08, 0.5 + r * 0.08, local);
-          ctx.save(); ctx.globalAlpha *= rk; ctx.translate((1 - rk) * 14, 0);
+          var ry = y0 + 80 + r * 40, rk = easeOut(seg(local, 0.1 + r * BEAT / 4, 0.4 + r * BEAT / 4));   // 能力行按十六分音符逐条弹出
+          ctx.save(); ctx.globalAlpha *= rk; ctx.translate((1 - rk) * 22, 0);
           ctx.fillStyle = rgba(ACC, 0.9); ctx.fillRect(0, ry - 12, 4, 4);
           text(c.k, 18, ry - 3, "600 17px " + FONT_NUM, rgba(ACC, 1));
           text(c.use, 224, ry - 3, "400 18px " + FONT_CN, C.text);
           ctx.restore();
         });
         if (cur.moreCaps) text("还有 " + cur.moreCaps + " 类能力，见项目说明页", 0, y0 + 80 + cur.capRows.length * 40 + 2, "400 15px " + FONT_CN, C.text2);
+      } else if (fi >= M) {
+        // 全员上线：面板换成全家福
+        var la = u - uAll, ia = easeOut(seg(la, 0, 0.3));
+        ctx.globalAlpha = pA * ia;
+        ctx.translate(P.x + 48 + (1 - ia) * 46, P.y);
+        text("全员上线", 0, 52, "600 18px " + FONT_CN, rgba(ACC, 1));
+        text((hub ? "宿主 + " + K : M) + " 个模块，一条总线", -2, 118, "600 54px " + FONT_CN, C.text);
+        text("每条指令都经宿主的命令总线分发，模块之间不直接相连", 0, 170, "400 21px " + FONT_CN, C.text2);
+        var cols = 3, cw = (P.w - 96 - 2 * 16) / cols, chh = 104, capsAll = 0;
+        spotlight.forEach(function (p, i) {
+          var nc = (p.d && p.d.caps.length) || 0;
+          capsAll += nc;
+          var rk = easeOut(seg(la, 0.1 + i * BEAT / 4, 0.4 + i * BEAT / 4));
+          if (rk <= 0) return;
+          var gx = (i % cols) * (cw + 16), gy = 222 + Math.floor(i / cols) * (chh + 16);
+          ctx.save(); ctx.globalAlpha *= rk; ctx.translate(0, (1 - rk) * 18);
+          ctx.fillStyle = C.surface2; ctx.beginPath(); ctx.roundRect(gx, gy, cw, chh, 12); ctx.fill();
+          ctx.strokeStyle = p === hub ? rgba(ACC, 0.5) : C.hair2; ctx.lineWidth = 1; ctx.stroke();
+          text(p.name, gx + 18, gy + 36, "600 20px " + FONT_NUM, p === hub ? rgba(ACC, 1) : C.text);
+          text(((p === hub ? "宿主 · " : "") + ((p.d && p.d.domain) || p.id)), gx + 18, gy + 62, "400 15px " + FONT_NUM, C.text2);
+          if (nc) text(nc + " 类能力", gx + 18, gy + 88, "500 14px " + FONT_CN, rgba(ACC, 1));
+          ctx.restore();
+        });
+        var ta = easeOut(seg(la, 0.5 + M * BEAT / 4, 0.9 + M * BEAT / 4));
+        if (capsAll && ta > 0) {
+          ctx.globalAlpha = pA * ia * ta;
+          var ty = 222 + Math.ceil(M / cols) * (chh + 16) + 26;
+          ctx.fillStyle = C.hair; ctx.fillRect(0, ty, P.w - 96, 1);
+          text("合计", 0, ty + 50, "500 18px " + FONT_CN, C.text2);
+          text(String(Math.round(capsAll * easeOut(seg(la, 0.5 + M * BEAT / 4, 1.3 + M * BEAT / 4)))), 52, ty + 52, "600 34px " + FONT_NUM, rgba(ACC, 1));
+          ctx.font = "600 34px " + FONT_NUM; var cwid = ctx.measureText(String(capsAll)).width;
+          text("类能力，全部挂在同一条总线上", 62 + cwid, ty + 50, "500 18px " + FONT_CN, C.text2);
+        }
       }
       ctx.restore();
     }
@@ -717,36 +853,37 @@
 
     function drawLastYear(t) {
       var u = t - S.wall, v = t - S.search;
-      if (u < 0 || v > 5.2) return;
+      if (u < -0.2 || v > 6.0) return;
       var items = lastYear.items, n = items.length;
       drawHeader({ chip: lastYear.label, n: n, title: lastYear.label, sub: "整车与机构设计、CAD 与 PLC 学习，还有这套工具本身" },
-        smooth(0.2, 0.9, u) * (1 - smooth(4.5, 5, u)));
-      var fade = 1 - 0.93 * smooth(1.5, 2.3, v);
-      var move = seg(v, 1.5, 2.7);
+        smooth(0, 0.6, u) * (1 - smooth(3.4, 3.9, u)));
+      var fade = 1 - 0.93 * smooth(1.5, 2.2, v);
+      var move = seg(v, 1.5, 2.5);
+      var land = v > 2.5 ? Math.exp(-(v - 2.5) * 3) : 0;            // 命中落定那一拍
       items.forEach(function (p, j) {
         var hi = hits.indexOf(p);
-        var kin = seg(u, 0.2 + j * 0.025, 1.1 + j * 0.025), kout = seg(v, 4.0 + j * 0.012, 4.9 + j * 0.012);
+        var kin = seg(u, -0.15 + j * 0.02, 0.65 + j * 0.02), kout = seg(v, 4.8 + j * 0.012, 5.6 + j * 0.012);
         if (kin <= 0 || kout >= 1) return;
         var W = wallRect(j, u, n);
         var target = hi >= 0 ? lerpRect(W, hitRect(hi), move) : W;
         var R = kout > 0 ? morph(railDot(p, t), target, 1 - kout) : morph(railDot(p, t), target, kin);
         var a = Math.min(1, kin * 4) * (hi >= 0 ? 1 : fade) * (kout > 0 ? Math.min(1, (1 - kout) * 4) : 1);
         if (a < 0.01) return;
-        drawCard(p, R, { alpha: a, accent: hi >= 0 ? smooth(2.4, 3.0, v) : 0 });
+        drawCard(p, R, { alpha: a, accent: hi >= 0 ? smooth(2.3, 2.5, v) : 0, lift: hi >= 0 ? 0.8 * land : 0 });
       });
       // 不在墙上的命中项（其他年份）从轨道飞上来
       hits.forEach(function (p, i) {
         if (items.indexOf(p) >= 0) return;
-        var kin = seg(v, 1.6 + i * 0.06, 2.6 + i * 0.06), kout = seg(v, 4.0, 4.9);
+        var kin = seg(v, 1.5 + i * 0.06, 2.4 + i * 0.03), kout = seg(v, 4.8, 5.6);
         var k = kin * (1 - kout);
         if (k <= 0) return;
-        drawCard(p, morph(railDot(p, t), hitRect(i), k), { alpha: Math.min(1, k * 4), accent: smooth(2.4, 3.0, v) });
+        drawCard(p, morph(railDot(p, t), hitRect(i), k), { alpha: Math.min(1, k * 4), accent: smooth(2.3, 2.5, v), lift: 0.8 * land });
       });
-      var sA = smooth(0, 0.6, v) * (1 - smooth(4.0, 4.6, v));
-      var typed = QUERY.slice(0, Math.floor(seg(v, 0.7, 1.4) * QUERY.length + 0.0001));
+      var sA = smooth(0, 0.4, v) * (1 - smooth(4.8, 5.3, v));
+      var typed = QUERY.slice(0, Math.floor(seg(v, 0.5, 0.5 + QUERY.length * BEAT / 2) * QUERY.length + 0.0001));   // 八分音符一个字
       var caret = v < 2.3 && Math.floor(v * 2.6) % 2 === 0;
       drawSearch(960, 150 + (1 - sA) * 12, 760, sA, typed, smooth(0.4, 0.7, v), "搜索项目名、编号或关键词", caret);
-      var cA = smooth(2.1, 2.6, v) * (1 - smooth(4.0, 4.6, v));
+      var cA = smooth(2.4, 2.8, v) * (1 - smooth(4.8, 5.3, v));
       if (cA > 0) {
         ctx.save(); ctx.globalAlpha = cA;
         text("匹配 " + hits.length + " / " + N + " 个项目 · 横跨 " + unique(hits.map(function (p) { return p.g.label; })).join("、"),
@@ -781,6 +918,19 @@
           }
           ctx.stroke();
         });
+        KICKS.forEach(function (kt) {
+          if (kt < S.tpl + BAR || kt >= S.end) return;
+          var w = seg(t, kt, kt + 0.55);
+          if (w <= 0 || w >= 1) return;
+          var e = easeOut(w), v = 1 - e, pa = Math.sin(Math.PI * w) * out;
+          projects.forEach(function (p) {
+            if (branchK(p, t) < 1) return;
+            var x = v * v * v * 960 + 3 * v * v * e * 960 + 3 * v * e * e * p.rx + e * e * e * p.rx;
+            var y = v * v * v * y0 + 3 * v * v * e * (y0 + 230) + 3 * v * e * e * (y1 - 240) + e * e * e * y1;
+            ctx.fillStyle = glow(0.8 * pa);
+            ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill();
+          });
+        });
         ctx.restore();
       }
       var slots = [[tpl, tplRect]];
@@ -791,35 +941,46 @@
       });
       others.forEach(function (p, i) {
         var rect = { x: 1440 - CW / 2, y: 330 + i * (CH + 22), w: CW, h: CH };
-        var k = seg(u, 3.6 + i * 0.1, 4.6 + i * 0.1) * (1 - seg(u, 5.2, 6.1));
+        var k = seg(u, 3.5 + i * 0.1, 4.3 + i * 0.1) * (1 - seg(u, 5.2, 6.1));
         if (k <= 0) return;
         drawCard(p, morph(railDot(p, t), rect, k), { alpha: Math.min(1, k * 4) });
-        if (i === 0) drawChip("其他", others.length, rect.x, rect.y - 50, smooth(4.2, 4.8, u) * (1 - smooth(5.2, 5.8, u)));
+        if (i === 0) drawChip("其他", others.length, rect.x, rect.y - 50, smooth(4.0, 4.5, u) * (1 - smooth(5.2, 5.8, u)));
       });
     }
 
-    // ---------- 所有点汇回书脊 ----------
+    // ---------- 所有点汇回书脊：越收越快，全部在落点前一刻到达，落点一拍炸开 ----------
     function drawGather(t) {
-      var u = t - S.end;
-      if (u < 0 || u > 2.2) return;
-      projects.forEach(function (p) {
-        var d = Math.abs(p.rx - 960) / 710;
-        var f = ease(seg(u, d * 0.5, 1 + d * 0.5));
-        var cx2 = mix(p.rx, 960, 0.25), cy2 = RAIL_Y - 300;
-        var x = (1 - f) * (1 - f) * p.rx + 2 * (1 - f) * f * cx2 + f * f * 960;
-        var y = (1 - f) * (1 - f) * RAIL_Y + 2 * (1 - f) * f * cy2 + f * f * 520;
-        var a = 1 - smooth(0.82, 1, f);
-        if (a <= 0) return;
-        var g = ctx.createRadialGradient(x, y, 0, x, y, 12);
-        g.addColorStop(0, rgba(ACC, a)); g.addColorStop(0.3, rgba(ACC, 0.5 * a)); g.addColorStop(1, rgba(ACC, 0));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2); ctx.fill();
-      });
-      var flash = Math.exp(-Math.pow((u - 1.4) / 0.35, 2));
-      if (flash > 0.01) {
-        var g2 = ctx.createRadialGradient(960, 520, 0, 960, 520, 420);
-        g2.addColorStop(0, rgba(ACC, 0.35 * flash)); g2.addColorStop(1, rgba(ACC, 0));
-        ctx.fillStyle = g2; ctx.fillRect(0, 0, VW, VH);
+      var u = t - S.end, U = S.drop - S.end;
+      if (u < 0 || u > U + 2.5) return;
+      if (u < U) {
+        projects.forEach(function (p) {
+          var d = Math.abs(p.rx - 960) / 710;
+          var k = seg(u, d * 0.35, U - 0.1), f = k * k;                // 加速收拢
+          var cx2 = mix(p.rx, 960, 0.25), cy2 = RAIL_Y - 300;
+          var x = (1 - f) * (1 - f) * p.rx + 2 * (1 - f) * f * cx2 + f * f * 960;
+          var y = (1 - f) * (1 - f) * RAIL_Y + 2 * (1 - f) * f * cy2 + f * f * 520;
+          var a = 1 - smooth(0.9, 1, f);
+          if (a <= 0) return;
+          var r = 12 + 8 * f;
+          var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+          g.addColorStop(0, rgba(ACC, a)); g.addColorStop(0.3, glow(0.5 * a)); g.addColorStop(1, glow(0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+        });
+        // 书脊位置越攒越亮
+        var core = Math.pow(seg(u, 0.4, U), 2.5);
+        if (core > 0.01) {
+          var gc = ctx.createRadialGradient(960, 520, 0, 960, 520, 60 + 160 * core);
+          gc.addColorStop(0, glow(0.5 * core)); gc.addColorStop(1, glow(0));
+          ctx.fillStyle = gc; ctx.fillRect(0, 0, VW, VH);
+        }
+        return;
       }
+      var w = u - U, flash = Math.exp(-w * 2.6);
+      var g2 = ctx.createRadialGradient(960, 520, 0, 960, 520, 520 + 500 * easeOut(seg(w, 0, 1)));
+      g2.addColorStop(0, glow(0.45 * flash)); g2.addColorStop(1, glow(0));
+      ctx.fillStyle = g2; ctx.fillRect(0, 0, VW, VH);
+      shock(960, 520, S.drop, t, 1100, 1.4, 0.8);
+      shock(960, 520, S.drop + 0.12, t, 760, 1.2, 0.5);
     }
 
     function render(t) {
@@ -827,6 +988,9 @@
       ctx.setTransform(canvas.width / VW, 0, 0, canvas.height / VH, 0, 0);
       ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
       drawBackground(t, heroAlpha(t));
+      // 镜头：段落落点往前一冲再回弹；底鼓上再带一丝呼吸
+      var zoom = 1 + 0.014 * impact(t, 6) + 0.003 * kick(t);
+      ctx.translate(960, 540); ctx.scale(zoom, zoom); ctx.translate(-960, -540);
       drawHero(t);
       drawLine(t);
       drawNumbering(t);
@@ -836,6 +1000,7 @@
       drawLastYear(t);
       drawTemplates(t);
       drawGather(t);
+      ctx.setTransform(canvas.width / VW, 0, 0, canvas.height / VH, 0, 0);
       var fadeIn = 1 - smooth(0, 0.6, t);
       if (fadeIn > 0) { ctx.fillStyle = rgba(C.bgRGB, fadeIn); ctx.fillRect(0, 0, VW, VH); }
     }
@@ -845,7 +1010,8 @@
       duration: DUR,
       // 给配乐与渲染器用的时间表
       timeline: {
-        S: S, dwell: DWELL, count: N,
+        S: S, dwell: DWELL, focus0: FOCUS0, bpm: 60 / BEAT, beat: BEAT, bar: BAR, kicks: KICKS, count: N,
+        sweep0: SWEEP0, sweep: sweepStep(firstYear.items.length), typed: QUERY.length,
         firstYearCount: firstYear.items.length, lastYearCount: lastYear.items.length,
         spotlight: spotlight.map(function (p) { return p.name; }), hits: hits.length,
         branchTimes: projects.map(function (p) { return +(S.tpl + 0.9 + Math.abs(p.rx - 960) / 710 * 1.3 + 1.1).toFixed(3); })
