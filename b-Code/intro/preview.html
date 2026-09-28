@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <title>OneHistory 介绍动画 · 预览</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- 纸本版：衬线标题、等宽编号、手写批注（简体霞鹜文楷走 jsDelivr，取不到时退回 Google 的 TC 版） -->
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Noto+Serif+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.css" rel="stylesheet">
+  <style>
+    html, body { margin: 0; height: 100%; background: #121414; overflow: hidden; }
+    body { display: grid; place-items: center; }
+    canvas { width: min(100vw, calc(100vh * 16 / 9)); height: auto; aspect-ratio: 16 / 9; display: block; }
+    #bar { position: fixed; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(217,164,65,.15); cursor: pointer; }
+    #bar i { display: block; height: 100%; width: 0; background: #D9A441; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1920" height="1080"></canvas>
+  <div id="bar" title="点击跳转；空格暂停"><i></i></div>
+  <script src="intro.js"></script>
+  <script src="intro-paper.js"></script>
+  <script>
+  // 预览：?t=20 从第 20 秒开始；?v=paper 纸本版；?theme=light 深色版的浅色；?w=2560&h=1440 画布尺寸
+  // 渲染器用 ?render=1 逐帧取图
+  (async function () {
+    var q = new URLSearchParams(location.search);
+    var paper = q.get("v") === "paper";
+    var theme = paper || q.get("theme") === "light" ? "light" : "dark";
+    document.body.style.background = paper ? "#F5F0E8" : theme === "light" ? "#F7F5EF" : "#121414";
+    var canvas = document.getElementById("c");
+    canvas.width = parseInt(q.get("w") || "1920", 10);
+    canvas.height = parseInt(q.get("h") || "1080", 10);
+
+    var data = await (await fetch("/b-Site/projects.json")).json();
+    var details = {};
+    await Promise.all(data.projects.filter(OHIntro.isModule).map(async function (p) {
+      try {
+        var r = await fetch(p.url.replace(/^\//, "/b-Site/") + "index.html");
+        if (r.ok) details[p.id] = OHIntro.parsePage(await r.text());
+      } catch (e) { /* 缺说明页就只用卡片描述 */ }
+    }));
+
+    // 网页字体按 unicode-range 分片加载，必须把要画的字全部预先点名，否则前几帧会用回退字体
+    var src = await (await fetch(paper ? "intro-paper.js" : "intro.js")).text();
+    var glyphs = JSON.stringify(data) + JSON.stringify(details) + src + "0123456789:—·/ ";
+    var fonts = paper
+      ? ["400 16px \"Source Serif 4\"", "600 16px \"Source Serif 4\"", "700 16px \"Source Serif 4\"", "italic 400 16px \"Source Serif 4\"",
+         "400 16px \"Noto Serif SC\"", "500 16px \"Noto Serif SC\"", "600 16px \"Noto Serif SC\"", "700 16px \"Noto Serif SC\"",
+         "400 16px \"JetBrains Mono\"", "500 16px \"JetBrains Mono\"", "600 16px \"JetBrains Mono\"",
+         "400 16px \"LXGW WenKai\"", "400 16px \"LXGW WenKai TC\"", "400 16px \"Noto Sans SC\"", "500 16px \"Noto Sans SC\""]
+      : ["400 16px Outfit", "500 16px Outfit", "600 16px Outfit", "400 16px \"Noto Sans SC\"", "500 16px \"Noto Sans SC\"", "600 16px \"Noto Sans SC\""];
+    await Promise.race([
+      Promise.all(fonts.map(function (f) { return document.fonts.load(f, glyphs).catch(function () {}); })),
+      new Promise(function (r) { setTimeout(r, 20000); })
+    ]);
+
+    var logo = new Image();
+    logo.src = theme === "light" ? "/b-Site/assets/logo.png" : "/b-Site/assets/logo-dark.png";
+    await logo.decode();
+
+    var opts = { projects: data.projects, details: details, logo: logo, theme: theme, builtAt: data.builtAt };
+    var intro = paper ? OHIntroPaper.create(canvas, opts) : OHIntro.create(canvas, opts);
+    window.__meta = { FPS: 30, DUR: intro.duration, timeline: intro.timeline, size: [canvas.width, canvas.height] };
+    window.renderFrame = function (f) { intro.render(f / 30); return canvas.toDataURL("image/png"); };
+    if (q.has("render")) { window.__ready = true; return; }
+
+    var start = parseFloat(q.get("t") || "0"), t0 = performance.now(), paused = false, pt = 0;
+    var bar = document.querySelector("#bar i");
+    function now() { return paused ? pt : (start + (performance.now() - t0) / 1000) % intro.duration; }
+    document.addEventListener("keydown", function (e) {
+      if (e.code !== "Space") return;
+      e.preventDefault();
+      if (paused) { start = pt; t0 = performance.now(); } else pt = now();
+      paused = !paused;
+    });
+    document.getElementById("bar").addEventListener("click", function (e) {
+      var t = e.clientX / innerWidth * intro.duration;
+      if (paused) pt = t; else { start = t; t0 = performance.now(); }
+    });
+    (function loop() {
+      var t = now();
+      intro.render(t);
+      bar.style.width = (t / intro.duration * 100) + "%";
+      requestAnimationFrame(loop);
+    })();
+  })();
+  </script>
+</body>
+</html>
