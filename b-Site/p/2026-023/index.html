@@ -186,10 +186,6 @@
 <td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">模块开发手册</a></td>
 <td>工作区、submit/finish 与模块文档规范</td>
 </tr>
-<tr>
-<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-Samples/README.md">起步示例</a></td>
-<td>最小模块 DemoModule</td>
-</tr>
 </tbody></table>
 <h2>目录</h2>
 <table>
@@ -204,16 +200,12 @@
 <td>产品源码：Core、Services、ServiceHost、App、Cli</td>
 </tr>
 <tr>
-<td><code>b-Code-Samples/</code></td>
-<td>起步示例，不进正式运行区</td>
-</tr>
-<tr>
 <td><code>b-Code-Tests/</code></td>
 <td>宿主测试</td>
 </tr>
 <tr>
 <td><code>b-Code-Eng/</code></td>
-<td>发布登记表、public-api 基线与发布输入</td>
+<td>宿主冻结标签表、public-api 基线与发布输入</td>
 </tr>
 <tr>
 <td><code>b-Office/</code></td>
@@ -238,7 +230,7 @@ dotnet test .\b-Code-Tests\HistoryVulcan.Tests\HistoryVulcan.Tests.csproj -c Rel
 <ul>
 <li>运行区固定为 <code>%AppData%\HistoryVulcan\Modules\&lt;模块名&gt;</code>，只发现直属完整包，不扫描裸 DLL。</li>
 <li><code>--cli</code> 离线组合执行；<code>--runtime</code> 只连接活宿主，仅放行 <code>vulcan.module.list/ready/reload/install</code>。</li>
-<li>模块发布登记表：<a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-Eng/pipeline/module-publish.manifest.json"><code>module-publish.manifest.json</code></a>。</li>
+<li>宿主不登记模块：模块的发布描述在各模块仓 <code>project.manifest.json</code> 的 <code>publish</code> 节；本仓只有宿主冻结标签表 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-Eng/pipeline/host-freeze.json"><code>host-freeze.json</code></a>。</li>
 </ul>
 <h2>保留内容</h2>
 <ul>

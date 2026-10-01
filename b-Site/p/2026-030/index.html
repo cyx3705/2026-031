@@ -213,7 +213,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContrac
 本仓不自行发布；<code>eng/Build-HistoryApolloPackage.ps1</code> 只用于本地候选构建。</p>
 <h2>要点</h2>
 <ul>
-<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\Modules\HistoryApollo\data\providers.json</code>，或由环境变量提供（优先）：
+<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\ModuleData\HistoryApollo\providers.json</code>（宿主给的数据目录），或由环境变量提供（优先）：
 DeepSeek 为 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code>，博查为 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>。</li>
 <li><strong>密钥不入库。</strong> 项目合同检查会扫描全仓，拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</li>
 <li>嵌套调用的过程输出也逐轮进控制台；消费方不要再从载荷复述调用过程。</li>

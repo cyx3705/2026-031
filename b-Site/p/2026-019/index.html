@@ -235,8 +235,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContrac
 <h2>要点</h2>
 <ul>
 <li>Diana 不登记 <code>diana.worktree.*</code>、<code>diana.release.*</code>、<code>diana.trial.*</code>，也不经 <code>diana.relay.call</code> 绕行开发管线。</li>
-<li>模块发布登记表在宿主仓 <code>2026-023-HistoryVulcan/b-Code-Eng/pipeline/module-publish.manifest.json</code>；
-<code>HistoryVulcan</code> 是 <code>kind=host</code>，走 <code>vulcan.release.cycle</code>，禁止走模块开发管线。</li>
+<li>宿主 5.8.0 起不登记模块：本仓的发布描述在根 <code>project.manifest.json</code> 的 <code>publish</code> 节；
+<code>HistoryVulcan</code> 是宿主，走 <code>vulcan.release.cycle</code>，禁止走模块开发管线。</li>
 <li><code>diana.project.docs</code> 只用于已授权项目的维护；跨项目消费一律走 <code>diana.docs.catalog/read</code>。</li>
 </ul>
 <h2>保留内容</h2>
