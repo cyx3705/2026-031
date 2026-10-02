@@ -141,7 +141,7 @@ Git 文件规则与 LFS，GitHub 账号与远端，以及分支图谱与提交�
 <td>页面协议（内部）</td>
 </tr>
 </tbody></table>
-<p>完整命令目录（运行时共 51 条）、参数与返回见 <a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a>。</p>
+<p>完整命令目录与参数是注册时的自描述：<code>diana.docs.read domain=janus</code>（宿主 6.1.0 起没有消费文档）。</p>
 <h2>入口</h2>
 <table>
 <thead>
@@ -179,10 +179,6 @@ Git 文件规则与 LFS，GitHub 账号与远端，以及分支图谱与提交�
 <td>验证层级、命令与证据</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/package/%E6%A8%A1%E5%9D%97API.md">模块 API</a></td>
-<td>跨模块消费合同</td>
-</tr>
-<tr>
 <td><a href="https://github.com/cyx3705/2026-020/blob/HEAD/b-Office/current/%E6%8C%87%E4%BB%A4%E4%BC%98%E5%8C%96%E8%A7%84%E8%8C%83.md">指令优化规范</a></td>
 <td>命令命名规则与旧名映射</td>
 </tr>
@@ -205,7 +201,7 @@ Git 文件规则与 LFS，GitHub 账号与远端，以及分支图谱与提交�
 </tr>
 <tr>
 <td><code>b-Office/</code></td>
-<td>项目文档：<code>current/</code> 现行合同、<code>package/</code> 消费合同、<code>history/</code> 只读归档</td>
+<td>项目文档：<code>current/</code> 现行合同、<code>history/</code> 只读归档</td>
 </tr>
 <tr>
 <td><code>z-Publish/</code></td>
@@ -227,8 +223,8 @@ dotnet run --project .\b-Code-Verify\ModuleSmoke\ModuleSmoke.csproj -c Release -
 本仓不自行发布；<code>Build-HistoryJanusPackage.ps1</code> 只用于本地候选构建。</p>
 <h2>要点</h2>
 <ul>
-<li>正式快照含 <code>HistoryJanus.dll</code>、XML、module manifest、checksum 与 <code>docs/</code>，不含 Janus EXE 或 HistoryVulcan 运行库。</li>
-<li>跨项目读取已发布 API 走 <code>diana.docs.read domain=janus</code>；HistoryVulcan 合同只从平级 <code>2026-023-HistoryVulcan/z-Publish</code> 消费。</li>
+<li>正式快照含 <code>HistoryJanus.dll</code>、XML、module manifest 与 checksum，不含 docs、Janus EXE 或 HistoryVulcan 运行库。</li>
+<li>跨项目查 Janus 指令走 <code>diana.docs.read domain=janus</code>；HistoryVulcan 合同只从平级 <code>2026-023-HistoryVulcan/z-Publish</code> 消费。</li>
 <li>默认不读 <code>b-Office/history</code>，只有明确追溯版本时才读指定文件。</li>
 </ul>
 <h2>保留内容</h2>
