@@ -62,7 +62,7 @@
 <li>根目录只提供必要入口，不要求 AI 扫描整个仓库。</li>
 <li><code>project.manifest.json</code> 声明活动目录、文档、命令、归档和生成物。</li>
 <li>根目录的可见文件夹只使用 <code>a-*</code>、<code>b-*</code>、<code>z-*</code> 三种级别。</li>
-<li><code>b-Office/current/</code> 只保存必要的项目现行文档；<code>b-Office/package/</code> 保存精简复用入口。</li>
+<li><code>b-Office/current/</code> 只保存必要的项目现行文档；不设单独的消费文档包（模块的指令说明就是注册时的自描述）。</li>
 <li><code>b-Office/history/</code> 默认不进入 AI 上下文。</li>
 <li>任何构建、测试或验收命令都必须在 manifest 中明确声明；不适用时使用 <code>null</code>。</li>
 </ul>
@@ -81,10 +81,6 @@
 <tr>
 <td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
 <td>可机器读取的项目身份、路径、命令和上下文排除项</td>
-</tr>
-<tr>
-<td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/package/%E5%A4%8D%E7%94%A8%E8%AF%B4%E6%98%8E.md"><code>b-Office/package/复用说明.md</code></a></td>
-<td>文档包边界与建议读取顺序</td>
 </tr>
 <tr>
 <td><a href="https://github.com/cyx3705/0000-001-AIReady/blob/HEAD/b-Office/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.md#%E7%9B%AE%E5%BD%95%E8%A7%84%E8%8C%83"><code>b-Office/文档中心.md</code></a></td>
