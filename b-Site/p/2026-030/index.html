@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-030 HistoryApollo · OneHistory</title>
+  <meta name="description" content="模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-030" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-030</span>
+      <span class="crumb-name">HistoryApollo</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryApollo</h1>
+<blockquote>
+<p>模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryApollo 把 OpenAI 兼容的对话补全接口变成 HistoryVulcan 指令，首发内置 DeepSeek，可按需联网搜索（博查），
+可附本机图片交给识图模型（内置通义千问），每一轮往返实时写进控制台。</p>
+<ul>
+<li>它只做一件事——<strong>把一次模型调用说清楚</strong>。</li>
+<li>会话历史、提示词工程、重试编排和逐字流式输出都属于调用方，不在这里。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-030</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>apollo</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>无（<code>ui: false</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>standard</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Code/HistoryApollo/HistoryApolloVersion.props"><code>HistoryApolloVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>chat</code></td>
+<td><code>apollo.chat.ask</code> / <code>send</code></td>
+<td>单轮提问 / 完整消息数组；<code>web=true</code> 时模型自行决定是否联网；<code>images=</code> 附图走识图供应商</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td><code>apollo.model.list</code></td>
+<td>模型清单</td>
+</tr>
+<tr>
+<td><code>provider</code></td>
+<td><code>apollo.provider.list</code> / <code>use</code> / <code>config</code></td>
+<td>供应商、默认模型与接入点</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code>apollo.key.set</code> / <code>clear</code></td>
+<td>密钥读写（回执只出掩码）</td>
+</tr>
+</tbody></table>
+<pre><code>apollo.key.set token=&lt;密钥&gt; provider=deepseek
+apollo.chat.ask prompt=用一句话解释张量
+apollo.chat.ask prompt=&quot;CDQ2B20-10D 是哪个品牌的气缸&quot; web=true
+apollo.key.set token=&lt;密钥&gt; provider=qwen
+apollo.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
+</code></pre>
+<p>参数读注册自描述：<code>diana.docs.read domain=apollo</code>（宿主 6.1.0 起没有消费文档）；返回载荷、密钥与取舍见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、取舍、真机才知道的、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryApollo/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryApollo.Tests/</code></td>
+<td>自动验证</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td><code>current/现行约定.md</code>，唯一的长期文档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryApollo\HistoryApollo.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\HistoryApollo.Tests\HistoryApollo.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>自动验证全程离线：对话用例走假传输，不出网、不计费。需要联网实调时设 <code>APOLLO_LIVE=1</code> 再跑测试。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-HistoryApolloPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
+<ul>
+<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\ModuleData\HistoryApollo\providers.json</code>（宿主给的数据目录），或由环境变量提供（优先）：
+DeepSeek 为 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code>，博查为 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>，通义千问为 <code>APOLLO_QWEN_KEY</code> / <code>QWEN_API_KEY</code>。</li>
+<li><strong>密钥不入库。</strong> 项目合同检查会扫描全仓，拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</li>
+<li>嵌套调用的过程输出也逐轮进控制台；消费方不要再从载荷复述调用过程。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-030/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-030" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-030" rel="noopener">cyx3705/2026-030</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

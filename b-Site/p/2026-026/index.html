@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-026 HistoryAurora · OneHistory</title>
+  <meta name="description" content="宿主前端界面模块：窗口、场景、布局、控制台与主题">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-026" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-026</span>
+      <span class="crumb-name">HistoryAurora</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryAurora</h1>
+<blockquote>
+<p>宿主前端界面模块：窗口、场景、布局、控制台与主题</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryAurora 是 HistoryVulcan 的界面模块，经 <code>RegisterFrontend</code> 登记为宿主唯一前端：主窗口、场景、布局、
+控制台、命令集、弹窗与页面宿主都在这里。名字取自罗马黎明女神——它是体系对用户可见的那一面。</p>
+<ul>
+<li>不是独立应用：启动与显隐走注册指令，发布只有模块包。没装 Aurora 的宿主没有界面。</li>
+<li>别的模块不自建控件，而是以描述化页面协议注册页面，由 Aurora 的组件层渲染。</li>
+<li>它的由来是把宿主前端进程自持的 39 条界面命令搬出宿主，让宿主只剩指令总线（MCP 工具一个不少）。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-026</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>），宿主唯一前端</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>aurora</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>本模块即界面</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Code-Studio/AuroraVersion.props"><code>AuroraVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ui</code></td>
+<td><code>show</code> / <code>dock</code> / <code>float</code> / <code>layouts</code> / <code>panels</code> / <code>dialog</code> / <code>selectfile</code> …</td>
+<td>窗口、布局、面板、弹窗与文件选择</td>
+</tr>
+<tr>
+<td><code>component</code></td>
+<td><code>list</code> / <code>show</code></td>
+<td>页面协议与组件用法的自描述</td>
+</tr>
+<tr>
+<td><code>scene</code></td>
+<td><code>list</code> / <code>open</code> / <code>go</code> / <code>save</code> / <code>reset</code> / <code>delete</code></td>
+<td>场景</td>
+</tr>
+<tr>
+<td><code>log</code></td>
+<td><code>source</code> / <code>level</code> / <code>keyword</code> / <code>clear</code> / <code>export</code> …</td>
+<td>控制台筛选与导出</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td><code>history</code> / <code>copyexample</code> / <code>runreadonly</code></td>
+<td>命令集</td>
+</tr>
+<tr>
+<td><code>app</code></td>
+<td><code>about</code> / <code>window</code></td>
+<td>关于与主窗口</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td><code>ready</code> 等</td>
+<td>宿主装载完成钩子（内部）</td>
+</tr>
+</tbody></table>
+<p>模块怎么在界面里露面、有哪些组件、怎么写：<code>aurora.component.list</code> → <code>aurora.component.show name=&lt;名&gt;</code>（从 <code>page</code> 看起）；
+<code>aurora.*</code> 指令的参数读注册自描述：<code>diana.docs.read domain=aurora</code>。本仓不写手工用法文档。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-026/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、组件层规矩、界面取舍、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-Studio/Module/</code></td>
+<td>模块工程与程序集元数据</td>
+</tr>
+<tr>
+<td><code>b-Code-Studio/Shell/</code></td>
+<td>界面源码，按层分目录（见「要点」）</td>
+</tr>
+<tr>
+<td><code>b-Code-Studio/eng/</code></td>
+<td>构建与门禁脚本</td>
+</tr>
+<tr>
+<td><code>b-Code-Verify/</code></td>
+<td><code>Contracts</code> 合同测试、<code>ModuleSmoke</code> 模块装载冒烟</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td><code>current/现行约定.md</code>，仅此一份</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入；纳入 git，排除规则不得触碰</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet restore .\HistoryAurora.sln --locked-mode -p:NuGetAudit=false
+dotnet build .\HistoryAurora.sln -c Release --no-restore -p:NuGetAudit=false
+dotnet test .\b-Code-Verify\Contracts\Contracts.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code-Studio\eng\Test-QualityGate.ps1
+</code></pre>
+<p>宿主快照按相对路径解析（假定本仓与 <code>2026-023-HistoryVulcan</code> 在同一库根下）。
+推送时 <a href="https://github.com/cyx3705/2026-026/blob/HEAD/.github/workflows/historyaurora-gate.yml"><code>historyaurora-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<p><code>Shell/</code> 下只有五个层目录，编号越大越靠上，<strong>依赖只能向下</strong>；目录名即层，命名空间跟着目录走。</p>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>命名空间</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0-Neutral/</code></td>
+<td><code>HistoryAurora.Shell.Neutral</code></td>
+<td>指令面、日志、纯工具</td>
+</tr>
+<tr>
+<td><code>1-Base/</code></td>
+<td><code>.Base</code></td>
+<td>页面外壳：停靠、顶栏、拖出拖入、页面合并、弹窗</td>
+</tr>
+<tr>
+<td><code>2-Components/</code></td>
+<td><code>.Components</code></td>
+<td>风格令牌、表格、控制面板、泳道、页面描述与渲染器、组件目录（<code>Catalog/</code>）</td>
+</tr>
+<tr>
+<td><code>3-HostedPages/</code></td>
+<td><code>.HostedPages</code></td>
+<td>Aurora 自己托管的页面，与模块页同一条路</td>
+</tr>
+<tr>
+<td><code>4-Composition/</code></td>
+<td><code>.Composition</code></td>
+<td>装配根：<code>ShellWindow</code> 与内置指令组</td>
+</tr>
+</tbody></table>
+<ul>
+<li>门禁两道：<code>HistoryAurora.Module.csproj</code> 按层 <code>Include</code>（没分层的目录不参与编译）；<code>LayerContractTests</code> 守落点、命名空间与依赖方向。</li>
+<li>改 <code>csproj</code> 时 <code>Link=&quot;%(RecursiveDir)…&quot;</code> 必须吃掉层目录，否则资源名变成 <code>2-components/themes/…</code>：编译零征兆，运行期建窗抛 <code>IOException</code>。</li>
+<li>页面 owner 由指令域推出（<code>History</code> + 域名首字母大写），与模块名无关。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-026/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-026" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-026" rel="noopener">cyx3705/2026-026</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

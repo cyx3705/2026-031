@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-029 HistoryJuno · OneHistory</title>
+  <meta name="description" content="Sub2API 账号与服务控制面板：启动、代理重连、账号管理与导入">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-029" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-029</span>
+      <span class="crumb-name">HistoryJuno</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryJuno</h1>
+<blockquote>
+<p>Sub2API 账号与服务控制面板：启动、代理重连、账号管理与导入</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryJuno 是加载到 HistoryVulcan、显示在 HistoryAurora 中的 Sub2API 控制面板。<code>Juno</code> 页面提供启动、代理重连、
+关闭和刷新，并在「账号管理 / 服务状态 / 账号导入」三个子页间切换。</p>
+<ul>
+<li>复用现有 Sub2API PowerShell 工具，不重写 Sub2API 服务本体或代理内核。</li>
+<li>不创建独立网页或自建控件；账号导入子页复用 Aurora 通用 JSON 来源组件。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-029</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>juno</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述化页面 <code>Juno</code></td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code>；<code>juno.ui.*</code> 与 <code>juno.import.select</code> 对远程模型隐藏</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Code/HistoryJuno/HistoryJunoVersion.props"><code>HistoryJunoVersion.props</code></a>；最低宿主 HistoryVulcan 6.0.0</td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>juno.sub2api.start</code></td>
+<td>分阶段启动 Ubuntu Docker 与 Sub2API compose，8080/9090 就绪才算成功</td>
+</tr>
+<tr>
+<td><code>juno.sub2api.stop</code></td>
+<td>确认后停止服务</td>
+</tr>
+<tr>
+<td><code>juno.sub2api.status</code></td>
+<td>探测 8080、9090、7890、17890 端口</td>
+</tr>
+<tr>
+<td><code>juno.proxy.connect</code></td>
+<td>更新端口转发、Sub2API 全局代理与代理 IP</td>
+</tr>
+<tr>
+<td><code>juno.accounts.import</code></td>
+<td>导入账号并绑定所选分组与唯一全局代理</td>
+</tr>
+</tbody></table>
+<p>指令参数读注册自描述：<code>diana.docs.read domain=juno</code>（宿主 6.1.0 起没有消费文档）。取舍与外部路径见 <a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-029/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、取舍、真机才知道的、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryJuno/</code></td>
+<td>模块源码与 manifest</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryJuno.Tests/</code></td>
+<td>自动验证</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>唯一长期文档 <code>current/现行约定.md</code></td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<p>构建命令以 <a href="https://github.com/cyx3705/2026-029/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a> 的 <code>commands.build</code> 为准：它把中间文件与输出重定向到
+<code>C:\Users\Administrator\Desktop\easyTOOL\SU2API\.build</code>（F 盘工作树的默认 <code>obj</code> 受文件系统策略限制）。</p>
+<pre><code class="language-powershell">dotnet run --project .\b-Code\HistoryJuno.Tests\HistoryJuno.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>停止与代理动作依赖 <code>sub2api-tool.ps1</code> 与 <code>proxy-reconnect.ps1</code>，从 <code>SUB2API_TOOL_ROOT</code> 或桌面 <code>easyTOOL/SU2API</code> 查找。</li>
+<li>账号、分组、代理和导入走本机 Sub2API 管理接口；凭据目录由 <code>SUB2API_DEPLOY_ROOT</code> 指定，默认 <code>%USERPROFILE%/Projects/sub2api-deploy</code>。</li>
+<li>账号 JSON、管理密码、令牌和原始响应只在内存及 127.0.0.1 回环中使用，不进日志或页面数据。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-029/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-029" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-029" rel="noopener">cyx3705/2026-029</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

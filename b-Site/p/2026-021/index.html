@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-021 HistoryMercury · OneHistory</title>
+  <meta name="description" content="项目与入口的调度台：桌面项目坞、全局快捷键与资源管理器入口">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-021" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-021</span>
+      <span class="crumb-name">HistoryMercury</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryMercury</h1>
+<blockquote>
+<p>项目与入口的调度台：桌面项目坞、全局快捷键与资源管理器入口</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryMercury 为 <code>C:\OneHistory\HistoryClio</code> 项目库提供桌面项目坞（磁贴 <code>HC</code>）、全局快捷键、
+资源管理器托管入口（<code>HistoryClio 项目</code>）与使用历史。</p>
+<ul>
+<li>桌面坞是 Mercury 自己的窗口，跑在模块自有的 STA 线程上，前端在不在都照常显示。</li>
+<li>模块不构造任何前端控件；「扩展坞管理」页以描述化协议声明，由 HistoryAurora 渲染。</li>
+<li>不提供文件内容读写、Git 操作（归 Janus）或界面布局（归 Aurora）。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-021</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>mercury</code>（代码命名空间 <code>Mercury</code>，模块身份 <code>HistoryMercury</code>）</td>
+</tr>
+<tr>
+<td>界面</td>
+<td>桌面坞（自有窗口）+ Aurora 描述化页面「扩展坞管理」</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>standard</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Code-MercuryDock/HistoryMercury.csproj"><code>HistoryMercury.csproj</code></a>；最低宿主 HistoryVulcan 6.0.0（见<a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/current/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>）</td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>proj</code></td>
+<td><code>list</code> / <code>open</code> / <code>pin</code> / <code>exclude</code> / <code>add</code> / <code>refresh</code></td>
+<td>活动项目清单</td>
+</tr>
+<tr>
+<td><code>dock</code></td>
+<td><code>show</code> / <code>add</code> / <code>remove</code> / <code>policy</code> / <code>run</code></td>
+<td>项目坞与收录策略</td>
+</tr>
+<tr>
+<td><code>shortcut</code></td>
+<td><code>add</code> / <code>open</code> / <code>pick</code> / <code>wakeconsole</code></td>
+<td>快捷文件与唤起控制台</td>
+</tr>
+<tr>
+<td><code>hotkey</code></td>
+<td><code>list</code> / <code>register</code> / <code>unregister</code></td>
+<td>全局快捷键</td>
+</tr>
+<tr>
+<td><code>app</code> / <code>explorer</code></td>
+<td><code>app.open</code> / <code>app.status</code> / <code>explorer.register</code> / <code>explorer.remove</code></td>
+<td>主程序与资源管理器入口</td>
+</tr>
+<tr>
+<td><code>usage</code></td>
+<td><code>list</code> / <code>forget</code></td>
+<td>使用历史</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>mercury.go</code></td>
+<td>控制台域聚焦（转发 <code>aurora.log.source</code>）</td>
+</tr>
+</tbody></table>
+<p>完整命令目录与参数是注册时的自描述：<code>diana.docs.read domain=mercury</code>（宿主 6.1.0 起没有消费文档）。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-021/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、取舍、真机才知道的、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-MercuryDock/</code></td>
+<td>模块源码：<code>Module</code>、<code>Commands</code>、<code>Dock</code>、<code>Explorer</code>、<code>State</code>、<code>Ui</code>、<code>Input</code>、<code>Diagnostics</code></td>
+</tr>
+<tr>
+<td><code>b-Code-Tests/</code></td>
+<td><code>HistoryMercury.Smoke</code></td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>候选构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td><code>current/现行约定.md</code>，仅此一份</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet run --project .\b-Code-Tests\HistoryMercury.Smoke\HistoryMercury.Smoke.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Build-HistoryMercuryPackage.ps1
+</code></pre>
+<p>构建脚本在 <code>z-Publish/HistoryMercury-vX.Y.Z</code> 生成并校验候选包。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>快捷方式、状态与日志放在 <code>%APPDATA%\HistoryVulcan\HistoryMercury</code>，运行包目录 <code>Modules\HistoryMercury</code> 只放不可变、可校验的文件。</li>
+<li>项目扫描优先 <code>proj.libraryroot</code>（默认 <code>C:\OneHistory\HistoryClio</code>）；配置的目录不存在时回落到缺省库根。</li>
+<li>管理页的行操作只在右键菜单里（<code>rowActions</code> 一律 <code>inline: false</code>），「加入扩展坞」也是右键弹出。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-021/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-021" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-021" rel="noopener">cyx3705/2026-021</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

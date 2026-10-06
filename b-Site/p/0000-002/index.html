@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>0000-002 ModuleReady · OneHistory</title>
+  <meta name="description" content="宿主模块起步模板：派生、跑一条脚本，就是一个可构建、可测试">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/0000-002" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">0000-002</span>
+      <span class="crumb-name">ModuleReady</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<!-- template:head -->
+<h1>ModuleReady</h1>
+<blockquote>
+<p>宿主模块起步模板：派生、跑一条脚本，就是一个可构建、可测试、可热装的 HistoryVulcan 模块仓</p>
+</blockquote>
+<!-- /template:head -->
+
+<!-- template:usage -->
+<h2>从模板建立模块</h2>
+<p>本模板从 <code>0000-001-AIReady</code> 派生，内含一个能直接跑通的示范模块 <code>HistoryExemplum</code>（域 <code>exemplum</code>，
+一页 Aurora 页面、三条示范指令、离线测试含宿主装载冒烟）。新模块不必再去别的模块仓里复制。</p>
+<ol>
+<li><p>建仓：<code>janus.proj.create name=2026-0xx-History&lt;神名&gt; base=0000-002-ModuleReady</code>。</p>
+</li>
+<li><p>在新仓主树实例化（机械改名、改身份，跑完脚本删掉自己）：</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\New-ModuleFromTemplate.ps1 `
+    -Name History&lt;神名&gt; -Description &#39;&lt;一句话描述&gt;&#39; [-Domain &lt;域&gt;] [-PageTitle &lt;页面标题&gt;]
+</code></pre>
+<p>构建、测试通过后把这次实例化提交成一个脚手架提交，让之后的开发工作区只装业务改动。</p>
+</li>
+<li><p>不用改宿主仓：发布描述已在 <code>project.manifest.json</code> 的 <code>publish</code> 节（宿主 5.8.0 起模块自带）。</p>
+</li>
+<li><p><code>vulcan.dev.start</code> 开工作区，在里面把 <code>hello.*</code> 示范换成真实业务、填完 <code>{{...}}</code>，
+跑严格合同检查，再 <code>submit</code>（候选构建并热装）→ 审过 → <code>finish</code>。</p>
+</li>
+</ol>
+<p>模板自身的验证（模板模式，不带 <code>-Instantiation</code>）：</p>
+<pre><code class="language-powershell">dotnet run --project .\b-Code\HistoryExemplum.Tests\HistoryExemplum.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1
+</code></pre>
+<!-- /template:usage -->
+<h2>定位</h2>
+<p>{{这个模块做什么、为谁做；两三句话}}</p>
+<ul>
+<li>{{明确不做的事，以及它属于哪个模块}}</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>exemplum</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述式页面（场景 <code>HistoryExemplum</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/0000-002/blob/HEAD/b-Code/HistoryExemplum/HistoryExemplumVersion.props"><code>HistoryExemplumVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>按钮</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>打招呼</td>
+<td><code>exemplum.hello.ping</code></td>
+<td>示范：改状态的无参指令，刷新页面表格</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>exemplum.hello.echo text=…</code></td>
+<td>示范：带参数的只读指令</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>exemplum.hello.list</code></td>
+<td>示范：只读列表，投影到 MCP</td>
+</tr>
+</tbody></table>
+<p>指令说明就是注册时的自描述（<code>diana.docs.read domain=exemplum</code>，宿主 6.1.0 起没有消费文档）；自描述装不下的取舍写进 <a href="https://github.com/cyx3705/0000-002/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/0000-002/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-002/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/0000-002/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：模板规则与模块起步约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryExemplum/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryExemplum.Tests/</code></td>
+<td>离线自动验证（含宿主装载冒烟）</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>唯一长期文档 <code>current/现行约定.md</code></td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryExemplum\HistoryExemplum.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\HistoryExemplum.Tests\HistoryExemplum.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>离线测试最后一组用宿主真正的 <code>ModuleHost</code> 装一遍打好的包：版本漂移、manifest 写错在宿主那边
+都是静默跳过整个模块，这组用例在出包前拦住它们。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-HistoryExemplumPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
+<ul>
+<li>页面 owner 由指令域推出（<code>exemplum</code> → <code>HistoryExemplum</code>），合同检查与离线测试都守着这条。</li>
+<li>版本只改 <code>HistoryExemplumVersion.props</code>，再同步两份 manifest；三处不一致构建前就失败。</li>
+<li>{{本模块特有的要点}}</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/0000-002/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/0000-002" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/0000-002" rel="noopener">cyx3705/0000-002</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

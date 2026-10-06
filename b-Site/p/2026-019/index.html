@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-019 HistoryDiana · OneHistory</title>
+  <meta name="description" content="OneHistory 的 AI 工具区：观察、巡检、文档读取与 MCP 中继">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-019" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-019</span>
+      <span class="crumb-name">HistoryDiana</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryDiana</h1>
+<blockquote>
+<p>OneHistory 的 AI 工具区：观察、巡检、文档读取与 MCP 中继</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryDiana 是 OneHistory 的 <strong>AI 工具区</strong>：统一承接面向 AI 的跨项目观察、巡检、读取、转换和工具中继能力。
+新增的 AI 通用工具，只要不属于某个业务模块的领域合同，默认归 Diana。</p>
+<ul>
+<li>业务模块仍拥有自己的领域能力；Diana 只中继调用，不复制、不接管领域实现。</li>
+<li>不提供自己的 UI 页面；<code>diana.view.*</code> 只观察现有 HistoryVulcan 前端。</li>
+<li>不拥有模块开发管线：<code>vulcan.dev.start/submit/finish</code> 由 HistoryVulcan 独占，只走 Console CLI，不进入 Diana 或 MCP。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-019</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>diana</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>无（<code>ui: false</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>standard</code>；写命令只有 <code>diana.relay.call</code> 与 <code>diana.view.capture</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Code-HistoryDiana/HistoryDianaVersion.props"><code>HistoryDianaVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>log</code></td>
+<td><code>diana.log.read</code></td>
+<td>读取前端控制台内存日志；默认只返回 Error/Fatal</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td><code>diana.host.modules</code> / <code>ready</code> / <code>observe</code></td>
+<td>只读转发活宿主装载状态，<code>observe</code> 可对比基线</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>diana.project.summary</code> / <code>recent</code> / <code>largest</code></td>
+<td>已登记工作树的只读巡检</td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td><code>diana.project.manifest</code> / <code>docs</code> / <code>align</code></td>
+<td>项目 manifest、现行文档与入口对齐检查</td>
+</tr>
+<tr>
+<td><code>kit</code></td>
+<td><code>diana.kit.sha256</code> / <code>base64</code> / <code>guid</code> / <code>now</code></td>
+<td>无副作用的小计算</td>
+</tr>
+<tr>
+<td><code>relay</code></td>
+<td><code>diana.relay.list</code> / <code>describe</code> / <code>call</code></td>
+<td>按当前 MCP 策略列举与调用工具</td>
+</tr>
+<tr>
+<td><code>docs</code></td>
+<td><code>diana.docs.catalog</code> / <code>read</code> / <code>audit</code></td>
+<td>现查宿主指令目录：按域列出、渲染说明书、检查自描述缺陷</td>
+</tr>
+<tr>
+<td><code>view</code></td>
+<td><code>diana.view.windows</code> / <code>capture</code></td>
+<td>列出并原尺寸捕获 HistoryVulcan 前端窗口</td>
+</tr>
+</tbody></table>
+<p>查别的模块怎么调用：先 <code>diana.docs.catalog</code>，再 <code>diana.docs.read domain=&lt;域&gt; [class=&lt;类&gt;]</code> 或 <code>command=&lt;指令&gt;</code>。2.8.0 起说明书就是注册自描述，没有消费文档。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-019/blob/HEAD/b-Office-Diana/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、取舍、真机才知道的、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code-HistoryDiana/</code></td>
+<td>模块源码、manifest 与 <code>tests/</code> 下的 Smoke</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查与候选构建辅助脚本</td>
+</tr>
+<tr>
+<td><code>b-Office-Diana/</code></td>
+<td><code>current/现行约定.md</code>，仅此一份</td>
+</tr>
+<tr>
+<td><code>b-References/</code></td>
+<td>参考图</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet restore .\b-Code-HistoryDiana\HistoryDiana.csproj
+dotnet build .\b-Code-HistoryDiana\HistoryDiana.csproj -c Release
+dotnet run --project .\b-Code-HistoryDiana\tests\HistoryDiana.Smoke\HistoryDiana.Smoke.csproj -c Release
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+宿主只扫描 <code>%AppData%\HistoryVulcan\Modules</code>，本仓不自行发布。</p>
+<h2>要点</h2>
+<ul>
+<li>Diana 不登记 <code>diana.worktree.*</code>、<code>diana.release.*</code>、<code>diana.trial.*</code>，也不经 <code>diana.relay.call</code> 绕行开发管线。</li>
+<li>宿主 5.8.0 起不登记模块：本仓的发布描述在根 <code>project.manifest.json</code> 的 <code>publish</code> 节；
+<code>HistoryVulcan</code> 是宿主，走 <code>vulcan.release.cycle</code>，禁止走模块开发管线。</li>
+<li><code>diana.project.docs</code> 只用于已授权项目的维护；查别的模块的指令一律走 <code>diana.docs.catalog/read</code>。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-019/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-019" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-019" rel="noopener">cyx3705/2026-019</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>
