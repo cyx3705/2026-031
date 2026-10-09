@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-034 HistoryStrenua · OneHistory</title>
+  <meta name="description" content="PowerSW：SolidWorks 运行时快捷指令，一次手工操作变成一下点击">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-034" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-034</span>
+      <span class="crumb-name">HistoryStrenua</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryStrenua</h1>
+<blockquote>
+<p>PowerSW：SolidWorks 运行时快捷指令，一次手工操作变成一下点击</p>
+</blockquote>
+<h2>定位</h2>
+<p>HistoryStrenua 是 HistoryVulcan 的 SolidWorks 易用性模块，面向用户的名字叫 <strong>PowerSW</strong>。
+它附着到你<strong>正在用</strong>的那个 SolidWorks，把重复的手工操作做成一键快捷指令；每条同时是一条宿主指令，
+控制台里也能直接敲。</p>
+<ul>
+<li>它只作用于用户已打开的 SolidWorks：不启动、不隐藏、不接管、不退出；新建的工程图不替用户保存。</li>
+<li>批量转换、离线处理文件属于 HistoryMinerva（<code>2026-024</code>），不在这里。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>编号</td>
+<td><code>2026-034</code></td>
+</tr>
+<tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>strenua</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述式页面「PowerSW」（场景 <code>HistoryStrenua</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-034/blob/HEAD/b-Code/HistoryStrenua/HistoryStrenuaVersion.props"><code>HistoryStrenuaVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>页面上</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>孔标注全流程</td>
+<td><code>strenua.hole.flow</code></td>
+<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「销钉符号 → 中心符号线 → 孔位尺寸 → 外轮廓 → 孔标注 → 销孔标注」，全部视图做完才结束</td>
+</tr>
+<tr>
+<td>销钉符号</td>
+<td><code>strenua.hole.dowel</code></td>
+<td>点一个工程图视图，异形孔向导做的销钉孔没有销钉符号的各加一个；已有的跳过</td>
+</tr>
+<tr>
+<td>孔标注</td>
+<td><code>strenua.hole.callout</code></td>
+<td>点一个工程图视图，视图里每种孔标一次（数量由 SW 的「N×」带出），标在孔左上方；已标过的种跳过，同一页上别的视图（如顶视图对底视图）标过的种也跳过；柱形沉头孔的沉孔在视图背面时留给看得见沉孔的视图标，没有那样的视图就标在这里、后面写「(反面)」；「避障」开着时文字压在别的孔的标注线条上就换到孔的另一个角</td>
+</tr>
+<tr>
+<td>中心符号线</td>
+<td><code>strenua.hole.centermark</code></td>
+<td>点一个工程图视图，视图里全部的孔删掉旧中心符号线后重标：每种孔一组「线性中心符号线 + 连接线」，单孔用单个</td>
+</tr>
+<tr>
+<td>孔位尺寸</td>
+<td><code>strenua.hole.position</code></td>
+<td>点一个工程图视图，以零件左侧、上侧为基准重标全部孔的位置尺寸：同种孔接着标、不同种从基准标，同种超过 4 个等距标「(N-1) x 间距 =总长」；按中心线标，并排的孔不重复；同一页上别的视图标过位置的孔不再标；「尺寸链」开着时改用 SW 尺寸链（坐标尺寸），每个方向一组、0 点在零件左侧 / 上侧直边；「避障」开着时数字压在别的孔的标注线条上就沿尺寸线滑开</td>
+</tr>
+<tr>
+<td>销孔标注</td>
+<td><code>strenua.hole.dowelfit</code></td>
+<td>点一个工程图视图，销孔（异形孔向导销钉孔）的孔标注带 H7 与偏差值；同种相邻销孔之间的尺寸带 ±0.02，已有的改、没有的补；与别的孔同段被去重时后面写「(公差仅对销孔)」</td>
+</tr>
+<tr>
+<td>外轮廓</td>
+<td><code>strenua.hole.outline</code></td>
+<td>点一个工程图视图，以零件左侧、上侧直边为基准标外轮廓每个台阶（含总长总宽）；「尺寸链」关时一站一层线性尺寸，开时加进孔的那组坐标尺寸；这一页别的视图标过的（如高度）不再重复标</td>
+</tr>
+<tr>
+<td>一键出图（出图）</td>
+<td><code>strenua.drawing.auto</code></td>
+<td>打开零件（或在装配体里选中零件）按一下：依次做下面的「新建工程图 → 投影视图 → 轴测图 → 技术要求（表格里设为默认的那份）→ 排版」，再「孔标注全流程」、「全图圆心」、「全图圆弧」、「全图倒角」，出一张基本标好的图，不保存</td>
+</tr>
+<tr>
+<td>新建工程图（出图）</td>
+<td><code>strenua.drawing.create</code></td>
+<td>按「零件」工程图模板建新图、放主视图：图幅（A4 横 / A3 / A2）与比例按零件大小、孔的疏密和整套视图排不排得下自动选，主视图取孔、窗口和圆弧最多的那一面；标题栏由模板的属性链接带出；新图名字与零件一致（保存时默认文件名）；不保存</td>
+</tr>
+<tr>
+<td>投影视图（出图）</td>
+<td><code>strenua.drawing.project</code></td>
+<td>当前工程图：从主视图（选了视图就从它）投影出看侧面孔、窗口的视图，都没有就加一个看厚度的；那个方向已有视图就不加；贴着主视图放、别的不动</td>
+</tr>
+<tr>
+<td>轴测图（出图）</td>
+<td><code>strenua.drawing.iso</code></td>
+<td>当前工程图：从主视图（或选中的视图）斜投影一个轴测图，放右边的空地（放不下缩一两档比例）；已有就不加</td>
+</tr>
+<tr>
+<td>排版（出图）</td>
+<td><code>strenua.drawing.arrange</code></td>
+<td>当前图纸页的主视图、四边投影视图、轴测图、技术要求按实际大小重新排开不重叠、给尺寸留地方，躲开标题栏等；排不下把图纸比例降一档；别的视图（剖视、局部等）原地不动</td>
+</tr>
+<tr>
+<td>全图圆心（倒圆倒角）</td>
+<td><code>strenua.fillet.arccenterall</code></td>
+<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「圆心位置」</td>
+</tr>
+<tr>
+<td>全图圆弧（倒圆倒角）</td>
+<td><code>strenua.fillet.arcall</code></td>
+<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「圆弧标注」</td>
+</tr>
+<tr>
+<td>全图倒角（倒圆倒角）</td>
+<td><code>strenua.fillet.chamferall</code></td>
+<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「倒角标注」</td>
+</tr>
+<tr>
+<td>圆心位置（倒圆倒角）</td>
+<td><code>strenua.fillet.arccenter</code></td>
+<td>点一个视图，圆弧（圆角、凹弧、孔以外的整圆）的圆心以零件左侧、上侧直边为基准标位置：两端与直线相切不标；都不相切（含整圆）水平、竖直各一个；一端相切只标一个——切线水平标水平尺寸、切线竖直标竖直尺寸、斜的标水平；与孔同心、已有尺寸的跳过；「尺寸链」开着时并进孔的那组坐标尺寸</td>
+</tr>
+<tr>
+<td>圆弧标注（倒圆倒角）</td>
+<td><code>strenua.fillet.arc</code></td>
+<td>点一个视图，每段圆弧加一个 R（R1 按技术要求不标，同半径 3 个以上合标「N x R」），文字放零件外的空处，已标的跳过；视图里的圆先减去孔（认得出是孔的一律不管，孔归孔类指令），剩下的整圆（凸台、轴端）标 Ø，同直径 3 个以上合标「N x Ø」</td>
+</tr>
+<tr>
+<td>倒角标注（倒圆倒角）</td>
+<td><code>strenua.fillet.chamfer</code></td>
+<td>点一个视图，侧着看成斜线的倒角每种尺寸标一个线性尺寸（量一条直角边，文字写「C5」），同尺寸 2 个以上合标「N x C5」，尺寸先放下边、右边，「避障」开着时压着别的标注就往外让一档或沿尺寸线滑开（也躲同一页别的视图）；C1 按技术要求不标，已标的、别的视图标过的跳过；轴端的锥面倒角暂不认</td>
+</tr>
+<tr>
+<td>写入（技术要求，最下面一行、与 AI 开关并排）</td>
+<td><code>strenua.tech.ai</code></td>
+<td>AI 填写技术要求：当前工程图截图 + 图纸信息（材料、属性、特征类型、图幅比例）+ 模板标题交给 AI（经 HistoryApollo 识图）选一份做基础（或判定没有合适的），再按图最多删 3 条、加 3 条（已有条目不改写），插到标题栏上方或左侧</td>
+</tr>
+<tr>
+<td>技术要求模板表格（技术要求）</td>
+<td><code>strenua.tech.apply name=&lt;模板名&gt;</code></td>
+<td>「技术要求」类下面的表格列出 2026-025 z 级目录 SW 设计库里的「通用技术要求」，点名字就插进当前工程图；图上已有技术要求就删掉、在原处换成这份；只放标题栏上方或左侧，避障开时把压着的视图往上 / 往左挪开；「AI 填写技术要求」开着时改由 AI 重新选基础并微调</td>
+</tr>
+<tr>
+<td>表格「设置」列（技术要求）</td>
+<td><code>strenua.tech.default name=&lt;模板名&gt;</code></td>
+<td>把这一份设为默认（记到本机，没设过是「机加件-钢材」），「一键出图」插的就是它；不带 name 报当前默认</td>
+</tr>
+<tr>
+<td>未标尺寸（检查）</td>
+<td><code>strenua.check.dimension</code></td>
+<td>不用点视图：当前图纸页全部视图（轴测图除外）查孔标注、孔位、销孔 H7 / ±0.02、外轮廓台阶有没有漏标，列进控制台并在 SW 里选中，不改图</td>
+</tr>
+<tr>
+<td>悬空标注（检查）</td>
+<td><code>strenua.check.dangling</code></td>
+<td>不用点视图：当前图纸页全部视图与图纸上附着丢了的尺寸、注解（模型改过、中心符号线删过以后常见），列进控制台并在 SW 里选中，不改图</td>
+</tr>
+<tr>
+<td>注解重叠（检查）</td>
+<td><code>strenua.check.overlap</code></td>
+<td>不用点视图：当前图纸页全部视图里尺寸、孔标注、注释的文字有没有互相压、压别的注解的线、压视图轮廓线与孔、压技术要求 / 标题栏、出图框，判法同「避障」，列进控制台并在 SW 里选中，不改图</td>
+</tr>
+<tr>
+<td>图纸截图（检查）</td>
+<td><code>strenua.check.snapshot</code></td>
+<td>不用点视图：当前图纸页整页存成 PNG（模块数据目录 snapshots，只留最近 30 张），回执给出路径——AI 经 MCP 调完指令读这张图就能自己验收</td>
+</tr>
+<tr>
+<td>开关「避障」</td>
+<td><code>strenua.option.clearance</code></td>
+<td>所有往图上加东西的指令都躲开已有的：孔标注、孔位尺寸、销孔标注、外轮廓、圆心位置加完后把压线的文字挪开；圆弧、倒角文字找不压线也不压已有标注的地方；技术要求、轴测图找空地，投影视图压到别的就往外让；关着时都放默认位置（默认开，记住上次）</td>
+</tr>
+<tr>
+<td>开关「AI 填写技术要求」（只在技术要求类下面）</td>
+<td><code>strenua.option.techai</code></td>
+<td>开着时模板表格点哪份、「一键出图」插技术要求都由 AI 选基础再微调，AI 没成退回原来那份（默认关，记住上次）</td>
+</tr>
+<tr>
+<td>开关「尺寸链」</td>
+<td><code>strenua.option.chain</code></td>
+<td>孔位尺寸、外轮廓与圆心位置改用 SW 尺寸链（坐标尺寸）：每个方向一组，0 点在零件左侧 / 上侧直边，文字排一列自动折弯，不分种、不用阵列写法（默认关，记住上次）</td>
+</tr>
+<tr>
+<td>工具条「取消」</td>
+<td><code>strenua.quick.cancel</code></td>
+<td>取消正在执行的快捷指令（包括正在等你点视图的那一条）</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>strenua.quick.list</code></td>
+<td>列出全部快捷指令及上次结果、开关的状态（只读）</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>strenua.quick.run</code></td>
+<td>按 key 执行一条快捷指令（控制台用）</td>
+</tr>
+<tr>
+<td>工具条「浮动」</td>
+<td><code>aurora.ui.float name=powersw</code></td>
+<td>整页浮成置顶小窗，操作 SolidWorks 时也点得到，按住工具条中间的文字拖动；再点还原（需 Aurora 1.30.1+）</td>
+</tr>
+</tbody></table>
+<p>页面是一行工具条（浮动 / 占位文字 / 类 / 取消）加按类切换的控制面板：窗口最下面固定一行开关，「技术要求」类下面是「AI 填写技术要求」，别的类是「避障」「尺寸链」（两者对所有类都管用，需 Aurora 1.30.2）；每类控制面板只有一行按钮，窗口窄了由前端自己折行、拖宽拖窄均匀伸缩：「孔」七个、「出图」十二个、「技术要求」是技术要求模板表格（「写入」按钮在最下面一行和 AI 开关并排）、「检查」四个。结果写进控制台。技术要求不论从哪放进来，都只在右下角标题栏的上方或左侧（1.13.0）。
+孔类指令认孔、分种的规则相同；单条指令选视图两种顺序都行：先在 SolidWorks 里点视图再点指令名，或者点完 60 秒内去点视图。
+「孔标注全流程」「未标尺寸」「悬空标注」「注解重叠」「图纸截图」「技术要求」「排版」「全图圆心」「全图圆弧」「全图倒角」不用点视图，直接做当前图纸页；「投影视图」「轴测图」选了视图就从它投影，没选就从主视图；
+「一键出图」「新建工程图」作用于当前零件（或装配体里选中的零件）。出图类每一步都能单独按，也能在手工建的图上接着按。
+参数读注册自描述：<code>diana.docs.read domain=strenua</code>（宿主 6.1.0 起没有消费文档）；取舍与已知缺口见 <a href="https://github.com/cyx3705/2026-034/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-034/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-034/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-034/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：真相在哪、取舍、真机才知道的、已知缺口、工程约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryStrenua/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryStrenua.Tests/</code></td>
+<td>离线自动验证</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td><code>current/现行约定.md</code>，唯一的长期文档</td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryStrenua\HistoryStrenua.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\HistoryStrenua.Tests\HistoryStrenua.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>自动验证全程离线，不需要也不会碰 SolidWorks。还没真机跑过的见现行约定「已知缺口」。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-HistoryStrenuaPackage.ps1</code> 只用于本地候选构建。</p>
+<p><strong>加一条快捷指令</strong>：写一个 <code>QuickCommand</code>（在已附着 SolidWorks 的 STA 线程上执行），
+登记进 <code>QuickCommands.All</code>。按钮、类选项、类面板、动作声明和指令注册都由登记表生成；新类在 <code>QuickCommands</code> 的类名表里登记中文名，页面自动多一块面板。</p>
+<h2>要点</h2>
+<ul>
+<li>SolidWorks Interop 不在编译期引用，运行时从本机安装目录加载；没装 SolidWorks 的机器照样能构建和跑测试。</li>
+<li>一次只跑一条快捷指令：它们共用同一个 SolidWorks 的选择集。</li>
+<li>页面 owner 由指令域推出（<code>strenua</code> → <code>HistoryStrenua</code>），合同检查守着这条。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-034/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-034" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-034" rel="noopener">cyx3705/2026-034</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>

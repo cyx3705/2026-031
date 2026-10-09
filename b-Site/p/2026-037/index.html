@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-037 HistoryFama · OneHistory</title>
+  <meta name="description" content="MessageHub 前端：聚合消费各平台消息桥的统一 API">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-037" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-037</span>
+      <span class="crumb-name">HistoryFama</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>HistoryFama</h1>
+<blockquote>
+<p>MessageHub 前端：聚合消费各平台消息桥的统一 API</p>
+</blockquote>
+<h2>定位</h2>
+<p>把 <code>2026-036-MessageHub</code> 里各平台的<strong>消息桥</strong>聚到一页上看，并从这一页把消息发出去。
+每个桥是一个自带 SQLite、对外暴露同一套 HTTP API 的进程（QQ / 钉钉各一个），
+Fama 是它们的<strong>唯一消费方</strong>：它不直连平台、不解析平台原始格式，只按
+<code>2026-036-MessageHub/b-Office/b-Code-Bridge.md</code> 那份契约说话。</p>
+<ul>
+<li><strong>不做的</strong>：不存消息（真值在桥里）、不碰 QQ/钉钉协议、不做桥的部署。
+桥怎么跑、怎么收、怎么解密属于 <code>2026-036-MessageHub</code>；
+界面外壳、窗口与快捷键属于 HistoryAurora 与 HistoryMercury。</li>
+<li><strong>跨仓路径用代码文本，不写相对 Markdown 链接</strong>（F 盘工作区不在 Clio 兄弟目录）。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>fama</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述式页面（场景 <code>HistoryFama</code>，页面标题「消息中心」）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code>（只读查询投影出去；发送要人确认，不投影）</td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-037/blob/HEAD/b-Code/HistoryFama/HistoryFamaVersion.props"><code>HistoryFamaVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<table>
+<thead>
+<tr>
+<th>从哪进</th>
+<th>指令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>控制台 / MCP</td>
+<td><code>fama.bridge.list</code></td>
+<td>列出已配置的桥，逐个探活并给出账号与收发能力</td>
+</tr>
+<tr>
+<td>控制台</td>
+<td><code>fama.bridge.add id= baseurl= [platform=] [title=] [token=]</code></td>
+<td>新增或更新一个桥的接入配置</td>
+</tr>
+<tr>
+<td>控制台</td>
+<td><code>fama.bridge.remove id=</code></td>
+<td>移除一个桥的配置（不动桥容器与桥里的数据）</td>
+</tr>
+<tr>
+<td>页面桥表 / 控制台</td>
+<td><code>fama.bridge.test id=</code></td>
+<td>探活一个桥，回平台、账号与能力</td>
+</tr>
+<tr>
+<td>页面会话表 / 控制台</td>
+<td><code>fama.conv.list [bridge=] [q=] [kind=] [limit=]</code></td>
+<td>跨桥列出会话，按最后消息倒序</td>
+</tr>
+<tr>
+<td>页面消息表 / 控制台</td>
+<td><code>fama.msg.list bridge= conversation= [limit=]</code></td>
+<td>列出某会话的消息，按时间升序</td>
+</tr>
+<tr>
+<td>页面发送按钮 / 控制台</td>
+<td><code>fama.msg.send bridge= conversation= text=</code></td>
+<td>发一条文字消息（<strong>要确认</strong>）</td>
+</tr>
+<tr>
+<td>页面内部</td>
+<td><code>fama.ui.describe / actions / data</code></td>
+<td>Aurora 页面协议，只读且对远程隐藏</td>
+</tr>
+</tbody></table>
+<p>指令说明就是注册时的自描述（<code>diana.docs.read domain=fama</code>，宿主 6.1.0 起没有消费文档）；
+自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-037/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-037/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-037/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-037/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：桥配置、契约要点与已知缺口</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/HistoryFama/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/HistoryFama.Tests/</code></td>
+<td>离线自动验证（含宿主装载冒烟与一个说 HTTP 的假桥）</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>唯一长期文档 <code>现行约定.md</code></td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>先配桥再用</h2>
+<p>桥的地址与 token 由 <code>2026-036-MessageHub</code> 的 <code>b-Deploy\Start.ps1</code> 打印，例如：</p>
+<pre><code class="language-powershell">fama.bridge.add id=qq       platform=qq       title=QQ   baseurl=http://127.0.0.1:8010 token=&lt;QQ_BRIDGE_TOKEN&gt;
+fama.bridge.add id=dingtalk platform=dingtalk title=钉钉 baseurl=http://127.0.0.1:8011 token=&lt;DINGTALK_BRIDGE_TOKEN&gt;
+fama.bridge.list
+</code></pre>
+<p>配置落在 <code>%AppData%\HistoryVulcan\ModuleData\HistoryFama\bridges.json</code>，卸载模块默认保留。</p>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\HistoryFama\HistoryFama.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\HistoryFama.Tests\HistoryFama.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>离线测试最后一组用宿主真正的 <code>ModuleHost</code> 装一遍打好的包：版本漂移、manifest 写错在宿主那边
+都是静默跳过整个模块，这组用例在出包前拦住它们。另一组用标准库的 <code>TcpListener</code> 起一个<strong>假桥</strong>
+（照契约回 JSON），把客户端解析、错误码透传与请求形状钉死，不需要真的起容器。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-HistoryFamaPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
+<ul>
+<li>页面 owner 由指令域推出（<code>fama</code> → <code>HistoryFama</code>），合同检查与离线测试都守着这条。</li>
+<li>版本只改 <code>HistoryFamaVersion.props</code>，再同步两份 manifest；三处不一致构建前就失败。</li>
+<li><strong>消息的真值在桥里</strong>，模块不留缓存；桥掉线就在桥表里写明原因，不显示上次的旧数据。</li>
+<li><strong>能力由桥自己声明</strong>：<code>/api/v1/meta</code> 说不能发就不能发，<code>fama.msg.send</code> 会直接说明原因（钉钉当前如此）。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板
+  每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-037/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-037" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-037" rel="noopener">cyx3705/2026-037</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>
