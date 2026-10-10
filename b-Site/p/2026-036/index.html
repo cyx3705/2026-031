@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-036 MessageHub · OneHistory</title>
+  <meta name="description" content="多平台消息收发聚合平台：每个平台一个「桥」，桥自带存储与统一 HTTP API">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-036" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-036</span>
+      <span class="crumb-name">MessageHub</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>MessageHub</h1>
+<blockquote>
+<p>多平台消息收发聚合平台：每个平台一个「桥」，桥自带存储与统一 HTTP API，前端模块按同一套接口消费</p>
+</blockquote>
+<h2>项目内容</h2>
+<ul>
+<li>目标：把多个平台的会话汇到一起统一收发。</li>
+<li>形态：<strong>没有第三方聚合后端</strong>。每个平台一个桥进程，桥自己落地 SQLite 并对外暴露同一套 HTTP API；
+前端模块（HistoryVulcan 的 <code>2026-037-HistoryFama</code>）是这套 API 的消费方。</li>
+<li>部署方式：Docker Compose，跑在 WSL Ubuntu 的 Docker Engine 里，跑法与本机 Sub2API 一致。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>收</th>
+<th>发</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QQ</td>
+<td>✅ 文字/@/图片，好友与群</td>
+<td>✅ 文字/附件</td>
+</tr>
+<tr>
+<td>钉钉</td>
+<td>✅ 文字/文件/卡片/链接，单聊与群</td>
+<td>❌ 未打通（桥如实把 <code>send</code> 标成 false）</td>
+</tr>
+<tr>
+<td>飞书</td>
+<td>✅ 文字/文件/图片/卡片/日程，单聊与群（网页版，不需要开放平台）</td>
+<td>✅ 文字</td>
+</tr>
+</tbody></table>
+<h2>文档去哪看</h2>
+<p><strong>文档全在 <a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office"><code>b-Office/</code></a></strong>（本库通用约定：根目录只留这份 README 与 <code>b-</code> 级文件夹）。
+文件名带 <code>b-Code-</code> 前缀的，是那个同名代码目录的说明书。</p>
+<table>
+<thead>
+<tr>
+<th>文档</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-Bridge.md">b-Code-Bridge.md</a></td>
+<td><strong>统一桥接口约定（唯一契约）</strong>：消息模型、REST 端点、SSE、鉴权、错误码、能力矩阵</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-MessageHub.md">b-Code-MessageHub.md</a></td>
+<td>项目总览：目录、容器清单、启动、入库约定</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-QQ.md">b-Code-QQ.md</a></td>
+<td>QQ 桥：数据流、source_id 映射、环境变量、首次扫码登录</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-DingTalk.md">b-Code-DingTalk.md</a></td>
+<td>钉钉桥：怎么收、SQLite 落点、环境变量、运维排障</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-DingTalk-%E4%BA%A7%E5%87%BA%E6%A0%B7%E4%BE%8B.md">b-Code-DingTalk-产出样例.md</a></td>
+<td>钉钉桥产出样例（脱敏，已按契约形状给出）</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-Feishu.md">b-Code-Feishu.md</a></td>
+<td>飞书桥：网页版 SDK 收发、水位线同步、消息归一化、首次扫码</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/%E9%92%89%E9%92%89%E6%94%B6%E6%B6%88%E6%81%AF-%E9%9C%80%E6%B1%82%E4%B9%A6.md">钉钉收消息-需求书.md</a></td>
+<td>钉钉收消息的原始需求书（<strong>留档，已被现状取代</strong>）</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>是什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Code-Bridge"><code>b-Code-Bridge/</code></a></td>
+<td><strong>各桥共用的公共件</strong>：<code>bridgekit.py</code>（SQLite + 统一 HTTP API + SSE + 附件）、<code>selftest.py</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Code-QQ"><code>b-Code-QQ/</code></a></td>
+<td>QQ 桥：<code>bridge.py</code>（NapCat 上报 → 桥，API 发送 → NapCat）+ <code>selftest.py</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Code-DingTalk"><code>b-Code-DingTalk/</code></a></td>
+<td>钉钉桥：<code>receive.py</code>（解密本地库收消息）+ <code>api.py</code>（统一 API）+ 客户端容器</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Code-Feishu"><code>b-Code-Feishu/</code></a></td>
+<td>飞书桥：<code>bridge.py</code>（同步/发送）+ <code>feishu_page.py</code>（经 CDP 调网页版 SDK）+ 浏览器容器</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Deploy/docker-compose.yml"><code>b-Deploy/</code></a></td>
+<td>部署：compose、<code>Start.ps1</code>、<code>.env.example</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office"><code>b-Office/</code></a></td>
+<td>文档（上表那些）</td>
+</tr>
+</tbody></table>
+<h2>快速开始</h2>
+<pre><code class="language-powershell">.\b-Deploy\Start.ps1          # 首次运行会生成 .env（随机密钥）、建数据目录，然后启动
+.\b-Deploy\Start.ps1 -Status  # 查看容器状态
+.\b-Deploy\Start.ps1 -Down    # 停止（数据保留）
+.\b-Deploy\Start.ps1 -BridgeInfo   # 只打印各桥的地址与 token（填前端模块配置用）
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QQ 桥 API</td>
+<td><a href="http://127.0.0.1:8010/api/v1/meta">http://127.0.0.1:8010/api/v1/meta</a></td>
+</tr>
+<tr>
+<td>钉钉桥 API</td>
+<td><a href="http://127.0.0.1:8011/api/v1/meta">http://127.0.0.1:8011/api/v1/meta</a></td>
+</tr>
+<tr>
+<td>QQ 扫码</td>
+<td><a href="http://127.0.0.1:6099/webui%EF%BC%88%E4%BB%A4%E7%89%8C">http://127.0.0.1:6099/webui（令牌</a> = <code>.env</code> 的 <code>NAPCAT_WEBUI_TOKEN</code>）</td>
+</tr>
+<tr>
+<td>钉钉扫码/观察</td>
+<td><a href="http://127.0.0.1:6080/vnc.html%EF%BC%88%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%BA%A6">http://127.0.0.1:6080/vnc.html（二维码约</a> 5 分钟过期）</td>
+</tr>
+<tr>
+<td>飞书桥 API</td>
+<td><a href="http://127.0.0.1:8012/api/v1/meta">http://127.0.0.1:8012/api/v1/meta</a></td>
+</tr>
+<tr>
+<td>飞书扫码/观察</td>
+<td><a href="http://127.0.0.1:6081/vnc.html%EF%BC%88%E7%BD%91%E9%A1%B5%E7%89%88%EF%BC%8C%E7%94%A8%E9%A3%9E%E4%B9%A6">http://127.0.0.1:6081/vnc.html（网页版，用飞书</a> App 扫码）</td>
+</tr>
+</tbody></table>
+<h2>消息流入口</h2>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>去处</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QQ</td>
+<td><code>qq-bridge</code> 的 SQLite（<code>/opt/messagehub-data/qq/qq.db</code>），经 <code>http://127.0.0.1:8010</code> 出去</td>
+</tr>
+<tr>
+<td>钉钉</td>
+<td>钉钉桥的 SQLite（<code>/opt/messagehub-data/dingtalk/home/inbox/dingtalk.db</code>），经 <code>http://127.0.0.1:8011</code> 出去</td>
+</tr>
+<tr>
+<td>飞书</td>
+<td>飞书桥的 SQLite（<code>/opt/messagehub-data/feishu/feishu.db</code>），经 <code>http://127.0.0.1:8012</code> 出去</td>
+</tr>
+</tbody></table>
+<p>各桥对外的形状是同一套，见 <a href="https://github.com/cyx3705/2026-036/blob/HEAD/b-Office/b-Code-Bridge.md">b-Code-Bridge.md</a>。</p>
+<h2>入库约定</h2>
+<ul>
+<li><code>b-Code-Bridge/</code>、<code>b-Deploy/</code>、<code>b-Code-QQ/</code>、<code>b-Code-DingTalk/</code>、<code>b-Code-Feishu/</code> 下的文本一律保持 LF（<code>.gitattributes</code> 已写规则），否则容器里的 shell/python 脚本会因 CRLF 起不来。</li>
+<li>桥的 SQLite、附件、自测临时目录都在 <code>.gitignore</code> 里排除；&lt;100MB 的文件一律不走 LFS。</li>
+</ul>
+<h2>保留内容</h2>
+<ul>
+<li>本模板项目介绍：此为最初的准备的项目模板，每个分支项目都会由他去继承</li>
+<li>作者：Pinavia - 2025</li>
+</ul>
+<p><img src="https://github.com/cyx3705/2026-036/raw/HEAD/Logo.png" alt="logo"></p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-036" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-036" rel="noopener">cyx3705/2026-036</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+</body>
+</html>
