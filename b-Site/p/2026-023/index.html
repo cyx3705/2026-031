@@ -93,7 +93,7 @@
 </tr>
 <tr>
 <td>版本</td>
-<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-HistoryVulcan/VulcanVersion.props"><code>VulcanVersion.props</code></a>；冻结基线见 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E5%86%BB%E7%BB%93%E5%90%88%E5%90%8C.md">冻结合同</a></td>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-HistoryVulcan/VulcanVersion.props"><code>VulcanVersion.props</code></a>；API 变更纪律见 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E5%86%BB%E7%BB%93%E5%90%88%E5%90%8C.md">公开 API 合同</a></td>
 </tr>
 </tbody></table>
 <h2>能力</h2>
@@ -141,7 +141,7 @@
 <td>宿主自身的发布</td>
 </tr>
 </tbody></table>
-<p>接入契约、模块包格式与 CLI 通道见 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">模块开发手册</a>；指令怎么调用看注册自描述（<code>diana.docs.catalog</code> / <code>diana.docs.read</code>）。</p>
+<p>接入契约、模块包格式与 CLI 通道见 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">模块开发手册</a>；指令怎么调用看注册自描述（<code>diana.docs.catalog</code> / <code>diana.docs.read</code>）。</p>
 <h2>入口</h2>
 <table>
 <thead>
@@ -179,7 +179,7 @@
 <td>验证命令、测试边界与交付检查</td>
 </tr>
 <tr>
-<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">模块开发手册</a></td>
+<td><a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E6%89%8B%E5%86%8C.md">模块开发手册</a></td>
 <td>接入契约、工作区与 submit/finish、指令自描述规范、观察取证</td>
 </tr>
 </tbody></table>
@@ -201,7 +201,7 @@
 </tr>
 <tr>
 <td><code>b-Code-Eng/</code></td>
-<td>宿主冻结标签表、public-api 基线与发布输入</td>
+<td>历史 public-api 记录与发布输入</td>
 </tr>
 <tr>
 <td><code>b-Office/</code></td>
@@ -218,15 +218,15 @@ dotnet build .\HistoryVulcan.sln -c Release --no-restore
 dotnet test .\b-Code-Tests\HistoryVulcan.Tests\HistoryVulcan.Tests.csproj -c Release --no-build --no-restore
 </code></pre>
 <p>根 <code>HistoryVulcan.sln</code> 是唯一解决方案，SDK 由 <code>global.json</code> 固定。其余门禁命令见 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Office/current/%E9%AA%8C%E8%AF%81%E5%90%88%E5%90%8C.md">验证合同</a>；
-推送时 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/.github/workflows/historyvulcan-freeze-gate.yml"><code>historyvulcan-freeze-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
+推送时 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/.github/workflows/historyvulcan-quality-gate.yml"><code>historyvulcan-quality-gate.yml</code></a> 在 GitHub Actions 上复验。</p>
 <h2>开发与发布</h2>
 <p>宿主只走 <code>vulcan.release.cycle</code>，<strong>禁止</strong>走模块的 <code>vulcan.dev.start/submit/finish</code>。
 候选构建须显式指定工作区；提交、标签、推送、正式发布及部署须有明确授权。</p>
 <h2>要点</h2>
 <ul>
-<li>运行区固定为 <code>%AppData%\HistoryVulcan\Modules\&lt;模块名&gt;</code>，只发现直属完整包，不扫描裸 DLL。</li>
+<li>运行区固定为 <code>%AppData%\HistoryVulcan\Modules\&lt;模块名&gt;.nupkg</code>，只发现直属完整包，不扫描裸 DLL；随包文件通过 <code>PackageDirectory</code> 读取对应包哈希的只读内容快照。</li>
 <li><code>--cli</code> 离线组合执行；<code>--runtime</code> 只连接活宿主，仅放行 <code>vulcan.module.list/ready/reload/install</code>。</li>
-<li>宿主不登记模块：模块的发布描述在各模块仓 <code>project.manifest.json</code> 的 <code>publish</code> 节；本仓只有宿主冻结标签表 <a href="https://github.com/cyx3705/2026-023/blob/HEAD/b-Code-Eng/pipeline/host-freeze.json"><code>host-freeze.json</code></a>。</li>
+<li>宿主不登记模块：模块的发布描述在各模块仓 <code>project.manifest.json</code> 的 <code>publish</code> 节；宿主身份与版本由本仓 manifest 和版本源校验。</li>
 </ul>
 <h2>保留内容</h2>
 <ul>

@@ -85,7 +85,7 @@ Fama 是它们的<strong>唯一消费方</strong>：它不直连平台、不解�
 </tr>
 <tr>
 <td>界面</td>
-<td>Aurora 描述式页面（场景 <code>HistoryFama</code>，页面标题「消息中心」）</td>
+<td>Aurora 描述式页面（场景 <code>HistoryFama</code>；左侧独立「通讯录」页、中央独立「消息」页，分别可停靠）</td>
 </tr>
 <tr>
 <td>MCP 投影</td>
@@ -97,6 +97,12 @@ Fama 是它们的<strong>唯一消费方</strong>：它不直连平台、不解�
 </tr>
 </tbody></table>
 <h2>能力</h2>
+<p>REQ-FAMA-001：通讯式信息界面。会话列表支持标题搜索、摘要、来源、未读数和首字头像；
+消息按收发方向分左右气泡，保留多行正文并可选中复制，底部是多行输入和显式发送按钮。
+需要 HistoryAurora 1.35.0 或更新版的 <code>conversationList</code> / <code>chatTimeline</code> 组件。</p>
+<p>REQ-FAMA-002：未读会话优先排列；打开并读到最新消息后清除 Fama 本地红点，已读进度跨重启保存。
+本地已读不影响飞书等平台客户端的红点。
+验收由离线页面接线检查与 Aurora 聊天组件合同测试共同覆盖。</p>
 <table>
 <thead>
 <tr>
@@ -128,7 +134,7 @@ Fama 是它们的<strong>唯一消费方</strong>：它不直连平台、不解�
 <tr>
 <td>页面会话表 / 控制台</td>
 <td><code>fama.conv.list [bridge=] [q=] [kind=] [limit=]</code></td>
-<td>跨桥列出会话，按最后消息倒序</td>
+<td>跨桥列出会话，本地未读优先、组内按最后消息倒序</td>
 </tr>
 <tr>
 <td>页面消息表 / 控制台</td>
