@@ -53,7 +53,7 @@
     <div class="page-grid">
       <article class="doc" id="doc">
 <h1>SolidEdgeMCP</h1>
-<p>OneHistory 项目 <code>2026-038</code>：通过 Python MCP 服务控制 Siemens Solid Edge。</p>
+<p>OneHistory 项目 <code>2026-038</code>：通过 C#（.NET 8）MCP 服务控制 Siemens Solid Edge。</p>
 <p>项目入口：</p>
 <ul>
 <li><a href="https://github.com/cyx3705/2026-038/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a>：项目身份、活动目录、依赖和验证命令。</li>
@@ -61,7 +61,7 @@
 <li><a href="https://github.com/cyx3705/2026-038/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md"><code>b-Office/现行约定.md</code></a>：本项目长期约定。</li>
 <li><a href="https://github.com/cyx3705/2026-038/blob/HEAD/b-Code-SolidEdgeMCP/README.md"><code>b-Code-SolidEdgeMCP/README.md</code></a>：安装、MCP 接入、工具和实机验证说明。</li>
 </ul>
-<p>业务源码集中在 <code>b-Code-SolidEdgeMCP</code>。当前支持有序单实体 <code>.par</code> 零件：连接、创建草图、拉伸、切除、参数修改、保存、STEP 导出和视图截图。当前实机验证环境是 Solid Edge 2020、Python 3.12、Windows x64。</p>
+<p>业务源码集中在 <code>b-Code-SolidEdgeMCP</code>。MCP 接口固定为查询、调用、载入、卸载 4 个工具，具体操作是可在运行中热换、逐条开关的内部指令。当前支持有序单实体 <code>.par</code> 零件：连接；声明式草图（关系、驱动尺寸、圆角倒角、椭圆样条、基准与实体边引用），按尺寸修改和编辑草图；拉伸、切除、旋转；建基准面；参数修改、保存、STEP 导出和视图截图。当前实机验证环境是 Solid Edge 2020、.NET 8、Windows x64。</p>
 <h2>常用命令</h2>
 <pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code-SolidEdgeMCP\scripts\setup.ps1 -Dev
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
