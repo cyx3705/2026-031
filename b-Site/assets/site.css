@@ -8,25 +8,25 @@
    ============================================================ */
 
 /* ---------------------------------------------- 令牌 */
-/* 与 README §3 逐值相同（= HistoryAurora 1.41.0）。文字只有一种颜色：--text = --text-2 = --ink；
-   --on-ink 是墨色块上的反白字 = 本主题 canvas；accent-on-ink / text-2-on-ink 取另一套主题的对应值。 */
+/* 与 README §3 逐值相同。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
+   深浅两套分开设定（2026-10-24 起）：页面、条带、墨色块都是各主题自己的原值，不拿另一套主题的颜色来对齐。 */
 html[data-theme="light"] {
-  --canvas:#FBFAF7; --surface:#ECEAE5; --surface-2:#DAD7CE; --surface-hover:#E3E1DA;
+  --canvas:#FBFAF7; --surface:#F3F1EC; --surface-2:#EBE9E4; --surface-hover:#E5E3DE;
   --text:#38352F; --text-2:#38352F;
   --accent:#7F5E0F;
   --accent-soft:rgba(127,94,15,.34); --accent-wash:rgba(127,94,15,.08);
-  --hairline:#E3E1DA; --hairline-2:#D5D1C8;
+  --hairline:#E5E3DE; --hairline-2:#D5D1C8;
   --code-bg:#EBE9E4;
-  --ink:#38352F; --on-ink:#FBFAF7; --accent-on-ink:#D9A441; --text-2-on-ink:#DAD7CE;
+  --ink:#26231E; --on-ink:#FBFAF7; --accent-on-ink:#D9A441; --text-2-on-ink:#ACA593;
 }
 html[data-theme="dark"] {
-  --canvas:#121414; --surface:#232320; --surface-2:#38352F; --surface-hover:#2E2C28;
+  --canvas:#121414; --surface:#1D201F; --surface-2:#191C1B; --surface-hover:#2A2D2C;
   --text:#DAD7CE; --text-2:#DAD7CE;
   --accent:#D9A441;
   --accent-soft:rgba(217,164,65,.38); --accent-wash:rgba(217,164,65,.10);
-  --hairline:#2E2C28; --hairline-2:#343736;
-  --code-bg:#242625;
-  --ink:#DAD7CE; --on-ink:#121414; --accent-on-ink:#7F5E0F; --text-2-on-ink:#38352F;
+  --hairline:#2A2D2C; --hairline-2:#343736;
+  --code-bg:#171A19;
+  --ink:#E2DAC6; --on-ink:#121414; --accent-on-ink:#7F5E0F; --text-2-on-ink:#6A6458;
 }
 :root {
   --nav-h:62px; --wrap:1200px;
