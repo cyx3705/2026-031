@@ -8,25 +8,25 @@
    ============================================================ */
 
 /* ---------------------------------------------- 令牌 */
-/* 与 README §3 逐值相同。--ink 是墨色（= text），墨色块、粗横线都用它；
-   *-on-ink 是写在墨色块上的反白字：取另一套主题的对应值（Office 的 accent-dark 同理）。 */
+/* 与 README §3 逐值相同（= HistoryAurora 1.41.0）。文字只有一种颜色：--text = --text-2 = --ink；
+   --on-ink 是墨色块上的反白字 = 本主题 canvas；accent-on-ink / text-2-on-ink 取另一套主题的对应值。 */
 html[data-theme="light"] {
-  --canvas:#FBFAF7; --surface:#F3F1EC; --surface-2:#EBE9E4; --surface-hover:#E5E3DE;
-  --text:#26231E; --text-2:#6A6458;
-  --accent:#7F5E0F; --accent-hover:#6A4E0C;
+  --canvas:#FBFAF7; --surface:#ECEAE5; --surface-2:#DAD7CE; --surface-hover:#E3E1DA;
+  --text:#38352F; --text-2:#38352F;
+  --accent:#7F5E0F;
   --accent-soft:rgba(127,94,15,.34); --accent-wash:rgba(127,94,15,.08);
-  --hairline:#E5E3DE; --hairline-2:#D5D1C8;
+  --hairline:#E3E1DA; --hairline-2:#D5D1C8;
   --code-bg:#EBE9E4;
-  --ink:#26231E; --on-ink:#FBFAF7; --accent-on-ink:#D9A441; --text-2-on-ink:#ACA593;
+  --ink:#38352F; --on-ink:#FBFAF7; --accent-on-ink:#D9A441; --text-2-on-ink:#DAD7CE;
 }
 html[data-theme="dark"] {
-  --canvas:#121414; --surface:#1D201F; --surface-2:#191C1B; --surface-hover:#2A2D2C;
-  --text:#E2DAC6; --text-2:#ACA593;
-  --accent:#D9A441; --accent-hover:#E8B65C;
+  --canvas:#121414; --surface:#232320; --surface-2:#38352F; --surface-hover:#2E2C28;
+  --text:#DAD7CE; --text-2:#DAD7CE;
+  --accent:#D9A441;
   --accent-soft:rgba(217,164,65,.38); --accent-wash:rgba(217,164,65,.10);
-  --hairline:#2A2D2C; --hairline-2:#343936;
-  --code-bg:#171A19;
-  --ink:#E2DAC6; --on-ink:#121414; --accent-on-ink:#7F5E0F; --text-2-on-ink:#6A6458;
+  --hairline:#2E2C28; --hairline-2:#343736;
+  --code-bg:#242625;
+  --ink:#DAD7CE; --on-ink:#121414; --accent-on-ink:#7F5E0F; --text-2-on-ink:#38352F;
 }
 :root {
   --nav-h:62px; --wrap:1200px;
