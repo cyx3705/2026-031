@@ -109,12 +109,17 @@
 <tbody><tr>
 <td>一键出图（一键）</td>
 <td><code>strenua.onekey.drawing</code></td>
-<td>打开零件（或在装配体里选中零件）按一下：把各类的一键都做一遍——「基础出图」（中途插表格里设为默认的技术要求）→「孔标注全流程」→「全图倒圆倒角」，出一张基本标好的图，不保存</td>
+<td>基础出图并插技术要求，AI 判断钣金 / 框架 / 加工件后按类别标注，最后整理标注、重排；未解冲突明确报告，新图不保存</td>
+</tr>
+<tr>
+<td>一键出钣金 / 框架 / 加工件</td>
+<td><code>strenua.onekey.sheetmetal / frame / machined</code></td>
+<td>直接指定类别；钣金标孔、方形槽和外轮廓，框架标主要轮廓及型材说明，加工件另标圆弧倒角；三类最后都整理标注</td>
 </tr>
 <tr>
 <td>孔标注全流程</td>
 <td><code>strenua.hole.flow</code></td>
-<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「销钉符号 → 中心符号线 → 孔位尺寸 → 外轮廓 → 孔标注 → 销孔标注」，全部视图做完才结束</td>
+<td>不用点视图：当前图纸页全部视图（轴测图跳过）逐个做「销钉符号 → 中心符号线 → 孔位尺寸 → 方形槽 → 孔标注 → 销孔标注」，全部视图做完才结束</td>
 </tr>
 <tr>
 <td>销钉符号</td>
@@ -142,9 +147,14 @@
 <td>点一个工程图视图，销孔（异形孔向导销钉孔）的孔标注带 H7 与偏差值；同种相邻销孔之间的尺寸带 ±0.02，已有的改、没有的补；与别的孔同段被去重时后面写「(公差仅对销孔)」</td>
 </tr>
 <tr>
-<td>外轮廓</td>
-<td><code>strenua.hole.outline</code></td>
-<td>点一个工程图视图，以零件左侧、上侧直边为基准标外轮廓每个台阶（含总长总宽）；「尺寸链」关时一站一层线性尺寸，开时加进孔的那组坐标尺寸；这一页别的视图标过的（如高度）不再重复标</td>
+<td>外轮廓 / 全图外轮廓（基础）</td>
+<td><code>strenua.drawing.outline / outlineall</code></td>
+<td>指定视图或当前页全部视图标外轮廓台阶（含总长总宽），跨视图不重复；钣金折弯切线不当基准</td>
+</tr>
+<tr>
+<td>方形槽（孔）</td>
+<td><code>strenua.hole.square</code></td>
+<td>指定视图里的封闭方形槽标大小与位置，排除凸台</td>
 </tr>
 <tr>
 <td>基础出图（基础）</td>
@@ -170,6 +180,11 @@
 <td>排版（基础）</td>
 <td><code>strenua.drawing.arrange</code></td>
 <td>当前图纸页的主视图、四边投影视图、轴测图、技术要求按实际大小重新排开不重叠、给尺寸留地方，躲开标题栏等；排不下把图纸比例降一档；别的视图（剖视、局部等）原地不动</td>
+</tr>
+<tr>
+<td>整理标注（基础）</td>
+<td><code>strenua.drawing.finish</code></td>
+<td>标注后按整页真实文字、尺寸线、轮廓和图框避让，再重排复核；不改尺寸值、公差或附着，去掉精确整数 / 一位小数的多余显示零；坐标尺寸不挪，剩余冲突列入失败</td>
 </tr>
 <tr>
 <td>对称轴（基础）</td>
@@ -249,7 +264,7 @@
 <tr>
 <td>图纸截图（检查）</td>
 <td><code>strenua.check.snapshot</code></td>
-<td>不用点视图：当前图纸页整页存成 PNG（模块数据目录 snapshots，只留最近 30 张），回执给出路径——AI 经 MCP 调完指令读这张图就能自己验收</td>
+<td>当前纸面打印捕获为黑白 200 DPI PNG，不包含图框外备用技术要求；导出设置用后还原。图片在模块数据目录 snapshots，只留最近 30 张</td>
 </tr>
 <tr>
 <td>开关「避障」</td>
@@ -335,7 +350,7 @@
 </tr>
 <tr>
 <td><code>b-Office/</code></td>
-<td><code>current/现行约定.md</code>，唯一的长期文档</td>
+<td><code>现行约定.md</code>，唯一的长期文档</td>
 </tr>
 <tr>
 <td><code>z-Publish/</code></td>
@@ -361,6 +376,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContrac
 <li>页面 owner 由指令域推出（<code>strenua</code> → <code>HistoryStrenua</code>），合同检查守着这条。</li>
 </ul>
 <h2>保留内容</h2>
+<h3>logo与作者</h3>
+<ul>
+<li>作者：pinavia</li>
+<li><img src="https://github.com/cyx3705/2026-034/raw/HEAD/Logo.png" alt="logo"></li>
+</ul>
 <h3>学习许可与权利保留</h3>
 <ul>
 <li>本项目允许个人、学校和研究者进行非商业性的学习、研究和引用。</li>
