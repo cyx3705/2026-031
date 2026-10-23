@@ -18,14 +18,14 @@
 
 | 文件 | 用途 |
 |---|---|
-| `b-Site/assets/logo.png` | 浅色墨色（`#38352F`）字标，透明底，640×228。浅色主题的网站使用 |
-| `b-Site/assets/logo-dark.png` | 深色墨色（`#DAD7CE`）字标，透明底。深色主题的网站使用 |
-| `b-Site/assets/favicon.png`、`apple-touch.png` | 站点图标，浅色墨色 |
-| `z-OneHistoryID/assets/logo-ink.png` | 墨色（`#38352F`）字标，已裁掉透明边，588×176。Office 浅色背景使用 |
+| `b-Site/assets/logo.png` | 原始字标，黑色，透明底，640×228。浅色主题的网站使用 |
+| `b-Site/assets/logo-dark.png` | 米色（`#E2DAC6`）字标，透明底。深色主题的网站使用 |
+| `b-Site/assets/favicon.png`、`apple-touch.png` | 站点图标，黑色 |
+| `z-OneHistoryID/assets/logo-ink.png` | 墨色（`#26231E`）字标，已裁掉透明边，588×176。Office 浅色背景使用 |
 | `z-OneHistoryID/assets/logo-canvas.png` | 纸色（`#FBFAF7`）字标，588×176。Office 墨色背景使用 |
-| 各仓库根目录 `Logo.png` | README 用的整张字标图：纸色 `#FBFAF7` 底、墨色 `#38352F` 字，654×439 |
+| 各仓库根目录 `Logo.png` | README 用的整张字标图：网站浅色底 `#FBFAF7`、黑色字，字形居中，654×439 |
 
-- 全部由同一个字形按上表颜色重新着色得到（2026-10-23 起），只有这几种颜色版本。
+- 字标颜色就是上表这几种（2026-10-24 从 10-23 的 `#38352F` 改回原色），不跟文字色走。
 
 - 字标是衬线体的「OneHistory」，中间嵌一本打开的书。「书页」是整个识别体系的母题（网站首屏的书页意象就来自它）。
 - 不要拉伸字标，不要加描边、阴影或渐变，也不要给它另外配色。只允许使用上表中的几种颜色版本。
