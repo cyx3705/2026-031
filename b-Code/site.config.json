@@ -48,7 +48,7 @@
   "showcase": {
     "lead": "机械整机、机器人与自研软件工具。这里挑出有代表性的几件，全部项目在项目库。",
     "hero": [
-      { "id": "2026-003", "file": "/assets/models/2026-003.glb", "explode": "radial", "caption": "差速底盘、悬挂、电源与车体" },
+      { "id": "2025-004", "file": "/assets/models/2025-004.glb", "explode": "radial", "caption": "引导屏、底盘、电源与车体" },
       { "id": "2026-012", "file": "/assets/models/2026-012.glb", "up": "z", "explode": "y", "caption": "上下双舱、两路独立泵" },
       { "id": "2025-009", "file": "/assets/models/2025-009.glb", "up": "z", "explode": "radial", "caption": "料盒、传送带、出碗与挤压机构" }
     ],
@@ -58,7 +58,7 @@
       { "id": "2025-010", "file": "/assets/models/2025-010.glb", "up": "z", "caption": "抬升机构" }
     ],
     "featured": [
-      { "id": "2026-003", "cover": "b-Picture/效果图.png", "tags": ["Solid Edge", "EPLAN"] },
+      { "id": "2025-004", "tags": ["Solid Edge", "EPLAN"] },
       { "id": "2026-012", "tags": ["ESP32", "Altium Designer", "Unity"] },
       { "id": "2025-009", "tags": ["Solid Edge", "SolidWorks"] },
       { "id": "2026-006", "tags": ["竞赛作品"] },
@@ -66,7 +66,7 @@
       { "id": "2026-004" },
       { "id": "2025-010" }
     ],
-    "more": ["2025-008", "2025-007", "2025-004", "2025-014", "2025-015", "2026-011", "2025-003"],
+    "more": ["2025-008", "2025-007", "2025-014", "2025-015", "2026-011", "2025-003"],
     "software": ["2026-023", "2026-034", "2026-024", "2026-040", "2026-028", "2026-022"]
   },
 
