@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js">
   <script>
     // 以前首页就是项目库，别人分享出去的 /?q=… 筛选链接转到新地址
     if (/[?&](q|g)=/.test(location.search)) location.replace("/library/" + location.search + location.hash);
@@ -25,7 +26,14 @@
       document.documentElement.classList.add("js");
     })();
   </script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body class="is-show">
   <a class="skip" href="#works">跳到代表作品</a>
@@ -49,39 +57,47 @@
   </header>
 
   <main>
-    <!-- 首屏：左边字标与简介，右边 3D 展台 -->
-    <section class="show-hero" id="top">
-      <div class="wrap show-hero-in">
-        <div class="show-intro">
-          <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
-          <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
-          <p class="lead">机械整机、机器人与自研软件工具。这里挑出有代表性的几件，全部项目在项目库。</p>
+    <!-- 首屏：开放式，模型直接落在页面上做拆装动画，左边是当前作品的说明 -->
+    <section class="open-hero" id="top" aria-label="代表作品动画">
+      <div class="hero-stage" id="hero-stage">
+        <span class="load-bar" id="hero-load"><i></i></span>
+        <p class="drag-hint">拖动旋转 · 双击复位</p>
+      </div>
 
-          <dl class="tblock">
-            <div><dt>精选作品</dt><dd class="n">20</dd></div>
-            <div><dt>公开项目</dt><dd class="n">56</dd></div>
-            <div><dt>GitHub</dt><dd><a href="https://github.com/cyx3705" rel="noopener">github.com/cyx3705</a></dd></div>
-          </dl>
-
-          <p class="show-cta">
-            <a class="solid-btn" href="#works">看代表作品</a>
-            <a class="ghost-btn" href="/library/">进入项目库 →</a>
-          </p>
+      <div class="wrap open-hero-in">
+        <div class="slides" aria-live="polite">
+          <article class="slide is-on" data-i="0">
+            <p class="slide-n"><span class="id">01</span> / 03 · 代表作品</p>
+            <h1>中型AGV小车</h1>
+            <p class="slide-note">中型智能自主导航AGV搬运机器人（2025-005 项目）</p>
+            <p class="slide-cap"><span class="id">2026-003</span>差速底盘、悬挂、电源与车体</p>
+            <p class="slide-links">
+              <a class="solid-btn" href="/p/2026-003/">查看说明</a>
+              <a class="ghost-btn" href="#works">全部代表作品 ↓</a>
+            </p>
+          </article>
+          <article class="slide" data-i="1" hidden>
+            <p class="slide-n"><span class="id">02</span> / 03 · 代表作品</p>
+            <h1>便携式自动冷萃咖啡机</h1>
+            <p class="slide-note">一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵</p>
+            <p class="slide-cap"><span class="id">2026-012</span>上下双舱、两路独立泵</p>
+            <p class="slide-links">
+              <a class="solid-btn" href="/p/2026-012/">查看说明</a>
+              <a class="ghost-btn" href="#works">全部代表作品 ↓</a>
+            </p>
+          </article>
+          <article class="slide" data-i="2" hidden>
+            <p class="slide-n"><span class="id">03</span> / 03 · 代表作品</p>
+            <h1>沙拉售卖机</h1>
+            <p class="slide-note">基于轻食沙拉市场的全自动营养快餐机设计</p>
+            <p class="slide-cap"><span class="id">2025-009</span>料盒、传送带、出碗与挤压机构</p>
+            <p class="slide-links">
+              <a class="solid-btn" href="/p/2025-009/">查看说明</a>
+              <a class="ghost-btn" href="#works">全部代表作品 ↓</a>
+            </p>
+          </article>
         </div>
-
-        <figure class="stage" id="stage" aria-label="3D 模型展台">
-          <div class="stage-view">
-            <model-viewer id="viewer" camera-controls auto-rotate auto-rotate-delay="1500" rotation-per-second="18deg"
-              touch-action="pan-y" interaction-prompt="none" shadow-intensity="0.9" shadow-softness="0.8"
-              exposure="1.05" environment-image="neutral" camera-orbit="35deg 72deg auto" alt="作品三维模型"></model-viewer>
-            <div class="stage-load" id="stage-load"><span class="stage-bar" id="stage-bar"></span></div>
-            <p class="stage-hint">拖动旋转 · 滚轮缩放 · 双击复位</p>
-          </div>
-          <figcaption class="stage-foot">
-            <div class="stage-tabs" id="stage-tabs" role="group" aria-label="切换模型"><button type="button" class="stage-tab is-on" data-model="2026-012" aria-pressed="true"><span class="id">2026-012</span><span class="stage-tab-name">便携式自动冷萃咖啡机</span></button><button type="button" class="stage-tab" data-model="2026-039" aria-pressed="false"><span class="id">2026-039</span><span class="stage-tab-name">中型AGV小车</span></button></div>
-            <p class="stage-cap"><span id="stage-cap"></span><a id="stage-link" href="#">查看说明 →</a></p>
-          </figcaption>
-        </figure>
+        <nav class="dots" id="hero-dots" aria-label="切换作品"><button type="button" class="dot-btn is-on" data-i="0" aria-label="中型AGV小车"><span class="dot-n">01</span><span class="dot-name">中型AGV小车</span><span class="dot-bar"><i></i></span></button><button type="button" class="dot-btn" data-i="1" aria-label="便携式自动冷萃咖啡机"><span class="dot-n">02</span><span class="dot-name">便携式自动冷萃咖啡机</span><span class="dot-bar"><i></i></span></button><button type="button" class="dot-btn" data-i="2" aria-label="沙拉售卖机"><span class="dot-n">03</span><span class="dot-name">沙拉售卖机</span><span class="dot-bar"><i></i></span></button></nav>
       </div>
     </section>
 
@@ -93,7 +109,21 @@
       </header>
       <div class="features">
         <article class="feature">
-          <a class="feature-media" href="/p/2026-012/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2026-012/raw/HEAD/b-Picture/%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="便携式自动冷萃咖啡机 效果图" loading="lazy" decoding="async"></a>
+          <a class="feature-media" href="/p/2026-003/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2026-003.webp" alt="中型AGV小车 效果图" loading="lazy" decoding="async" width="999" height="773"></a>
+          <div class="feature-body">
+            <span class="id">2026-003</span>
+            <h3><a href="/p/2026-003/">中型AGV小车</a></h3>
+            <p>中型智能自主导航AGV搬运机器人（2025-005 项目）</p>
+            <ul class="tags"><li>Solid Edge</li><li>EPLAN</li></ul>
+            <p class="feature-links">
+              <a class="ghost-btn" href="/p/2026-003/">查看说明</a>
+              <button type="button" class="text-btn" data-hero="2026-003">看拆装动画</button>
+              <a class="repo" href="https://github.com/cyx3705/2026-003" rel="noopener" aria-label="在 GitHub 打开 中型AGV小车" title="在 GitHub 打开"><svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a>
+            </p>
+          </div>
+        </article>
+        <article class="feature flip">
+          <a class="feature-media" href="/p/2026-012/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2026-012.webp" alt="便携式自动冷萃咖啡机 效果图" loading="lazy" decoding="async" width="1067" height="925"></a>
           <div class="feature-body">
             <span class="id">2026-012</span>
             <h3><a href="/p/2026-012/">便携式自动冷萃咖啡机</a></h3>
@@ -101,27 +131,27 @@
             <ul class="tags"><li>ESP32</li><li>Altium Designer</li><li>Unity</li></ul>
             <p class="feature-links">
               <a class="ghost-btn" href="/p/2026-012/">查看说明</a>
-              <button type="button" class="text-btn" data-model="2026-012">在 3D 展台查看</button>
+              <button type="button" class="text-btn" data-hero="2026-012">看拆装动画</button>
               <a class="repo" href="https://github.com/cyx3705/2026-012" rel="noopener" aria-label="在 GitHub 打开 便携式自动冷萃咖啡机" title="在 GitHub 打开"><svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a>
             </p>
           </div>
         </article>
-        <article class="feature flip">
-          <a class="feature-media" href="/p/2026-039/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2026-039/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="中型AGV小车 效果图" loading="lazy" decoding="async"></a>
+        <article class="feature">
+          <a class="feature-media" href="/p/2025-009/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2025-009.webp" alt="沙拉售卖机 效果图" loading="lazy" decoding="async" width="983" height="956"></a>
           <div class="feature-body">
-            <span class="id">2026-039</span>
-            <h3><a href="/p/2026-039/">中型AGV小车</a></h3>
-            <p>中型智能自主导航AGV搬运机器人（2025-005 项目）</p>
-            <ul class="tags"><li>Solid Edge</li><li>EPLAN</li></ul>
+            <span class="id">2025-009</span>
+            <h3><a href="/p/2025-009/">沙拉售卖机</a></h3>
+            <p>基于轻食沙拉市场的全自动营养快餐机设计</p>
+            <ul class="tags"><li>Solid Edge</li><li>SolidWorks</li></ul>
             <p class="feature-links">
-              <a class="ghost-btn" href="/p/2026-039/">查看说明</a>
-              <button type="button" class="text-btn" data-model="2026-039">在 3D 展台查看</button>
-              <a class="repo" href="https://github.com/cyx3705/2026-039" rel="noopener" aria-label="在 GitHub 打开 中型AGV小车" title="在 GitHub 打开"><svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a>
+              <a class="ghost-btn" href="/p/2025-009/">查看说明</a>
+              <button type="button" class="text-btn" data-hero="2025-009">看拆装动画</button>
+              <a class="repo" href="https://github.com/cyx3705/2025-009" rel="noopener" aria-label="在 GitHub 打开 沙拉售卖机" title="在 GitHub 打开"><svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a>
             </p>
           </div>
         </article>
-        <article class="feature">
-          <a class="feature-media" href="/p/2026-006/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2026-006/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="伟立杯手套 效果图" loading="lazy" decoding="async"></a>
+        <article class="feature flip">
+          <a class="feature-media" href="/p/2026-006/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2026-006.webp" alt="伟立杯手套 效果图" loading="lazy" decoding="async" width="1600" height="859"></a>
           <div class="feature-body">
             <span class="id">2026-006</span>
             <h3><a href="/p/2026-006/">伟立杯手套</a></h3>
@@ -134,8 +164,8 @@
             </p>
           </div>
         </article>
-        <article class="feature flip">
-          <a class="feature-media" href="/p/2026-007/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2026-007/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="三维坐标机器 效果图" loading="lazy" decoding="async"></a>
+        <article class="feature">
+          <a class="feature-media" href="/p/2026-007/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2026-007.webp" alt="三维坐标机器 效果图" loading="lazy" decoding="async" width="1014" height="829"></a>
           <div class="feature-body">
             <span class="id">2026-007</span>
             <h3><a href="/p/2026-007/">三维坐标机器</a></h3>
@@ -148,8 +178,8 @@
             </p>
           </div>
         </article>
-        <article class="feature">
-          <a class="feature-media" href="/p/2026-004/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2026-004/raw/HEAD/b-Picture/%E5%AE%89%E8%A3%85%E5%B1%8F%E5%B9%95%E6%95%88%E6%9E%9C%E5%9B%BE.PNG" alt="警务机器人 效果图" loading="lazy" decoding="async"></a>
+        <article class="feature flip">
+          <a class="feature-media" href="/p/2026-004/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2026-004.webp" alt="警务机器人 效果图" loading="lazy" decoding="async" width="987" height="947"></a>
           <div class="feature-body">
             <span class="id">2026-004</span>
             <h3><a href="/p/2026-004/">警务机器人</a></h3>
@@ -162,8 +192,8 @@
             </p>
           </div>
         </article>
-        <article class="feature flip">
-          <a class="feature-media" href="/p/2025-010/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="https://github.com/cyx3705/2025-010/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="墙面瓷砖自动铺设装置 效果图" loading="lazy" decoding="async"></a>
+        <article class="feature">
+          <a class="feature-media" href="/p/2025-010/" tabindex="-1" aria-hidden="true"><img class="feature-img" src="/assets/covers/2025-010.webp" alt="墙面瓷砖自动铺设装置 效果图" loading="lazy" decoding="async" width="655" height="962"></a>
           <div class="feature-body">
             <span class="id">2025-010</span>
             <h3><a href="/p/2025-010/">墙面瓷砖自动铺设装置</a></h3>
@@ -179,6 +209,32 @@
       </div>
     </section>
 
+    <!-- 模型展示：选页，只转不拆 -->
+    <section class="wrap show-sec" id="models">
+      <header class="sec-head">
+        <h2>模型展示</h2>
+        <span class="ink-bar">选一页 · 拖动旋转</span>
+      </header>
+      <div class="shelf">
+        <div class="shelf-side">
+          <div class="pages" id="pages" role="group" aria-label="选择模型"><button type="button" class="page-btn is-on" data-i="0" aria-pressed="true"><span class="id">2025-002</span><span class="page-name">轻型 AGV 小车</span></button><button type="button" class="page-btn" data-i="1" aria-pressed="false"><span class="id">2025-008</span><span class="page-name">机器人手部快换装置</span></button><button type="button" class="page-btn" data-i="2" aria-pressed="false"><span class="id">2025-010</span><span class="page-name">墙面瓷砖自动铺设装置</span></button><button type="button" class="page-btn" data-i="3" aria-pressed="false"><span class="id">2025-015</span><span class="page-name">弹簧测试机械</span></button></div>
+          <div class="shelf-cap">
+            <p class="shelf-name" id="shelf-name"></p>
+            <p class="shelf-note" id="shelf-note"></p>
+            <a class="text-link" id="shelf-link" href="#">查看说明 →</a>
+          </div>
+        </div>
+        <div class="shelf-stage" id="shelf-stage">
+          <span class="load-bar" id="shelf-load"><i></i></span>
+          <p class="page-flip">
+            <button type="button" class="icon-btn" id="page-prev" aria-label="上一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button>
+            <span class="page-n" id="page-n"></span>
+            <button type="button" class="icon-btn" id="page-next" aria-label="下一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button>
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- 更多机械作品 -->
     <section class="wrap show-sec">
       <header class="sec-head">
@@ -186,16 +242,8 @@
         <span class="ink-bar">课程设计 · 竞赛 · 专利</span>
       </header>
       <div class="tiles">
-          <a class="tile" href="/p/2025-009/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-009/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="沙拉售卖机 效果图" loading="lazy" decoding="async">
-            <span class="tile-body">
-              <span class="id">2025-009</span>
-              <strong>沙拉售卖机</strong>
-              <span class="tile-note">基于轻食沙拉市场的全自动营养快餐机设计</span>
-            </span>
-          </a>
           <a class="tile" href="/p/2025-008/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-008/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="机器人手部快换装置 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2025-008.webp" alt="机器人手部快换装置 效果图" loading="lazy" decoding="async" width="711" height="782">
             <span class="tile-body">
               <span class="id">2025-008</span>
               <strong>机器人手部快换装置</strong>
@@ -203,7 +251,7 @@
             </span>
           </a>
           <a class="tile" href="/p/2025-007/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-007/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="仿生风滚草 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2025-007.webp" alt="仿生风滚草 效果图" loading="lazy" decoding="async" width="610" height="616">
             <span class="tile-body">
               <span class="id">2025-007</span>
               <strong>仿生风滚草</strong>
@@ -219,7 +267,7 @@
             </span>
           </a>
           <a class="tile" href="/p/2025-014/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-014/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="减速机课程设计 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2025-014.webp" alt="减速机课程设计 效果图" loading="lazy" decoding="async" width="1031" height="847">
             <span class="tile-body">
               <span class="id">2025-014</span>
               <strong>减速机课程设计</strong>
@@ -227,7 +275,7 @@
             </span>
           </a>
           <a class="tile" href="/p/2025-015/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-015/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="弹簧测试机械 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2025-015.webp" alt="弹簧测试机械 效果图" loading="lazy" decoding="async" width="1369" height="1013">
             <span class="tile-body">
               <span class="id">2025-015</span>
               <strong>弹簧测试机械</strong>
@@ -235,7 +283,7 @@
             </span>
           </a>
           <a class="tile" href="/p/2026-011/">
-            <img class="tile-img" src="https://github.com/cyx3705/2026-011/raw/HEAD/b-Picture/Scan.jpg" alt="顺时针环岛交通导流系统 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2026-011.webp" alt="顺时针环岛交通导流系统 效果图" loading="lazy" decoding="async" width="1289" height="1600">
             <span class="tile-body">
               <span class="id">2026-011</span>
               <strong>顺时针环岛交通导流系统</strong>
@@ -243,7 +291,7 @@
             </span>
           </a>
           <a class="tile" href="/p/2025-003/">
-            <img class="tile-img" src="https://github.com/cyx3705/2025-003/raw/HEAD/b-Picture/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="光伏货架车 效果图" loading="lazy" decoding="async">
+            <img class="tile-img" src="/assets/covers/2025-003.webp" alt="光伏货架车 效果图" loading="lazy" decoding="async" width="612" height="805">
             <span class="tile-body">
               <span class="id">2025-003</span>
               <strong>光伏货架车</strong>
@@ -343,70 +391,86 @@
   </footer>
 
   <script src="/assets/site.js"></script>
-  <script>
-  (function () {
-    // 由 b-Code/build.mjs 根据 site.config.json 的 showcase.models 生成，请勿手改
-    var MODELS = [{"id":"2026-012","file":"/assets/models/2026-012.glb","caption":"整机装配（不含电路板）","orientation":"0deg -90deg 0deg","name":"便携式自动冷萃咖啡机","url":"/p/2026-012/"},{"id":"2026-039","file":"/assets/models/2026-039.glb","caption":"整机装配","orientation":"0deg 0deg 0deg","name":"中型AGV小车","url":"/p/2026-039/"}];
+  <script type="module">
+    import { Stage, CYCLE } from "/assets/stage.js";
 
-    var stage = document.getElementById("stage");
-    var viewer = document.getElementById("viewer");
-    var tabs = document.getElementById("stage-tabs");
-    var cap = document.getElementById("stage-cap");
-    var link = document.getElementById("stage-link");
-    var load = document.getElementById("stage-load");
-    var bar = document.getElementById("stage-bar");
+    // 由 b-Code/build.mjs 根据 site.config.json 的 showcase.hero / showcase.models 生成，请勿手改
+    const HERO = [{"id":"2026-003","name":"中型AGV小车","note":"中型智能自主导航AGV搬运机器人（2025-005 项目）","caption":"差速底盘、悬挂、电源与车体","url":"/p/2026-003/","file":"/assets/models/2026-003.glb","up":"y","explode":"radial"},{"id":"2026-012","name":"便携式自动冷萃咖啡机","note":"一套便携式自动冷萃咖啡机原型，采用上下双舱结构和两路独立泵","caption":"上下双舱、两路独立泵","url":"/p/2026-012/","file":"/assets/models/2026-012.glb","up":"z","explode":"y"},{"id":"2025-009","name":"沙拉售卖机","note":"基于轻食沙拉市场的全自动营养快餐机设计","caption":"料盒、传送带、出碗与挤压机构","url":"/p/2025-009/","file":"/assets/models/2025-009.glb","up":"z","explode":"radial"}];
+    const SHELF = [{"id":"2025-002","name":"轻型 AGV 小车","note":"轻型 AGV","caption":"轻型 AGV 整车","url":"/p/2025-002/","file":"/assets/models/2025-002.glb","up":"z","explode":""},{"id":"2025-008","name":"机器人手部快换装置","note":"人形机器人手腕快换接头设计 —— 第一届“均普杯”迷你科技竞赛作品","caption":"手腕快换接头装配","url":"/p/2025-008/","file":"/assets/models/2025-008.glb","up":"z","explode":""},{"id":"2025-010","name":"墙面瓷砖自动铺设装置","note":"面向建筑行业劳动力短缺的瓷砖自动化铺设解决方案 —— 2025 项目","caption":"抬升机构","url":"/p/2025-010/","file":"/assets/models/2025-010.glb","up":"z","explode":""},{"id":"2025-015","name":"弹簧测试机械","note":"液压与气动 PLC 综合实训装置，面向机电、自动化专业教学实操设备","caption":"实训装置整机","url":"/p/2025-015/","file":"/assets/models/2025-015.glb","up":"z","explode":""}];
 
-    if (!MODELS.length) { stage.classList.add("hidden"); return; }
-    // 「减少动效」下不自转，只在拖动时转
-    if (window.OH && !window.OH.motion) viewer.removeAttribute("auto-rotate");
+    const $ = (id) => document.getElementById(id);
+    const loadBar = (el) => (p) => {
+      el.firstElementChild.style.transform = "scaleX(" + p + ")";
+      el.classList.toggle("done", p >= 1);
+    };
 
-    function show(id) {
-      var m = MODELS.filter(function (x) { return x.id === id; })[0] || MODELS[0];
-      if (viewer.getAttribute("src") !== m.file) {
-        load.classList.remove("done");
-        bar.style.transform = "scaleX(0)";
-        viewer.setAttribute("orientation", m.orientation || "0deg 0deg 0deg");
-        viewer.setAttribute("src", m.file);
-        viewer.setAttribute("alt", m.name + " 三维模型");
-      }
-      cap.textContent = m.name + " · " + (m.caption || "");
-      link.href = m.url;
-      tabs.querySelectorAll(".stage-tab").forEach(function (b) {
-        var on = b.dataset.model === m.id;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-pressed", on);
+    // ---- 首屏：一件转完一轮拆装就换下一件；拖过模型就停在这一件上 ----
+    if (HERO.length) {
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot-btn");
+      let cur = 0, held = false;
+
+      const hero = new Stage($("hero-stage"), {
+        onProgress: loadBar($("hero-load")),
+        onInteract: () => { held = true; },
+        onTime: (t) => {
+          dots[cur].style.setProperty("--p", Math.min(t / CYCLE, 1).toFixed(3));
+          if (t >= CYCLE && !held && HERO.length > 1) go((cur + 1) % HERO.length);
+        },
       });
+
+      function go(i) {
+        cur = i;
+        slides.forEach((s, j) => { s.classList.toggle("is-on", j === i); s.hidden = j !== i; });
+        dots.forEach((d, j) => { d.classList.toggle("is-on", j === i); d.style.setProperty("--p", 0); });
+        hero.show(HERO[i]);
+      }
+
+      dots.forEach((d, i) => d.addEventListener("click", () => { held = false; go(i); }));
+      // 代表作品里的「看拆装动画」：切到那一件并回到首屏
+      document.querySelectorAll("[data-hero]").forEach((b) => b.addEventListener("click", () => {
+        const i = HERO.findIndex((m) => m.id === b.dataset.hero);
+        if (i < 0) return;
+        held = true;
+        go(i);
+        $("top").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto" });
+      }));
+      go(0);
     }
 
-    viewer.addEventListener("progress", function (e) {
-      var p = e.detail.totalProgress || 0;
-      bar.style.transform = "scaleX(" + p + ")";
-      if (p >= 1) load.classList.add("done");
-    });
-    // 双击回到初始视角
-    viewer.addEventListener("dblclick", function () {
-      viewer.cameraOrbit = "35deg 72deg auto";
-      viewer.fieldOfView = "auto";
-      viewer.cameraTarget = "auto auto auto";
-    });
+    // ---- 模型展示：滚到附近才建第二块画布，省得首屏一次下太多模型 ----
+    if (SHELF.length) {
+      const pages = document.querySelectorAll(".page-btn");
+      let shelf = null, cur = 0;
 
-    tabs.addEventListener("click", function (e) {
-      var b = e.target.closest(".stage-tab");
-      if (b) show(b.dataset.model);
-    });
+      function page(i) {
+        cur = (i + SHELF.length) % SHELF.length;
+        const m = SHELF[cur];
+        pages.forEach((b, j) => { b.classList.toggle("is-on", j === cur); b.setAttribute("aria-pressed", j === cur); });
+        $("shelf-name").textContent = m.name + (m.caption ? " · " + m.caption : "");
+        $("shelf-note").textContent = m.note;
+        $("shelf-link").href = m.url;
+        $("page-n").textContent = (cur + 1) + " / " + SHELF.length;
+        if (shelf) shelf.show(m);
+      }
 
-    // 作品条目里的「在 3D 展台查看」：切模型并滚回首屏
-    document.querySelectorAll(".text-btn[data-model]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        show(b.dataset.model);
-        stage.scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "center" });
-      });
-    });
+      pages.forEach((b, i) => b.addEventListener("click", () => page(i)));
+      $("page-prev").addEventListener("click", () => page(cur - 1));
+      $("page-next").addEventListener("click", () => page(cur + 1));
+      page(0);
 
-    show(MODELS[0].id);
+      const boot = () => {
+        if (shelf) return;
+        shelf = new Stage($("shelf-stage"), { spin: 0.3, onProgress: loadBar($("shelf-load")) });
+        shelf.show(SHELF[cur]);
+      };
+      if (window.IntersectionObserver) {
+        const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { io.disconnect(); boot(); } }, { rootMargin: "400px 0px" });
+        io.observe($("shelf-stage"));
+      } else boot();
+    }
 
     if (window.OH && window.OH.reveal) window.OH.reveal(document.querySelectorAll(".card"));
-  })();
   </script>
 </body>
 </html>

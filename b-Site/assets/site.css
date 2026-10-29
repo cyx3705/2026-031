@@ -461,20 +461,10 @@ html[data-theme="light"] .i-sun { display:none; }
 .page-end a:hover { color:var(--accent); }
 
 /* ---------------------------------------------- 作品页（首页） */
-/* 首屏左右两栏：左边字标 + 简介 + 标题栏 + 两个按钮，右边 3D 展台。
-   展台是全页唯一带墨色整圈边的大块，底子画成图纸网格，和「标题栏」同一套图纸语言 */
+/* 首屏是开放式的：没有框、没有底色块，三维模型直接落在页面上做拆装动画（assets/stage.js），
+   左边一栏是当前作品的说明，左下是切换条。往下的图片一律不加框、不垫底色，按原始比例排，
+   效果图四周的纯色边在构建时已经裁掉（build.mjs 的 localCover）。 */
 .nav-link.is-on { color:var(--text); border-bottom-color:var(--ink); }
-
-.show-hero { padding:clamp(28px, 5vh, 64px) 0 clamp(24px, 4vh, 48px); }
-.show-hero-in {
-  display:grid; align-items:center;
-  grid-template-columns:minmax(0, .9fr) minmax(0, 1.25fr);
-  gap:clamp(28px, 4vw, 64px);
-}
-.show-intro .brand { height:clamp(52px, 6.4vw, 96px); width:auto; display:block; margin:0 0 clamp(16px, 2.4vh, 24px); }
-.lead { margin:0 0 24px; max-width:30em; color:var(--text-2); font-size:clamp(17px, 1.5vw, 19.5px); line-height:1.7; }
-.show-intro .tblock { max-width:none; margin:0 0 20px; }
-.show-cta { display:flex; flex-wrap:wrap; gap:12px; margin:0; }
 
 .ghost-btn { display:inline-flex; align-items:center; justify-content:center; }
 .solid-btn {
@@ -484,65 +474,80 @@ html[data-theme="light"] .i-sun { display:none; }
   transition:background .16s ease, color .16s ease;
 }
 .solid-btn:hover { background:transparent; color:var(--text); }
+.text-link { color:var(--text); font-weight:500; border-bottom:1px solid var(--accent-soft); }
+.text-link:hover { color:var(--accent); border-bottom-color:currentColor; }
 
-.stage {
-  margin:0; overflow:hidden;
-  border:1px solid var(--ink); border-radius:var(--r-card);
-  background-color:var(--surface);
-  background-image:
-    linear-gradient(var(--hairline) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
-  background-size:28px 28px; background-position:-1px -1px;
-}
-.stage-view { position:relative; aspect-ratio:4 / 3; }
-.stage model-viewer {
-  display:block; width:100%; height:100%;
-  background:transparent; --poster-color:transparent; --progress-bar-height:0;
-}
-.stage-load { position:absolute; inset:0 0 auto; height:2px; transition:opacity .4s ease .3s; }
-.stage-load.done { opacity:0; }
-.stage-bar { display:block; height:100%; background:var(--accent); transform-origin:0 50%; transform:scaleX(0); transition:transform .2s ease; }
-.stage-hint {
-  position:absolute; left:16px; bottom:12px; margin:0; pointer-events:none;
-  color:var(--text-2); font-size:12.5px; letter-spacing:.04em;
-}
-.stage-foot {
-  display:flex; flex-direction:column; gap:8px;
-  padding:12px 14px 10px; border-top:1px solid var(--ink); background:var(--canvas);
-}
-.stage-tabs { display:flex; flex-wrap:wrap; gap:6px; }
-.stage-tab {
-  display:inline-flex; align-items:center; gap:9px;
-  height:38px; padding:0 13px; border-radius:var(--r-bar);
-  border:1px solid var(--hairline-2); background:transparent; color:var(--text-2); font-size:14.5px;
-  transition:color .16s ease, border-color .16s ease, background .16s ease;
-}
-.stage-tab:hover { color:var(--text); background:var(--surface); }
-.stage-tab.is-on { color:var(--on-ink); border-color:var(--ink); background:var(--ink); font-weight:600; }
-.stage-tab.is-on .id { color:var(--accent-on-ink); }
-.stage-cap { display:flex; justify-content:space-between; gap:12px; margin:0; color:var(--text-2); font-size:13.5px; }
-.stage-cap a { color:var(--text); white-space:nowrap; }
-.stage-cap a:hover { color:var(--accent); }
+/* 加载条：画布顶上一道金线 */
+.load-bar { position:absolute; inset:0 0 auto; z-index:2; height:2px; pointer-events:none; transition:opacity .4s ease .3s; }
+.load-bar.done { opacity:0; }
+.load-bar i { display:block; height:100%; background:var(--accent); transform-origin:0 50%; transform:scaleX(0); transition:transform .2s ease; }
 
-.show-sec { padding-top:clamp(44px, 8vh, 88px); scroll-margin-top:calc(var(--nav-h) - clamp(20px, 5vh, 64px)); }
+.open-hero {
+  position:relative; overflow:hidden;
+  display:grid; align-items:center;
+  min-height:calc(100vh - var(--nav-h));
+  min-height:calc(100svh - var(--nav-h));
+}
+.hero-stage { position:absolute; top:0; right:0; bottom:0; width:66%; }
+.hero-stage canvas, .shelf-stage canvas { display:block; width:100%; height:100%; cursor:grab; }
+.hero-stage canvas:active, .shelf-stage canvas:active { cursor:grabbing; }
+.drag-hint {
+  position:absolute; right:clamp(20px, 4vw, 48px); bottom:28px; margin:0; pointer-events:none;
+  color:var(--text-2); font-size:12.5px; letter-spacing:.06em; opacity:.8;
+}
+/* 文字层在画布上面，但只有文字本身接鼠标，其余地方都能拖到模型 */
+.open-hero-in {
+  position:relative; z-index:1; pointer-events:none;
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:inherit; padding-block:clamp(32px, 6vh, 72px) clamp(24px, 4vh, 44px);
+}
+.slides, .dots { pointer-events:auto; max-width:440px; }
+.slides { flex:1; display:flex; flex-direction:column; justify-content:center; }
+.slide-n { margin:0 0 14px; color:var(--text-2); font-size:13px; letter-spacing:.06em; }
+.slide-n .id { font-size:13px; }
+.slide h1 {
+  margin:0 0 16px; font-size:clamp(34px, 4.4vw, 58px); font-weight:650;
+  letter-spacing:-.03em; line-height:1.15;
+}
+.slide-note { margin:0 0 18px; color:var(--text-2); font-size:clamp(16.5px, 1.4vw, 19px); line-height:1.7; }
+.slide-cap {
+  display:flex; align-items:baseline; gap:12px; margin:0 0 26px; padding-top:12px;
+  border-top:var(--rule) solid var(--ink); font-size:14.5px; color:var(--text);
+}
+.slide-links { display:flex; flex-wrap:wrap; gap:12px; margin:0; }
+html.js .slide.is-on > * { animation:rise .6s var(--ease) backwards; }
+html.js .slide.is-on > :nth-child(2) { animation-delay:.05s; }
+html.js .slide.is-on > :nth-child(3) { animation-delay:.10s; }
+html.js .slide.is-on > :nth-child(4) { animation-delay:.15s; }
+html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
 
-/* 代表作品：大图 + 说明左右交替；编号后接墨线，与卡片同一个母题。
-   效果图比例各不相同，一律完整显示（contain），不裁 */
-.features { display:flex; flex-direction:column; gap:clamp(32px, 6vh, 64px); }
+/* 切换条：编号 + 名称，下方一道细线随拆装进度走满 */
+.dots { display:flex; gap:clamp(14px, 2vw, 28px); margin-top:clamp(24px, 5vh, 48px); }
+.dot-btn {
+  display:flex; flex-direction:column; align-items:flex-start; gap:4px; min-width:0;
+  padding:0; border:0; background:transparent; color:var(--text-2); text-align:left;
+  transition:color .16s ease;
+}
+.dot-btn:hover, .dot-btn.is-on { color:var(--text); }
+.dot-n { font-family:var(--num); font-size:13px; font-weight:600; color:var(--accent); letter-spacing:.05em; }
+.dot-name { font-size:13.5px; white-space:nowrap; }
+.dot-bar { display:block; width:100%; min-width:72px; height:2px; margin-top:4px; background:var(--hairline-2); border-radius:2px; overflow:hidden; }
+.dot-bar i { display:block; height:100%; background:var(--ink); transform-origin:0 50%; transform:scaleX(0); }
+.dot-btn.is-on .dot-bar i { transform:scaleX(var(--p, 0)); }
+
+.show-sec { padding-top:clamp(56px, 10vh, 112px); scroll-margin-top:calc(var(--nav-h) - clamp(32px, 7vh, 88px)); }
+
+/* 代表作品：大图 + 说明左右交替；图按原始比例，不加框不垫底 */
+.features { display:flex; flex-direction:column; gap:clamp(40px, 8vh, 88px); }
 .feature {
   display:grid; align-items:center;
   grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr);
-  gap:clamp(22px, 3.5vw, 52px);
+  gap:clamp(22px, 3.5vw, 56px);
 }
 .feature.flip .feature-media { order:2; }
-.feature-media {
-  display:block; overflow:hidden; aspect-ratio:16 / 10;
-  border:1px solid var(--hairline-2); border-radius:var(--r-card); background:var(--surface);
-  transition:border-color .2s ease;
-}
-.feature-media:hover { border-color:var(--ink); }
-.feature-img { display:block; width:100%; height:100%; object-fit:contain; transition:transform .6s var(--ease); }
-.feature-media:hover .feature-img { transform:scale(1.03); }
+.feature-media { display:block; overflow:hidden; border-radius:var(--r-card); }
+.feature-img { display:block; width:100%; height:auto; transition:transform .6s var(--ease); }
+.feature-media:hover .feature-img { transform:scale(1.025); }
 .feature-body .id, .tile-body .id { display:flex; align-items:center; gap:10px; }
 .feature-body .id::after, .tile-body .id::after {
   content:""; flex:1; height:var(--rule); border-radius:3px; background:var(--ink);
@@ -568,28 +573,47 @@ html[data-theme="light"] .i-sun { display:none; }
 }
 .text-btn:hover { color:var(--accent); box-shadow:inset 0 -1px 0 currentColor; }
 
-/* 更多作品：带图小卡 */
-.tiles {
-  display:grid; gap:clamp(12px, 1.3vw, 18px);
-  grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+/* 模型展示：左边选页，右边开放画布 */
+.shelf {
+  display:grid; align-items:stretch;
+  grid-template-columns:minmax(220px, 300px) minmax(0, 1fr);
+  gap:clamp(20px, 3vw, 48px);
 }
-.tile {
-  display:flex; flex-direction:column; overflow:hidden; color:inherit;
-  border:1px solid var(--hairline-2); border-radius:var(--r-card);
-  transition:border-color .2s ease;
+.shelf-side { display:flex; flex-direction:column; gap:22px; }
+.pages { display:flex; flex-direction:column; border-top:var(--rule) solid var(--ink); }
+.page-btn {
+  display:flex; align-items:baseline; gap:12px;
+  padding:12px 12px 12px 14px; border:0; border-bottom:1px solid var(--hairline-2);
+  background:transparent; color:var(--text-2); text-align:left; font-size:15.5px;
+  border-radius:0; transition:color .16s ease, background .16s ease;
 }
-.tile:hover { color:inherit; border-color:var(--ink); }
-.tile-img {
-  display:block; width:100%; aspect-ratio:4 / 3; object-fit:contain;
-  background:var(--surface); border-bottom:1px solid var(--hairline-2);
-  transition:transform .6s var(--ease);
+.page-btn:hover { color:var(--text); background:var(--surface); }
+.page-btn.is-on { color:var(--on-ink); background:var(--ink); border-radius:var(--r-bar); border-bottom-color:transparent; font-weight:600; }
+.page-btn.is-on .id { color:var(--accent-on-ink); }
+.shelf-cap p { margin:0 0 6px; }
+.shelf-name { color:var(--text); font-weight:600; }
+.shelf-note { color:var(--text-2); font-size:14.5px; line-height:1.65; }
+.shelf-cap .text-link { display:inline-block; margin-top:8px; font-size:14.5px; }
+.shelf-stage { position:relative; min-height:clamp(360px, 62vh, 640px); }
+.page-flip {
+  position:absolute; right:0; bottom:0; z-index:2; margin:0;
+  display:flex; align-items:center; gap:10px;
 }
-.tile:hover .tile-img { transform:scale(1.03); }
-.no-cover { display:grid; place-items:center; }
+.page-n { min-width:44px; text-align:center; font-family:var(--num); font-size:13.5px; color:var(--text-2); }
+
+/* 更多作品：瀑布流，图按原始比例 */
+.tiles { columns:4 230px; column-gap:clamp(14px, 1.6vw, 22px); }
+.tile { display:block; break-inside:avoid; margin:0 0 clamp(18px, 2.4vh, 26px); color:inherit; }
+.tile:hover { color:inherit; }
+.tile-img { display:block; width:100%; height:auto; border-radius:var(--r-card); transition:transform .6s var(--ease); }
+.tile > .tile-img { overflow:hidden; }
+.tile:hover .tile-img { transform:scale(1.02); }
+.no-cover { display:grid; place-items:center; aspect-ratio:4 / 3; background:var(--surface); }
 .no-cover .id { font-size:22px; }
 .no-cover .id::after { display:none; }
-.tile-body { display:flex; flex-direction:column; gap:5px; padding:12px 16px 14px; background:var(--canvas); position:relative; }
+.tile-body { display:flex; flex-direction:column; gap:5px; padding:12px 2px 0; }
 .tile-body strong { font-size:17px; font-weight:650; letter-spacing:-.01em; line-height:1.35; }
+.tile:hover .tile-body strong { color:var(--accent); }
 .tile-note {
   color:var(--text-2); font-size:13.5px; line-height:1.55;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
@@ -617,9 +641,22 @@ html[data-theme="light"] .i-sun { display:none; }
   .hint { display:none; }
   .search.big input { padding-right:18px; }
 
-  .show-hero-in { grid-template-columns:minmax(0, 1fr); }
+  /* 首屏改成上下：模型在上，说明在下 */
+  .open-hero { display:block; min-height:0; }
+  .hero-stage { position:relative; width:auto; height:min(58svh, 520px); }
+  .drag-hint { bottom:8px; }
+  .open-hero-in { min-height:0; padding-block:4px 28px; }
+  .slides, .dots { max-width:none; }
+  .dots { margin-top:26px; overflow-x:auto; scrollbar-width:none; }
+
   .feature { grid-template-columns:minmax(0, 1fr); gap:18px; }
   .feature.flip .feature-media { order:0; }
+
+  .shelf { grid-template-columns:minmax(0, 1fr); }
+  .shelf-side { order:2; }
+  .pages { flex-direction:row; overflow-x:auto; scrollbar-width:none; border-top:0; gap:6px; }
+  .page-btn { flex:0 0 auto; border:1px solid var(--hairline-2); border-radius:var(--r-bar); padding:8px 12px; }
+  .shelf-stage { min-height:min(70vw, 460px); }
 }
 @media (max-width:760px) {
   :root { --nav-h:54px; }
@@ -653,10 +690,9 @@ html[data-theme="light"] .i-sun { display:none; }
   .card h3 { font-size:18.5px; }
   .repo { width:34px; height:34px; }
 
-  .stage-view { aspect-ratio:1 / 1; }
-  .stage-hint { display:none; }
-  .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
-  .tile-body { padding:10px 12px 12px; }
+  .slide h1 { font-size:32px; }
+  .dot-bar { min-width:56px; }
+  .tiles { columns:2; column-gap:12px; }
   .tile-body strong { font-size:15.5px; }
   .tile-note { display:none; }
   .feature-links { gap:14px; }
@@ -742,6 +778,8 @@ html.js .card.in:hover { transition-delay:0s; }
   /* 关掉：跟随滚动的视差、下拉箭头的循环浮动 */
   html.js .hero-in, html.js .book { transform:none !important; opacity:1 !important; }
   html.js .cue svg { animation:none; }
+
+  html.js .slide.is-on > * { animation-name:fade; }
 
   /* 卡片保留浮现，但只淡入、不位移，错峰间隔减半 */
   html.js .card { opacity:0; transform:none; }

@@ -6,7 +6,8 @@
  *           （CDN，不计入 60 次/小时的未认证 API 限额），因此项目再多也不会触顶。
  *
  * 产出：
- *   b-Site/index.html          代表作品页（site.config.json 的 showcase 挑选，含 3D 展台）
+ *   b-Site/index.html          代表作品页（site.config.json 的 showcase 挑选，含 3D 动画与模型选页）
+ *   b-Site/assets/covers/      代表作品的封面图（裁掉白边/黑边后的 webp）
  *   b-Site/library/index.html  项目库：全部项目的统一列表（卡片数据内联，页面零请求）
  *   b-Site/p/<编号>/index.html 每个项目的说明页（README 渲染）
  *   b-Site/projects.json       结构化数据，便于其他地方复用
@@ -20,6 +21,7 @@ import { setDefaultResultOrder } from "node:dns";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
+import sharp from "sharp";
 
 // 有些网络里 GitHub 的 IPv6 地址连不上、只能等超时，优先走 IPv4 能省掉这段空等
 setDefaultResultOrder("ipv4first");
@@ -41,13 +43,14 @@ if (process.env.GITHUB_TOKEN) UA.Authorization = `Bearer ${process.env.GITHUB_TO
  * 那比构建失败更糟。
  */
 const BACKOFF = [1000, 2000, 3500, 6000, 10000];
-async function get(url, { asJson = false, allow404 = false } = {}) {
+async function get(url, { asJson = false, asBuf = false, allow404 = false } = {}) {
   let lastErr;
   for (let i = 0; i <= BACKOFF.length; i++) {
     try {
       const r = await fetch(url, { headers: UA });
       if (r.status === 404 && allow404) return null;
       if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
+      if (asBuf) return Buffer.from(await r.arrayBuffer());
       return asJson ? await r.json() : await r.text();
     } catch (e) {
       lastErr = e;
@@ -281,6 +284,7 @@ console.log("写入 b-Site/library/index.html");
 
 const sc = cfg.showcase;
 const byId = new Map(projects.map((p) => [p.id, p]));
+const animated = new Set(sc.hero.map((m) => m.id));
 
 /** 配置条目（编号或对象）-> 作品数据；README 是来源，配置只补封面和标签 */
 function work(entry) {
@@ -295,16 +299,56 @@ function work(entry) {
     text: p.fullNote || p.note,
     cover: e.cover ? assetUrl(e.cover, p.repo) : p.cover,
     tags: e.tags || [],
-    model: sc.models.some((m) => m.id === p.id),
+    caption: e.caption || "",
   };
 }
 const works = (list) => list.map(work).filter(Boolean);
 
-const ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+/**
+ * 封面图下载到本站、裁掉四周的纯色边（渲染图常见的大片白底/黑底），按原始长宽比展示。
+ * 失败不让构建失败：退回直接引用 GitHub 上的原图。
+ */
+const COVERS = path.join(SITE, "assets/covers");
+async function localCover(w) {
+  if (!w.cover) return;
+  try {
+    const buf = await get(w.cover, { asBuf: true });
+    const out = await sharp(buf, { limitInputPixels: false })
+      .flatten({ background: "#ffffff" })     // 透明底按白底处理，trim 才裁得掉
+      .trim({ threshold: 18 })
+      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer({ resolveWithObject: true });
+    await writeFile(path.join(COVERS, `${w.id}.webp`), out.data);
+    w.cover = `/assets/covers/${w.id}.webp`;
+    w.coverW = out.info.width;
+    w.coverH = out.info.height;
+  } catch (e) {
+    console.log(`  ! ${w.id} 封面处理失败，直接引用原图：${e.message}`);
+  }
+}
 
+const ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+const repoBtn = (w) => `<a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>`;
+
+// 带上宽高：图按原始比例排，加载前就占好位，不会跳
 const img = (w, cls) => w.cover
-  ? `<img class="${cls}" src="${esc(w.cover)}" alt="${esc(w.name)} 效果图" loading="lazy" decoding="async">`
+  ? `<img class="${cls}" src="${esc(w.cover)}" alt="${esc(w.name)} 效果图" loading="lazy" decoding="async"` +
+    (w.coverW ? ` width="${w.coverW}" height="${w.coverH}"` : "") + ">"
   : `<span class="${cls} no-cover" aria-hidden="true"><span class="id">${esc(w.id)}</span></span>`;
+
+/** 首屏动画的文字：每件一块，JS 切换 */
+const slideHtml = (w, i, all) => `
+          <article class="slide${i ? "" : " is-on"}" data-i="${i}"${i ? " hidden" : ""}>
+            <p class="slide-n"><span class="id">${String(i + 1).padStart(2, "0")}</span> / ${String(all.length).padStart(2, "0")} · 代表作品</p>
+            <h1>${esc(w.name)}</h1>
+            <p class="slide-note">${esc(w.note)}</p>
+            <p class="slide-cap"><span class="id">${esc(w.id)}</span>${esc(w.caption)}</p>
+            <p class="slide-links">
+              <a class="solid-btn" href="${esc(w.url)}">查看说明</a>
+              <a class="ghost-btn" href="#works">全部代表作品 ↓</a>
+            </p>
+          </article>`;
 
 /** 代表作品：大图 + 说明，左右交替 */
 const featureHtml = (w, i) => `
@@ -317,13 +361,13 @@ const featureHtml = (w, i) => `
             ${w.tags.length ? `<ul class="tags">${w.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
             <p class="feature-links">
               <a class="ghost-btn" href="${esc(w.url)}">查看说明</a>
-              ${w.model ? `<button type="button" class="text-btn" data-model="${esc(w.id)}">在 3D 展台查看</button>` : ""}
-              <a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>
+              ${animated.has(w.id) ? `<button type="button" class="text-btn" data-hero="${esc(w.id)}">看拆装动画</button>` : ""}
+              ${repoBtn(w)}
             </p>
           </div>
         </article>`;
 
-/** 更多作品：带图小卡 */
+/** 更多作品：带图小卡，瀑布流 */
 const tileHtml = (w) => `
           <a class="tile" href="${esc(w.url)}">
             ${img(w, "tile-img")}
@@ -334,6 +378,11 @@ const tileHtml = (w) => `
             </span>
           </a>`;
 
+/** 模型展示的选页按钮 */
+const pageBtnHtml = (w, i) =>
+  `<button type="button" class="page-btn${i ? "" : " is-on"}" data-i="${i}" aria-pressed="${!i}">` +
+  `<span class="id">${esc(w.id)}</span><span class="page-name">${esc(w.name)}</span></button>`;
+
 /** 软件与工具：没有效果图，沿用项目库的卡片 */
 const cardHtml = (w) => `
           <article class="card">
@@ -343,16 +392,26 @@ const cardHtml = (w) => `
               <p>${esc(w.note)}</p>
             </a>
             <footer class="card-foot"><span></span>
-              <a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>
+              ${repoBtn(w)}
             </footer>
           </article>`;
 
-const models = sc.models
-  .map((m) => ({ ...m, name: byId.get(m.id)?.name || m.id, url: byId.get(m.id)?.url || "" }))
-  .filter((m) => existsSync(path.join(SITE, m.file)) || console.log(`  ! 模型 ${m.file} 不存在，跳过`));
+/** 模型条目 -> 作品数据 + 前端需要的几个字段；GLB 不在就跳过 */
+const modelWorks = (list) => list
+  .filter((m) => existsSync(path.join(SITE, m.file)) || console.log(`  ! 模型 ${m.file} 不存在，跳过`))
+  .map((m) => ({ ...work(m), file: m.file, up: m.up || "y", explode: m.explode || "" }))
+  .filter((w) => w.id);
+const toClient = (list) => list.map((w) => ({ id: w.id, name: w.name, note: w.note, caption: w.caption, url: w.url, file: w.file, up: w.up, explode: w.explode }));
+
+const hero = modelWorks(sc.hero);
+const shelf = modelWorks(sc.models);
 const featured = works(sc.featured);
 const more = works(sc.more);
 const software = works(sc.software);
+
+if (existsSync(COVERS)) await rm(COVERS, { recursive: true });
+await mkdir(COVERS, { recursive: true });
+for (const w of [...featured, ...more]) await localCover(w);
 
 const showTpl = await readFile(path.join(SITE, "index.template.html"), "utf8");
 const showHtml = showTpl
@@ -360,18 +419,20 @@ const showHtml = showTpl
   .replaceAll("/*__OWNER__*/", cfg.owner)
   .replaceAll("/*__LEAD__*/", esc(sc.lead))
   .replaceAll("/*__COUNT__*/", String(cards.length))
-  .replaceAll("/*__WORKS__*/", String(featured.length + more.length + software.length))
   .replaceAll("/*__BUILT__*/", new Date().toISOString().slice(0, 10))
-  .replace("/*__MODELS__*/", () => JSON.stringify(models).replace(/</g, "\\u003c"))
-  .replace("<!--__MODEL_TABS__-->", () => models.map((m, i) =>
-    `<button type="button" class="stage-tab${i ? "" : " is-on"}" data-model="${esc(m.id)}" aria-pressed="${!i}">` +
-    `<span class="id">${esc(m.id)}</span><span class="stage-tab-name">${esc(m.name)}</span></button>`).join(""))
+  .replace("/*__HERO__*/", () => JSON.stringify(toClient(hero)).replace(/</g, "\\u003c"))
+  .replace("/*__SHELF__*/", () => JSON.stringify(toClient(shelf)).replace(/</g, "\\u003c"))
+  .replace("<!--__SLIDES__-->", () => hero.map(slideHtml).join(""))
+  .replace("<!--__HERO_DOTS__-->", () => hero.map((w, i) =>
+    `<button type="button" class="dot-btn${i ? "" : " is-on"}" data-i="${i}" aria-label="${esc(w.name)}">` +
+    `<span class="dot-n">${String(i + 1).padStart(2, "0")}</span><span class="dot-name">${esc(w.name)}</span><span class="dot-bar"><i></i></span></button>`).join(""))
+  .replace("<!--__PAGES__-->", () => shelf.map(pageBtnHtml).join(""))
   .replace("<!--__FEATURED__-->", () => featured.map(featureHtml).join(""))
   .replace("<!--__MORE__-->", () => more.map(tileHtml).join(""))
   .replace("<!--__SOFTWARE__-->", () => software.map(cardHtml).join(""));
 
 await writeFile(path.join(SITE, "index.html"), showHtml, "utf8");
-console.log(`写入 b-Site/index.html（代表作品 ${featured.length}、更多 ${more.length}、软件 ${software.length}、3D 模型 ${models.length}）`);
+console.log(`写入 b-Site/index.html（首屏动画 ${hero.length}、模型选页 ${shelf.length}、代表作品 ${featured.length}、更多 ${more.length}、软件 ${software.length}）`);
 
 await writeFile(
   path.join(SITE, "projects.json"),

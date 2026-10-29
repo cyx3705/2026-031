@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js">
   <script>
     // 以前首页就是项目库，别人分享出去的 /?q=… 筛选链接转到新地址
     if (/[?&](q|g)=/.test(location.search)) location.replace("/library/" + location.search + location.hash);
@@ -25,7 +26,14 @@
       document.documentElement.classList.add("js");
     })();
   </script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body class="is-show">
   <a class="skip" href="#works">跳到代表作品</a>
@@ -49,39 +57,17 @@
   </header>
 
   <main>
-    <!-- 首屏：左边字标与简介，右边 3D 展台 -->
-    <section class="show-hero" id="top">
-      <div class="wrap show-hero-in">
-        <div class="show-intro">
-          <img class="brand logo-light" src="/assets/logo.png" alt="OneHistory">
-          <img class="brand logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
-          <p class="lead">/*__LEAD__*/</p>
+    <!-- 首屏：开放式，模型直接落在页面上做拆装动画，左边是当前作品的说明 -->
+    <section class="open-hero" id="top" aria-label="代表作品动画">
+      <div class="hero-stage" id="hero-stage">
+        <span class="load-bar" id="hero-load"><i></i></span>
+        <p class="drag-hint">拖动旋转 · 双击复位</p>
+      </div>
 
-          <dl class="tblock">
-            <div><dt>精选作品</dt><dd class="n">/*__WORKS__*/</dd></div>
-            <div><dt>公开项目</dt><dd class="n">/*__COUNT__*/</dd></div>
-            <div><dt>GitHub</dt><dd><a href="https://github.com//*__OWNER__*/" rel="noopener">github.com//*__OWNER__*/</a></dd></div>
-          </dl>
-
-          <p class="show-cta">
-            <a class="solid-btn" href="#works">看代表作品</a>
-            <a class="ghost-btn" href="/library/">进入项目库 →</a>
-          </p>
+      <div class="wrap open-hero-in">
+        <div class="slides" aria-live="polite"><!--__SLIDES__-->
         </div>
-
-        <figure class="stage" id="stage" aria-label="3D 模型展台">
-          <div class="stage-view">
-            <model-viewer id="viewer" camera-controls auto-rotate auto-rotate-delay="1500" rotation-per-second="18deg"
-              touch-action="pan-y" interaction-prompt="none" shadow-intensity="0.9" shadow-softness="0.8"
-              exposure="1.05" environment-image="neutral" camera-orbit="35deg 72deg auto" alt="作品三维模型"></model-viewer>
-            <div class="stage-load" id="stage-load"><span class="stage-bar" id="stage-bar"></span></div>
-            <p class="stage-hint">拖动旋转 · 滚轮缩放 · 双击复位</p>
-          </div>
-          <figcaption class="stage-foot">
-            <div class="stage-tabs" id="stage-tabs" role="group" aria-label="切换模型"><!--__MODEL_TABS__--></div>
-            <p class="stage-cap"><span id="stage-cap"></span><a id="stage-link" href="#">查看说明 →</a></p>
-          </figcaption>
-        </figure>
+        <nav class="dots" id="hero-dots" aria-label="切换作品"><!--__HERO_DOTS__--></nav>
       </div>
     </section>
 
@@ -92,6 +78,32 @@
         <span class="ink-bar">名称 · 功能 · 效果图</span>
       </header>
       <div class="features"><!--__FEATURED__-->
+      </div>
+    </section>
+
+    <!-- 模型展示：选页，只转不拆 -->
+    <section class="wrap show-sec" id="models">
+      <header class="sec-head">
+        <h2>模型展示</h2>
+        <span class="ink-bar">选一页 · 拖动旋转</span>
+      </header>
+      <div class="shelf">
+        <div class="shelf-side">
+          <div class="pages" id="pages" role="group" aria-label="选择模型"><!--__PAGES__--></div>
+          <div class="shelf-cap">
+            <p class="shelf-name" id="shelf-name"></p>
+            <p class="shelf-note" id="shelf-note"></p>
+            <a class="text-link" id="shelf-link" href="#">查看说明 →</a>
+          </div>
+        </div>
+        <div class="shelf-stage" id="shelf-stage">
+          <span class="load-bar" id="shelf-load"><i></i></span>
+          <p class="page-flip">
+            <button type="button" class="icon-btn" id="page-prev" aria-label="上一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6l-6 6 6 6"/></svg></button>
+            <span class="page-n" id="page-n"></span>
+            <button type="button" class="icon-btn" id="page-next" aria-label="下一页"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg></button>
+          </p>
+        </div>
       </div>
     </section>
 
@@ -135,70 +147,86 @@
   </footer>
 
   <script src="/assets/site.js"></script>
-  <script>
-  (function () {
-    // 由 b-Code/build.mjs 根据 site.config.json 的 showcase.models 生成，请勿手改
-    var MODELS = /*__MODELS__*/;
+  <script type="module">
+    import { Stage, CYCLE } from "/assets/stage.js";
 
-    var stage = document.getElementById("stage");
-    var viewer = document.getElementById("viewer");
-    var tabs = document.getElementById("stage-tabs");
-    var cap = document.getElementById("stage-cap");
-    var link = document.getElementById("stage-link");
-    var load = document.getElementById("stage-load");
-    var bar = document.getElementById("stage-bar");
+    // 由 b-Code/build.mjs 根据 site.config.json 的 showcase.hero / showcase.models 生成，请勿手改
+    const HERO = /*__HERO__*/;
+    const SHELF = /*__SHELF__*/;
 
-    if (!MODELS.length) { stage.classList.add("hidden"); return; }
-    // 「减少动效」下不自转，只在拖动时转
-    if (window.OH && !window.OH.motion) viewer.removeAttribute("auto-rotate");
+    const $ = (id) => document.getElementById(id);
+    const loadBar = (el) => (p) => {
+      el.firstElementChild.style.transform = "scaleX(" + p + ")";
+      el.classList.toggle("done", p >= 1);
+    };
 
-    function show(id) {
-      var m = MODELS.filter(function (x) { return x.id === id; })[0] || MODELS[0];
-      if (viewer.getAttribute("src") !== m.file) {
-        load.classList.remove("done");
-        bar.style.transform = "scaleX(0)";
-        viewer.setAttribute("orientation", m.orientation || "0deg 0deg 0deg");
-        viewer.setAttribute("src", m.file);
-        viewer.setAttribute("alt", m.name + " 三维模型");
-      }
-      cap.textContent = m.name + " · " + (m.caption || "");
-      link.href = m.url;
-      tabs.querySelectorAll(".stage-tab").forEach(function (b) {
-        var on = b.dataset.model === m.id;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-pressed", on);
+    // ---- 首屏：一件转完一轮拆装就换下一件；拖过模型就停在这一件上 ----
+    if (HERO.length) {
+      const slides = document.querySelectorAll(".slide");
+      const dots = document.querySelectorAll(".dot-btn");
+      let cur = 0, held = false;
+
+      const hero = new Stage($("hero-stage"), {
+        onProgress: loadBar($("hero-load")),
+        onInteract: () => { held = true; },
+        onTime: (t) => {
+          dots[cur].style.setProperty("--p", Math.min(t / CYCLE, 1).toFixed(3));
+          if (t >= CYCLE && !held && HERO.length > 1) go((cur + 1) % HERO.length);
+        },
       });
+
+      function go(i) {
+        cur = i;
+        slides.forEach((s, j) => { s.classList.toggle("is-on", j === i); s.hidden = j !== i; });
+        dots.forEach((d, j) => { d.classList.toggle("is-on", j === i); d.style.setProperty("--p", 0); });
+        hero.show(HERO[i]);
+      }
+
+      dots.forEach((d, i) => d.addEventListener("click", () => { held = false; go(i); }));
+      // 代表作品里的「看拆装动画」：切到那一件并回到首屏
+      document.querySelectorAll("[data-hero]").forEach((b) => b.addEventListener("click", () => {
+        const i = HERO.findIndex((m) => m.id === b.dataset.hero);
+        if (i < 0) return;
+        held = true;
+        go(i);
+        $("top").scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto" });
+      }));
+      go(0);
     }
 
-    viewer.addEventListener("progress", function (e) {
-      var p = e.detail.totalProgress || 0;
-      bar.style.transform = "scaleX(" + p + ")";
-      if (p >= 1) load.classList.add("done");
-    });
-    // 双击回到初始视角
-    viewer.addEventListener("dblclick", function () {
-      viewer.cameraOrbit = "35deg 72deg auto";
-      viewer.fieldOfView = "auto";
-      viewer.cameraTarget = "auto auto auto";
-    });
+    // ---- 模型展示：滚到附近才建第二块画布，省得首屏一次下太多模型 ----
+    if (SHELF.length) {
+      const pages = document.querySelectorAll(".page-btn");
+      let shelf = null, cur = 0;
 
-    tabs.addEventListener("click", function (e) {
-      var b = e.target.closest(".stage-tab");
-      if (b) show(b.dataset.model);
-    });
+      function page(i) {
+        cur = (i + SHELF.length) % SHELF.length;
+        const m = SHELF[cur];
+        pages.forEach((b, j) => { b.classList.toggle("is-on", j === cur); b.setAttribute("aria-pressed", j === cur); });
+        $("shelf-name").textContent = m.name + (m.caption ? " · " + m.caption : "");
+        $("shelf-note").textContent = m.note;
+        $("shelf-link").href = m.url;
+        $("page-n").textContent = (cur + 1) + " / " + SHELF.length;
+        if (shelf) shelf.show(m);
+      }
 
-    // 作品条目里的「在 3D 展台查看」：切模型并滚回首屏
-    document.querySelectorAll(".text-btn[data-model]").forEach(function (b) {
-      b.addEventListener("click", function () {
-        show(b.dataset.model);
-        stage.scrollIntoView({ behavior: window.OH && window.OH.motion ? "smooth" : "auto", block: "center" });
-      });
-    });
+      pages.forEach((b, i) => b.addEventListener("click", () => page(i)));
+      $("page-prev").addEventListener("click", () => page(cur - 1));
+      $("page-next").addEventListener("click", () => page(cur + 1));
+      page(0);
 
-    show(MODELS[0].id);
+      const boot = () => {
+        if (shelf) return;
+        shelf = new Stage($("shelf-stage"), { spin: 0.3, onProgress: loadBar($("shelf-load")) });
+        shelf.show(SHELF[cur]);
+      };
+      if (window.IntersectionObserver) {
+        const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { io.disconnect(); boot(); } }, { rootMargin: "400px 0px" });
+        io.observe($("shelf-stage"));
+      } else boot();
+    }
 
     if (window.OH && window.OH.reveal) window.OH.reveal(document.querySelectorAll(".card"));
-  })();
   </script>
 </body>
 </html>

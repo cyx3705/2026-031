@@ -18,7 +18,9 @@
 | `b-Site/library.template.html` | 项目库模板，`/*__PROJECTS__*/` 等占位符由脚本填充 |
 | `b-Site/p.template.html` | 项目说明页模板 |
 | `b-Site/assets/` | 样式、脚本、图标（手工维护） |
-| `b-Site/assets/models/` | 首页 3D 展台的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
+| `b-Site/assets/stage.js` | 首页的 3D（three.js）：拆装动画与模型展示 |
+| `b-Site/assets/models/` | 首页的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
+| `b-Site/assets/covers/` | **生成产物**，代表作品封面（裁掉四周纯色边的 webp） |
 | `b-Site/CNAME` | 自定义域名 `onehistory.exc0.top` |
 | `b-Site/index.html` | **生成产物**，代表作品页，勿手改 |
 | `b-Site/library/index.html` | **生成产物**，项目库，勿手改 |
@@ -30,7 +32,14 @@
 
 ### 页面结构
 
-**首页 `/` 是代表作品页**：首屏左边是字标、简介和统计，右边是可拖动旋转的 **3D 展台**（[model-viewer](https://modelviewer.dev/)）；往下依次是「代表作品」（大图 + 名称 + 功能说明 + 标签，左右交替）、「更多作品」（带图小卡）、「软件与工具」，最后是去项目库的入口。挑哪些作品写在 `site.config.json` 的 `showcase` 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。
+**首页 `/` 是代表作品页**：
+
+- **首屏**是开放式的，没有框：三件代表作（`showcase.hero`）的三维模型直接落在页面上做**拆装动画**——外圈零件先拆、拆开停一会儿、再按反序装回，一轮转完自动换下一件；可以拖动旋转，拖过就停在这一件上。动画是通用的爆炸图算法（`assets/stage.js`），任何 STEP 装配都能直接用，不需要在 CAD 里另做动画。系统开了「减少动效」时只演一轮、不自转。
+- **代表作品**：大图 + 名称 + 功能说明 + 标签，左右交替。
+- **模型展示**（`showcase.models`）：选页，一页一个模型，只转不拆。
+- **更多作品**：瀑布流小卡；**软件与工具**；最后是去项目库的入口。
+
+挑哪些作品写在 `site.config.json` 的 `showcase` 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。封面在构建时下载下来，**裁掉四周的纯色白边/黑边**，按原始长宽比显示，不加框、不垫底色。
 
 **项目库在 `/library/`**：一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 `?q=` 和 `?g=`，可以直接把筛好的视图分享出去；以前分享的 `/?q=…` 链接会自动转到 `/library/?q=…`。
 
@@ -81,7 +90,9 @@ python b-Code/models.py          # 转 MODELS 里登记的全部模型
 python b-Code/models.py 2026-012 # 只转一个
 ```
 
-加一个模型：在 `models.py` 的 `MODELS` 里写上 STEP 路径和公差，再在 `site.config.json` 的 `showcase.models` 里登记文件和朝向（模型躺倒时改 `orientation`，例如 `0deg -90deg 0deg`）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。
+`models.py` 会在 HistoryClio 和 `HistorySaturn/HistoryVesta` 两处找项目文件夹。只有 Solid Edge 装配（`.asm`）没有 STEP 的项目，先在 Solid Edge 里打开装配另存为 `.stp`，放进该项目的 `b-Module-GE`（2025-009 沙拉售卖机就是这样来的）。
+
+加一个模型：在 `models.py` 的 `MODELS` 里写上 STEP 路径和公差，再在 `site.config.json` 的 `showcase.hero`（要拆装动画）或 `showcase.models`（只展示）里登记。模型躺倒时写 `"up": "z"`；`explode` 选 `radial`（向四周散开）或 `y`（竖直拉开，适合筒状叠层）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。
 
 ### 本地构建
 

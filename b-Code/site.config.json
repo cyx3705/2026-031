@@ -40,23 +40,33 @@
     "首页 = 代表作品页；完整列表在 /library/。",
     "条目只写编号，名称、描述、封面图都从该仓库 README 自动取（封面 = README 里第一张不是 Logo 的图）。",
     "README 的图路径坏了或想换一张时写 cover（仓库内相对路径）；tags 是作品下方的小标签。",
-    "models 是首屏 3D 展台：GLB 由 b-Code/models.py 从本机 STEP 转出，orientation 为 model-viewer 的「横滚 俯仰 偏航」。"
+    "封面图在构建时下载、裁掉四周的纯色白边/黑边，存成 /assets/covers/<编号>.webp，按原始长宽比显示。",
+    "hero 是首屏的开放式 3D 动画（拆装爆炸图循环），models 是下面「模型展示」的选页，只转不拆。",
+    "GLB 由 b-Code/models.py 从本机 STEP 转出。up 写 z 表示模型是 Z 轴朝上（多数 CAD 默认），会转成网页的 Y 朝上；",
+    "explode 是拆开的方向：radial 从中心向四周散开，y 只沿竖直方向拉开（适合筒状叠层结构）。"
   ],
   "showcase": {
     "lead": "机械整机、机器人与自研软件工具。这里挑出有代表性的几件，全部项目在项目库。",
+    "hero": [
+      { "id": "2026-003", "file": "/assets/models/2026-003.glb", "explode": "radial", "caption": "差速底盘、悬挂、电源与车体" },
+      { "id": "2026-012", "file": "/assets/models/2026-012.glb", "up": "z", "explode": "y", "caption": "上下双舱、两路独立泵" },
+      { "id": "2025-009", "file": "/assets/models/2025-009.glb", "up": "z", "explode": "radial", "caption": "料盒、传送带、出碗与挤压机构" }
+    ],
     "models": [
-      { "id": "2026-012", "file": "/assets/models/2026-012.glb", "caption": "整机装配（不含电路板）", "orientation": "0deg -90deg 0deg" },
-      { "id": "2026-039", "file": "/assets/models/2026-039.glb", "caption": "整机装配", "orientation": "0deg 0deg 0deg" }
+      { "id": "2025-002", "file": "/assets/models/2025-002.glb", "up": "z", "caption": "轻型 AGV 整车" },
+      { "id": "2025-008", "file": "/assets/models/2025-008.glb", "up": "z", "caption": "手腕快换接头装配" },
+      { "id": "2025-010", "file": "/assets/models/2025-010.glb", "up": "z", "caption": "抬升机构" }
     ],
     "featured": [
+      { "id": "2026-003", "cover": "b-Picture/效果图.png", "tags": ["Solid Edge", "EPLAN"] },
       { "id": "2026-012", "tags": ["ESP32", "Altium Designer", "Unity"] },
-      { "id": "2026-039", "cover": "b-Picture/效果图.png", "tags": ["Solid Edge", "EPLAN"] },
+      { "id": "2025-009", "tags": ["Solid Edge", "SolidWorks"] },
       { "id": "2026-006", "tags": ["竞赛作品"] },
       { "id": "2026-007", "tags": ["实物样机"] },
       { "id": "2026-004" },
       { "id": "2025-010" }
     ],
-    "more": ["2025-009", "2025-008", "2025-007", "2025-004", "2025-014", "2025-015", "2026-011", "2025-003"],
+    "more": ["2025-008", "2025-007", "2025-004", "2025-014", "2025-015", "2026-011", "2025-003"],
     "software": ["2026-023", "2026-034", "2026-024", "2026-040", "2026-028", "2026-022"]
   },
 
