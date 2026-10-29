@@ -12,6 +12,7 @@ on:
     paths:
       - "b-Code/**"
       - "b-Site/index.template.html"
+      - "b-Site/library.template.html"
       - "b-Site/p.template.html"
       - "b-Site/assets/**"
       - "b-Site/CNAME"

@@ -6,7 +6,8 @@
  *           （CDN，不计入 60 次/小时的未认证 API 限额），因此项目再多也不会触顶。
  *
  * 产出：
- *   b-Site/index.html          目录首页（卡片数据内联，页面零请求）
+ *   b-Site/index.html          代表作品页（site.config.json 的 showcase 挑选，含 3D 展台）
+ *   b-Site/library/index.html  项目库：全部项目的统一列表（卡片数据内联，页面零请求）
  *   b-Site/p/<编号>/index.html 每个项目的说明页（README 渲染）
  *   b-Site/projects.json       结构化数据，便于其他地方复用
  *
@@ -145,6 +146,21 @@ function rewriteLinks(md, repoFull) {
       (_, a, p, c) => a + blob + encodeURI(p.replace(/^\.\//, "")) + c);
 }
 
+/** README 里第一张不是 Logo 的图，作为作品封面 */
+function coverOf(md, repoFull) {
+  for (const m of md.matchAll(/!\[[^\]]*\]\(([^)\s]+)[^)]*\)/g)) {
+    if (/(^|\/)logo\.(png|jpe?g|svg|webp)$/i.test(m[1])) continue;
+    return assetUrl(m[1], repoFull);
+  }
+  return "";
+}
+
+/** 仓库内相对路径 -> 可直接引用的地址（走 /raw/，理由同 rewriteLinks） */
+function assetUrl(p, repoFull) {
+  if (/^https?:/.test(p)) return p;
+  return `https://github.com/${repoFull}/raw/HEAD/` + encodeURI(p.replace(/^\.?\//, ""));
+}
+
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
   .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -196,6 +212,7 @@ for (const r of picked) {
     url: `/p/${r.name}/`,
     slug: r.name,
     pushedAt: r.pushed_at,
+    cover: coverOf(md, r.full_name),
     html: marked.parse(rewriteLinks(md, r.full_name)),
   });
   console.log(`  ✓ ${id}  ${title}`);
@@ -247,8 +264,8 @@ if (DRY) {
 
 // ---------------------------------------------------------------- 生成
 
-const tpl = await readFile(path.join(SITE, "index.template.html"), "utf8");
-const indexHtml = tpl
+const tpl = await readFile(path.join(SITE, "library.template.html"), "utf8");
+const libraryHtml = tpl
   .replaceAll("/*__NOTE__*/", esc(cfg.note))
   .replaceAll("/*__OWNER__*/", cfg.owner)
   // 对象数组而非元组：以后给卡片加字段不会错位。
@@ -256,8 +273,105 @@ const indexHtml = tpl
   .replace("/*__PROJECTS__*/", JSON.stringify(cards).replace(/</g, "\\u003c"))
   .replaceAll("/*__BUILT__*/", new Date().toISOString().slice(0, 10));
 
-await writeFile(path.join(SITE, "index.html"), indexHtml, "utf8");
-console.log("写入 b-Site/index.html");
+await mkdir(path.join(SITE, "library"), { recursive: true });
+await writeFile(path.join(SITE, "library/index.html"), libraryHtml, "utf8");
+console.log("写入 b-Site/library/index.html");
+
+// ---------------------------------------------------------------- 代表作品页
+
+const sc = cfg.showcase;
+const byId = new Map(projects.map((p) => [p.id, p]));
+
+/** 配置条目（编号或对象）-> 作品数据；README 是来源，配置只补封面和标签 */
+function work(entry) {
+  const e = typeof entry === "string" ? { id: entry } : entry;
+  const p = byId.get(e.id);
+  if (!p) {
+    console.log(`  ! showcase 里的 ${e.id} 不在已收录的项目中，跳过`);
+    return null;
+  }
+  return {
+    ...p,
+    text: p.fullNote || p.note,
+    cover: e.cover ? assetUrl(e.cover, p.repo) : p.cover,
+    tags: e.tags || [],
+    model: sc.models.some((m) => m.id === p.id),
+  };
+}
+const works = (list) => list.map(work).filter(Boolean);
+
+const ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+
+const img = (w, cls) => w.cover
+  ? `<img class="${cls}" src="${esc(w.cover)}" alt="${esc(w.name)} 效果图" loading="lazy" decoding="async">`
+  : `<span class="${cls} no-cover" aria-hidden="true"><span class="id">${esc(w.id)}</span></span>`;
+
+/** 代表作品：大图 + 说明，左右交替 */
+const featureHtml = (w, i) => `
+        <article class="feature${i % 2 ? " flip" : ""}">
+          <a class="feature-media" href="${esc(w.url)}" tabindex="-1" aria-hidden="true">${img(w, "feature-img")}</a>
+          <div class="feature-body">
+            <span class="id">${esc(w.id)}</span>
+            <h3><a href="${esc(w.url)}">${esc(w.name)}</a></h3>
+            <p>${esc(w.text)}</p>
+            ${w.tags.length ? `<ul class="tags">${w.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+            <p class="feature-links">
+              <a class="ghost-btn" href="${esc(w.url)}">查看说明</a>
+              ${w.model ? `<button type="button" class="text-btn" data-model="${esc(w.id)}">在 3D 展台查看</button>` : ""}
+              <a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>
+            </p>
+          </div>
+        </article>`;
+
+/** 更多作品：带图小卡 */
+const tileHtml = (w) => `
+          <a class="tile" href="${esc(w.url)}">
+            ${img(w, "tile-img")}
+            <span class="tile-body">
+              <span class="id">${esc(w.id)}</span>
+              <strong>${esc(w.name)}</strong>
+              <span class="tile-note">${esc(w.note)}</span>
+            </span>
+          </a>`;
+
+/** 软件与工具：没有效果图，沿用项目库的卡片 */
+const cardHtml = (w) => `
+          <article class="card">
+            <a class="card-link" href="${esc(w.url)}">
+              <span class="id">${esc(w.id)}</span>
+              <h3>${esc(w.name)}</h3>
+              <p>${esc(w.note)}</p>
+            </a>
+            <footer class="card-foot"><span></span>
+              <a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>
+            </footer>
+          </article>`;
+
+const models = sc.models
+  .map((m) => ({ ...m, name: byId.get(m.id)?.name || m.id, url: byId.get(m.id)?.url || "" }))
+  .filter((m) => existsSync(path.join(SITE, m.file)) || console.log(`  ! 模型 ${m.file} 不存在，跳过`));
+const featured = works(sc.featured);
+const more = works(sc.more);
+const software = works(sc.software);
+
+const showTpl = await readFile(path.join(SITE, "index.template.html"), "utf8");
+const showHtml = showTpl
+  .replaceAll("/*__NOTE__*/", esc(cfg.note))
+  .replaceAll("/*__OWNER__*/", cfg.owner)
+  .replaceAll("/*__LEAD__*/", esc(sc.lead))
+  .replaceAll("/*__COUNT__*/", String(cards.length))
+  .replaceAll("/*__WORKS__*/", String(featured.length + more.length + software.length))
+  .replaceAll("/*__BUILT__*/", new Date().toISOString().slice(0, 10))
+  .replace("/*__MODELS__*/", () => JSON.stringify(models).replace(/</g, "\\u003c"))
+  .replace("<!--__MODEL_TABS__-->", () => models.map((m, i) =>
+    `<button type="button" class="stage-tab${i ? "" : " is-on"}" data-model="${esc(m.id)}" aria-pressed="${!i}">` +
+    `<span class="id">${esc(m.id)}</span><span class="stage-tab-name">${esc(m.name)}</span></button>`).join(""))
+  .replace("<!--__FEATURED__-->", () => featured.map(featureHtml).join(""))
+  .replace("<!--__MORE__-->", () => more.map(tileHtml).join(""))
+  .replace("<!--__SOFTWARE__-->", () => software.map(cardHtml).join(""));
+
+await writeFile(path.join(SITE, "index.html"), showHtml, "utf8");
+console.log(`写入 b-Site/index.html（代表作品 ${featured.length}、更多 ${more.length}、软件 ${software.length}、3D 模型 ${models.length}）`);
 
 await writeFile(
   path.join(SITE, "projects.json"),

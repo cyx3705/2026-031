@@ -14,19 +14,25 @@
 
 | 路径 | 说明 |
 | --- | --- |
-| `b-Site/index.template.html` | 首页模板，`/*__PROJECTS__*/` 等占位符由脚本填充 |
+| `b-Site/index.template.html` | 首页（代表作品页）模板，作品与 3D 展台由脚本按 `showcase` 配置填充 |
+| `b-Site/library.template.html` | 项目库模板，`/*__PROJECTS__*/` 等占位符由脚本填充 |
 | `b-Site/p.template.html` | 项目说明页模板 |
 | `b-Site/assets/` | 样式、脚本、图标（手工维护） |
+| `b-Site/assets/models/` | 首页 3D 展台的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
 | `b-Site/CNAME` | 自定义域名 `onehistory.exc0.top` |
-| `b-Site/index.html` | **生成产物**，勿手改 |
+| `b-Site/index.html` | **生成产物**，代表作品页，勿手改 |
+| `b-Site/library/index.html` | **生成产物**，项目库，勿手改 |
 | `b-Site/p/<仓库名>/index.html` | **生成产物**，每个项目一页 |
 | `b-Site/projects.json` | **生成产物**，结构化数据 |
 | `b-Code/build.mjs` | 生成脚本 |
-| `b-Code/site.config.json` | 配置：收录规则、外挂条目、人工覆盖 |
+| `b-Code/site.config.json` | 配置：收录规则、外挂条目、人工覆盖、首页作品挑选 |
+| `b-Code/models.py` | STEP → GLB 转换（本机手动跑） |
 
 ### 页面结构
 
-首页分两段：**首屏**是字标、一行统计和搜索框；往下是**项目库**，一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 `?q=` 和 `?g=`，可以直接把筛好的视图分享出去。
+**首页 `/` 是代表作品页**：首屏左边是字标、简介和统计，右边是可拖动旋转的 **3D 展台**（[model-viewer](https://modelviewer.dev/)）；往下依次是「代表作品」（大图 + 名称 + 功能说明 + 标签，左右交替）、「更多作品」（带图小卡）、「软件与工具」，最后是去项目库的入口。挑哪些作品写在 `site.config.json` 的 `showcase` 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。
+
+**项目库在 `/library/`**：一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 `?q=` 和 `?g=`，可以直接把筛好的视图分享出去；以前分享的 `/?q=…` 链接会自动转到 `/library/?q=…`。
 
 项目说明页在桌面端右侧带一个自动生成的目录（取正文的 `##` / `###`，少于两条就不显示），手机端折叠成顶部一个「目录」按钮。
 
@@ -64,6 +70,18 @@ README 正文整体渲染成该项目的说明页，其中的相对路径图片�
 2. README 标题适合做文档标题，但太长不适合做卡片标题。
 
 **把对应仓库的 README 写好之后，删掉该条覆盖即可恢复全自动。** 构建时会把仍是模板占位的仓库列在日志里。
+
+### 3D 展台的模型
+
+STEP 只在本机的项目文件夹里（各仓库的 `b-Module-GE`），Actions 拿不到，所以模型在本机转好后直接入库：
+
+```bash
+pip install cascadio
+python b-Code/models.py          # 转 MODELS 里登记的全部模型
+python b-Code/models.py 2026-012 # 只转一个
+```
+
+加一个模型：在 `models.py` 的 `MODELS` 里写上 STEP 路径和公差，再在 `site.config.json` 的 `showcase.models` 里登记文件和朝向（模型躺倒时改 `orientation`，例如 `0deg -90deg 0deg`）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。
 
 ### 本地构建
 
