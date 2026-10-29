@@ -86,8 +86,16 @@
 <td>样式、脚本、图标（手工维护）</td>
 </tr>
 <tr>
+<td><code>b-Site/assets/stage.js</code></td>
+<td>首页的 3D（three.js）：拆装动画与模型展示</td>
+</tr>
+<tr>
 <td><code>b-Site/assets/models/</code></td>
-<td>首页 3D 展台的 GLB 模型，由 <code>b-Code/models.py</code> 从本机 STEP 转出</td>
+<td>首页的 GLB 模型，由 <code>b-Code/models.py</code> 从本机 STEP 转出</td>
+</tr>
+<tr>
+<td><code>b-Site/assets/covers/</code></td>
+<td><strong>生成产物</strong>，代表作品封面（裁掉四周纯色边的 webp）</td>
 </tr>
 <tr>
 <td><code>b-Site/CNAME</code></td>
@@ -123,7 +131,14 @@
 </tr>
 </tbody></table>
 <h3>页面结构</h3>
-<p><strong>首页 <code>/</code> 是代表作品页</strong>：首屏左边是字标、简介和统计，右边是可拖动旋转的 <strong>3D 展台</strong>（<a href="https://modelviewer.dev/">model-viewer</a>）；往下依次是「代表作品」（大图 + 名称 + 功能说明 + 标签，左右交替）、「更多作品」（带图小卡）、「软件与工具」，最后是去项目库的入口。挑哪些作品写在 <code>site.config.json</code> 的 <code>showcase</code> 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。</p>
+<p><strong>首页 <code>/</code> 是代表作品页</strong>：</p>
+<ul>
+<li><strong>首屏</strong>是开放式的，没有框：三件代表作（<code>showcase.hero</code>）的三维模型直接落在页面上做<strong>拆装动画</strong>——外圈零件先拆、拆开停一会儿、再按反序装回，一轮转完自动换下一件；可以拖动旋转，拖过就停在这一件上。动画是通用的爆炸图算法（<code>assets/stage.js</code>），任何 STEP 装配都能直接用，不需要在 CAD 里另做动画。系统开了「减少动效」时只演一轮、不自转。</li>
+<li><strong>代表作品</strong>：大图 + 名称 + 功能说明 + 标签，左右交替。</li>
+<li><strong>模型展示</strong>（<code>showcase.models</code>）：选页，一页一个模型，只转不拆。</li>
+<li><strong>更多作品</strong>：瀑布流小卡；<strong>软件与工具</strong>；最后是去项目库的入口。</li>
+</ul>
+<p>挑哪些作品写在 <code>site.config.json</code> 的 <code>showcase</code> 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。封面在构建时下载下来，<strong>裁掉四周的纯色白边/黑边</strong>，按原始长宽比显示，不加框、不垫底色。</p>
 <p><strong>项目库在 <code>/library/</code></strong>：一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 <code>?q=</code> 和 <code>?g=</code>，可以直接把筛好的视图分享出去；以前分享的 <code>/?q=…</code> 链接会自动转到 <code>/library/?q=…</code>。</p>
 <p>项目说明页在桌面端右侧带一个自动生成的目录（取正文的 <code>##</code> / <code>###</code>，少于两条就不显示），手机端折叠成顶部一个「目录」按钮。</p>
 <h3>分类是算出来的，不是配出来的</h3>
@@ -155,7 +170,8 @@
 python b-Code/models.py          # 转 MODELS 里登记的全部模型
 python b-Code/models.py 2026-012 # 只转一个
 </code></pre>
-<p>加一个模型：在 <code>models.py</code> 的 <code>MODELS</code> 里写上 STEP 路径和公差，再在 <code>site.config.json</code> 的 <code>showcase.models</code> 里登记文件和朝向（模型躺倒时改 <code>orientation</code>，例如 <code>0deg -90deg 0deg</code>）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。</p>
+<p><code>models.py</code> 会在 HistoryClio 和 <code>HistorySaturn/HistoryVesta</code> 两处找项目文件夹。只有 Solid Edge 装配（<code>.asm</code>）没有 STEP 的项目，先在 Solid Edge 里打开装配另存为 <code>.stp</code>，放进该项目的 <code>b-Module-GE</code>（2025-009 沙拉售卖机就是这样来的）。</p>
+<p>加一个模型：在 <code>models.py</code> 的 <code>MODELS</code> 里写上 STEP 路径和公差，再在 <code>site.config.json</code> 的 <code>showcase.hero</code>（要拆装动画）或 <code>showcase.models</code>（只展示）里登记。模型躺倒时写 <code>&quot;up&quot;: &quot;z&quot;</code>；<code>explode</code> 选 <code>radial</code>（向四周散开）或 <code>y</code>（竖直拉开，适合筒状叠层）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。</p>
 <h3>本地构建</h3>
 <pre><code class="language-bash">npm install
 npm run build      # 生成 b-Site/index.html、p/**、projects.json
