@@ -3,7 +3,7 @@
 > Word / PowerPoint / Excel 模板的唯一权威风格说明。字标、颜色令牌、字体的定义见 [README.md](README.md)；各仓库里的 Office 模板只写引用，不复制本文内容。
 
 - 适用范围：OneHistory 体系内所有新写或改写的 Office 模板（报告、表单、演示、清单）。
-- 风格名：**浅色 · 文艺工业风**。暖白纸色、衬线字标带来「文艺」；墨色实心块、粗细两级横线、等宽感数字带来「工业」。
+- 风格名：**浅色 · 文艺工业风**。暖白纸色、衬线字标与宋体带来「文艺」；墨色实心块、粗细两级横线、等宽感数字带来「工业」。
 - 参考实现：`0000-000-Template/z-Unused/b-Office/` 下的四个文件（见文末「参考实现」）。
 - 本文件与参考实现冲突时，以本文件为准，并回头修参考实现。
 
@@ -50,10 +50,12 @@
 
 按 [README.md §4](README.md) 的 Office 一列执行：
 
-- 中文用 **Microsoft YaHei**（微软雅黑）。
-- 西文正文用 **Segoe UI**。
-- 数字、编号、英文标签、页码用 **Bahnschrift**。
+- 中文用 **宋体**（SimSun），标题与正文同一种。
+- 西文用 **Times New Roman**。
+- 数字、编号、英文标签、页码也用 **Times New Roman**（国标公文的西文与数字用法）。
 - 代码用 **Consolas**。
+- 不再出现微软雅黑、Segoe UI、Bahnschrift（`Segoe UI Symbol` 只给复选框符号，不算）。
+- 在 Word 里中西文要分开设：`w:eastAsia` 设宋体，`w:ascii` / `w:hAnsi` / `w:cs` 设 Times New Roman。PPT 同理：`a:ea` 宋体，`a:latin` / `a:cs` Times New Roman。Excel 一格只有一种字体：文字列宋体，数字列 Times New Roman。
 
 - 禁止出现 **等线（DengXian）**。见 §8.1：Word 保存时会把中文字体偷换成主题字体，必须同时修改主题。
 - 验收时导出 PDF，检查字体列表里没有 DengXian。
@@ -66,12 +68,12 @@
 
 - A4，左右边距 2.5 cm（1417 twips），上 1500 twips，下 1300 twips，页眉距 720 twips，页脚距 640 twips。
 - 页面颜色设为 canvas（`w:background` + `displayBackgroundShape`）。打印时默认不出底色，这是预期行为。
-- 正文 10.5 pt，行距约 1.33–1.4 倍（`w:line` 320–330，auto），段后 6–7 pt。雅黑本身行高偏大，不要超过 1.4 倍。
+- 正文 10.5 pt，行距约 1.33–1.4 倍（`w:line` 320–330，auto），段后 6–7 pt。宋体字面偏小、行高偏紧，不要低于 1.33 倍。
 
 ### 4.2 封面 / 首页
 
 - **顶栏**：一张无边框的两列表格，行高固定 675 twips。左格放墨色字标（`assets/logo-ink.png`，150×45 px，格宽 2442 twips）；右格里放一个与单元格同大的圆角墨色形状（「在单元格中版式」），一直到右边距。
-- **英文标签**：Bahnschrift 10–11 pt 粗体，字距加宽，墨色。例如 `RESEARCH REPORT`、`PROJECT PROPOSAL`。
+- **英文标签**：Times New Roman 10–11 pt 粗体，字距加宽，墨色。例如 `RESEARCH REPORT`、`PROJECT PROPOSAL`。
 - **标题**：报告类 32 pt 粗体；表单类 22 pt 粗体。
 - **副标题**：一句话说明，13 pt，text-2，不加竖线。
 - **信息栏（图纸标题栏式）**：表格顶部 2.25 pt 墨色粗线，底部 1 pt 墨线，内部 hairline-2 分隔。标签 8 pt text-2，值 10–11 pt 粗体；占位值用 text-2。
@@ -80,17 +82,17 @@
 ### 4.3 页眉页脚
 
 - **页眉**：左侧墨色字标，80×24 px；右侧文档名或主题，8.5 pt，text-2。不加横线。
-- **页脚**：左侧项目编号或英文文档名，Bahnschrift 7.5–8.5 pt，text-2；右侧页码，Bahnschrift 10 pt 粗体，墨色。不加横线。
+- **页脚**：左侧项目编号或英文文档名，Times New Roman 7.5–8.5 pt，text-2；右侧页码，Times New Roman 10 pt 粗体，墨色。不加横线。
 
 ### 4.4 标题
 
 | 级别 | 样式 | 规格 |
 |---|---|---|
-| 一级（报告类） | 标题 1 | 17 pt 粗体；编号 `01` 为 Bahnschrift、accent；标题后接墨色条；段前 32 pt、段后 12 pt |
+| 一级（报告类） | 标题 1 | 17 pt 粗体；编号 `01` 为 Times New Roman、accent；标题后接墨色条；段前 32 pt、段后 12 pt |
 | 一级（无编号） | 标题 1（无编号） | 同上，但不带编号。用于摘要、参考资料、附录 |
 | 一级（前置页） | 墨条标题 | 同为 17 pt，带墨色条，但**不进目录**。用于修订记录、审阅与分发、目录 |
-| 一级（表单类） | 表单分节 | 13 pt 粗体；字母 `A B C…` 为 Bahnschrift、accent；标题后接墨色条 |
-| 二级 | 标题 2 | 13.5 pt 粗体；编号 `1.1` 为 Bahnschrift、墨色；不加线 |
+| 一级（表单类） | 表单分节 | 13 pt 粗体；字母 `A B C…` 为 Times New Roman、accent；标题后接墨色条 |
+| 二级 | 标题 2 | 13.5 pt 粗体；编号 `1.1` 为 Times New Roman、墨色；不加线 |
 
 - 同一份文档里，所有一级标题（包括墨条标题）必须同字号、同字体。
 - **墨色条**：标题后面接一个**嵌入型圆角墨色形状**，高约为标题字号的 1.24 倍（17 pt 标题 → 21 pt），下沉到与汉字字身居中，长度一直到右边距。实现方式见 §8.2。
@@ -114,7 +116,7 @@
 | 分页 | 6 行以内的表整表不拆页（非末行段落设 `keepNext`）；长表允许跨页；每行 `cantSplit` |
 | 对齐 | 编号、★ 这类标记居中；金额右对齐；其他左对齐 |
 
-- 合计行的数字用 Bahnschrift 粗体。
+- 合计行的数字用 Times New Roman 粗体。
 - 签字区：标签行加空白行成组排列；首组顶部 2.25 pt ink，组与组之间 hairline-2，最后 0.5 pt ink 收口；整块不拆页。
 
 ### 4.6 其他元素
@@ -128,8 +130,8 @@
 | 图片占位 | 单格表格（固定行高，无边框）里放一个同大的圆角框：1 pt hairline-2 边、canvas 底，框内居中写「图片占位 · 建议宽度 16 cm」，text-2 |
 | 题注 | 9 pt，text-2，左对齐，格式为「图 3-1　〔图题〕」「表 4-1　〔表题〕」 |
 | 无序列表 | 符号 `■`，6 pt，墨色 |
-| 有序列表 | `1.`，Bahnschrift 粗体，墨色 |
-| 参考文献 | `[1]`，Bahnschrift，墨色 |
+| 有序列表 | `1.`，Times New Roman 粗体，墨色 |
+| 参考文献 | `[1]`，Times New Roman，墨色 |
 | 勾选项 | 使用 Word 内容控件复选框（☐ / ☒，Segoe UI Symbol），不要手打括号 |
 
 ### 4.7 自动填充标记
@@ -152,14 +154,14 @@
   - 底部信息栏：顶部粗墨线，三栏分别为制作人、日期、编号，栏间用 hairline-2 竖线。
 - **章节页**（墨色背景）：
   - 左上角放纸色字标。
-  - 章节号 `01`：Bahnschrift 110 pt，accent-dark。
+  - 章节号 `01`：Times New Roman 110 pt，accent-dark。
   - 标题 44 pt 粗体，canvas 色；副标题 18 pt，text-2-dark。
   - 右下角写 `01 / 05`。
 - **内容页**（浅色）：
   - 标题 28 pt 粗体，后接圆角墨色条（高 0.46 in），一直到右边距，与 Word 的「标题 1」同一做法。标题上方不加横线。
-  - 章节标签反白写在墨色条右端：`01` 用 Bahnschrift、accent-dark，后面接章节名，canvas 色，13 pt。
+  - 章节标签反白写在墨色条右端：`01` 用 Times New Roman、accent-dark，后面接章节名，canvas 色，13 pt。
   - 墨色条是独立形状，左端按标题长度算出。**改了标题要把墨色条的左端拖到标题后面**（留约 0.3 in 间距）。
-  - 左下角放墨色小字标，右下角放 Bahnschrift 页码。
+  - 左下角放墨色小字标，右下角放 Times New Roman 页码。
   - 目录页同样用「目录 + 墨色条」，条里写「共 N 部分」；各部分编号用 accent。
 - **表格**：同 §4.5，表头白底加粗横线，不画竖线。
 - **常用版式**：分工表、里程碑（圆角墨色小方块节点）、图文两栏、三栏块、大数字指标、2×2 块、前后对比（「改进后」的占位框用墨色边强调）、难点表、解决路径（圆角流程块，末步用 2.25 pt 墨色边收尾）、甘特图（圆角墨色条）、清单两栏、总结页。
@@ -170,12 +172,12 @@
 
 ## 6. Excel
 
-- 字体：微软雅黑 10 pt；数字列用 Bahnschrift。关闭网格线。
+- 字体：宋体 10 pt；数字列用 Times New Roman。关闭网格线。
 - **第 1 行**：左侧放墨色字标（140×42 px），右侧合并单元格上盖一个同宽的圆角墨色形状（上下各缩 3 pt，随单元格移动和缩放），作为墨色条；单元格本身不填色。第 3 行写标题，16 pt 粗体，中英并列。
 - **标题栏**：一行标签（9 pt，text-2）加一行值（10 pt）。顶部用 thick 墨色边框，底部 medium，字段之间 hairline-2 竖线。标签只写中文，避免被截断。
 - **列头**：按 §4.5，白底，顶部 thick 墨色，底部 thin 墨色，粗体墨色，自动换行。
 - **数据行**：行间 hairline-2，列间 hairline-2 竖线（清单类表格需要竖线来对齐）。
-- **合计**：计算列必须写公式，例如 `=IF(OR(I10="",O10=""),"",I10*O10)`。合计行上下 medium 墨线，合计值用 Bahnschrift 粗体、accent。
+- **合计**：计算列必须写公式，例如 `=IF(OR(I10="",O10=""),"",I10*O10)`。合计行上下 medium 墨线，合计值用 Times New Roman 粗体、accent。
 - **填写说明**：表格末尾一行 9 pt text-2，说明哪些列要填、哪些列自动计算。
 - **打印**：A4 横向，缩放到一页宽，列头设为每页重复，冻结窗格在列头下方。
 - 数据校验：固定取值的列（如 RoHS 填 Y / N）用下拉。
@@ -196,12 +198,12 @@
 
 Word 另存时会把 `docDefaults` 里的中文字体改写成「跟随主题」（`w:eastAsiaTheme="minorEastAsia"`），而主题默认的中文字体是等线。结果所有没有单独指定字体的文字都会变成等线。
 
-修法：生成后改 `word/theme/theme1.xml`，把 `a:latin` 改为 Segoe UI，把 `a:ea` 和 `script="Hans"` 的字体改为 Microsoft YaHei。
+修法：生成后改 `word/theme/theme1.xml`，把 `a:latin` 改为 Times New Roman，把 `a:ea` 和 `script="Hans"` 的字体改为宋体。
 
 ```js
-theme.replace(/<a:latin typeface="[^"]*"/g, '<a:latin typeface="Segoe UI"')
-     .replace(/<a:ea typeface="[^"]*"/g, '<a:ea typeface="Microsoft YaHei"')
-     .replace(/<a:font script="Hans" typeface="[^"]*"/g, '<a:font script="Hans" typeface="Microsoft YaHei"');
+theme.replace(/<a:latin typeface="[^"]*"( panose="[^"]*")?/g, '<a:latin typeface="Times New Roman" panose="02020603050405020304"')
+     .replace(/<a:ea typeface="[^"]*"/g, '<a:ea typeface="宋体"')
+     .replace(/<a:font script="Hans" typeface="[^"]*"/g, '<a:font script="Hans" typeface="宋体"');
 ```
 
 ### 8.2 标题墨色条与圆角块（Word）
@@ -243,7 +245,7 @@ docx-js 不支持在样式上挂编号。做法是生成后改 XML：
 ## 9. 验收清单
 
 - [ ] Word 渲染后逐页看过，没有空白页、孤立的表头或签字区。
-- [ ] PDF 字体列表里没有 DengXian。
+- [ ] PDF 字体列表里没有 DengXian，也没有微软雅黑、Segoe UI、Bahnschrift；只有宋体、Times New Roman（和代码的 Consolas）。
 - [ ] 同一文档内一级标题同字号、同字体。
 - [ ] 标题最多两级，目录只收 1–2 级。
 - [ ] 表格外没有横线，表头为白底加粗横线。

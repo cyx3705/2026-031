@@ -67,14 +67,20 @@
 
 ## 4. 字体
 
+整套用衬线体（2026-11-02 起）：中文宋体，西文与数字按国标公文惯例用罗马体 Times New Roman。宋体呼应衬线字标与书页母题。
+
 | 用途 | 网站 | Office | 说明 |
 |---|---|---|---|
-| 中文与正文 | Noto Sans SC | Microsoft YaHei | Office 里可变字体不可靠，发给别人也可能缺字体 |
-| 西文正文 | Noto Sans SC 自带 → Segoe UI | Segoe UI | |
-| 数字、编号、英文标签 | Outfit → Bahnschrift | Bahnschrift | 两者都偏几何；Bahnschrift 为 Windows 自带 |
-| 代码 | Consolas → 等宽 | Consolas | |
+| 中文（标题与正文） | Noto Serif SC（思源宋体） | 宋体（SimSun） | Office 里可变字体不可靠、发给别人也可能缺字体，故用系统自带的宋体 |
+| 西文（标题与正文） | Times New Roman → Tinos | Times New Roman | Tinos 与 Times New Roman 度量一致，给没有 TNR 的 Android / Linux 兜底 |
+| 数字、编号、英文标签 | Times New Roman → Tinos | Times New Roman | 同上；不再用几何体 |
+| 行内代码（路径、文件名） | 同正文罗马体，靠 `code` 底色区分 | — | |
+| 多行代码块 | Consolas → 等宽 | Consolas | 唯一保留等宽的地方，缩进要对齐 |
 
-- 网站字体经 Google Fonts 加载，字重 400 / 500 / 600 / 700。
+- 网站字体经 Google Fonts 加载：Noto Serif SC 400 / 500 / 600 / 700，Tinos 400 / 700 / 400 斜体。字体栈写作 `"Times New Roman", Tinos, "Noto Serif SC", …`：罗马体在前，西文和数字取罗马体，中文落到宋体。
+- 罗马体的数字比几何体矮，同字号显小：网站上编号、页码等数字比原先大 1–1.5 px。
+- 标题不再收紧字距（衬线体收紧会挤），字重 700。
+- 宋体横画细：网站深色主题正文字重 500；Office 只用浅色，不需要。
 
 ## 5. 语气
 
