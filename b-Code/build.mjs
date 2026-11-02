@@ -16,6 +16,7 @@
  */
 
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { setDefaultResultOrder } from "node:dns";
 import path from "node:path";
@@ -267,6 +268,17 @@ if (DRY) {
 
 // ---------------------------------------------------------------- 生成
 
+// 样式与脚本地址带上内容哈希（?v=xxxxxxxx）。文件名不变时浏览器和 Pages 的 CDN 会继续用缓存，
+// 改了样式线上也要等缓存过期才看得到；内容一变哈希就变，刷新即生效
+const ASSETS = ["site.css", "site.js", "stage.js"];
+const assetVer = {};
+for (const f of ASSETS) {
+  assetVer[f] = createHash("sha1").update(await readFile(path.join(SITE, "assets", f))).digest("hex").slice(0, 8);
+}
+const stamp = (html) => ASSETS.reduce(
+  (h, f) => h.replaceAll(`"/assets/${f}"`, `"/assets/${f}?v=${assetVer[f]}"`), html);
+
+
 const tpl = await readFile(path.join(SITE, "library.template.html"), "utf8");
 const libraryHtml = tpl
   .replaceAll("/*__NOTE__*/", esc(cfg.note))
@@ -277,7 +289,7 @@ const libraryHtml = tpl
   .replaceAll("/*__BUILT__*/", new Date().toISOString().slice(0, 10));
 
 await mkdir(path.join(SITE, "library"), { recursive: true });
-await writeFile(path.join(SITE, "library/index.html"), libraryHtml, "utf8");
+await writeFile(path.join(SITE, "library/index.html"), stamp(libraryHtml), "utf8");
 console.log("写入 b-Site/library/index.html");
 
 // ---------------------------------------------------------------- 代表作品页
@@ -431,7 +443,7 @@ const showHtml = showTpl
   .replace("<!--__MORE__-->", () => more.map(tileHtml).join(""))
   .replace("<!--__SOFTWARE__-->", () => software.map(cardHtml).join(""));
 
-await writeFile(path.join(SITE, "index.html"), showHtml, "utf8");
+await writeFile(path.join(SITE, "index.html"), stamp(showHtml), "utf8");
 console.log(`写入 b-Site/index.html（首屏动画 ${hero.length}、模型选页 ${shelf.length}、代表作品 ${featured.length}、更多 ${more.length}、软件 ${software.length}）`);
 
 await writeFile(
@@ -462,7 +474,7 @@ for (const p of projects) {
     .replaceAll("/*__ID__*/", esc(p.id))
     .replaceAll("/*__REPO__*/", esc(p.repo))
     .replace("/*__BODY__*/", p.html);
-  await writeFile(path.join(dir, "index.html"), html, "utf8");
+  await writeFile(path.join(dir, "index.html"), stamp(html), "utf8");
   n++;
 }
 console.log(`写入 ${n} 个说明页`);
