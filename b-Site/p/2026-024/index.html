@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026-024 HistoryMinerva · OneHistory</title>
-  <meta name="description" content="CAD 转换模块：Solid Edge 转 SolidWorks、属性整备改名与零件采购打包">
+  <meta name="description" content="CAD 转换模块：Solid Edge 转 SolidWorks、批量改名与零件采购打包">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -55,14 +55,14 @@
       <article class="doc" id="doc">
 <h1>HistoryMinerva</h1>
 <blockquote>
-<p>CAD 转换模块：Solid Edge 转 SolidWorks、属性整备改名与零件采购打包</p>
+<p>CAD 转换模块：Solid Edge 转 SolidWorks、批量改名与零件采购打包</p>
 </blockquote>
 <h2>定位</h2>
 <p>HistoryMinerva 是注册到 HistoryVulcan 的单一 CAD 转换模块，在 Aurora 中央页面 <code>Minerva</code> 上提供五种转换：</p>
 <ul>
 <li><code>.par → .SLDPRT</code>、<code>.asm → .SLDASM</code>；</li>
 <li><code>.SLDASM</code> 特征整备（导出 XT → 特征识别 → 按源层级重建）；</li>
-<li><code>.SLDASM</code> 属性整备（按装配层级改名、写属性）；</li>
+<li><code>.SLDASM</code> 批量改名（按装配层级改文件名，属性由 HistoryStrenua 写）；</li>
 <li><code>.SLDASM</code> 整体打包：在总装旁生成 <code>&lt;前缀&gt; 零件采购/</code>，含两张 BOM、同名 PNG 与机加件 DWG / PDF / STEP。</li>
 </ul>
 <p>转换由单一 <code>HistoryMinerva.Worker.exe</code>（x64 STA）执行。源 CAD 文件保持只读，产物写入来源目录下的 <code>XT/</code>、<code>SW/</code> 与 <code>&lt;前缀&gt; 零件采购/</code>。</p>
