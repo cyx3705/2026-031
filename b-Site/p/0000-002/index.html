@@ -65,11 +65,11 @@
 <p>本模板从 <code>0000-001-AIReady</code> 派生，内含一个能直接跑通的示范模块 <code>HistoryExemplum</code>（域 <code>exemplum</code>，
 一页 Aurora 页面、三条示范指令、离线测试含宿主装载冒烟）。新模块不必再去别的模块仓里复制。</p>
 <ol>
-<li><p>建仓：<code>janus.proj.create name=2026-0xx-History&lt;神名&gt; base=0000-002-ModuleReady</code>。</p>
+<li><p>建仓：<code>janus.proj.create name=2026-0xx-&lt;模块名&gt; base=0000-002-ModuleReady</code>。</p>
 </li>
 <li><p>在新仓主树实例化（机械改名、改身份，跑完脚本删掉自己）：</p>
 <pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\New-ModuleFromTemplate.ps1 `
-    -Name History&lt;神名&gt; -Description &#39;&lt;一句话描述&gt;&#39; [-Domain &lt;域&gt;] [-PageTitle &lt;页面标题&gt;]
+    -Name &lt;模块名，可带或不带 History 前缀&gt; -Description &#39;&lt;一句话描述&gt;&#39; [-Domain &lt;域&gt;] [-PageTitle &lt;页面标题&gt;]
 </code></pre>
 <p>构建、测试通过后把这次实例化提交成一个脚手架提交，让之后的开发工作区只装业务改动。</p>
 </li>

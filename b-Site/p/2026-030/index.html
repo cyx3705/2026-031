@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>2026-030 HistoryApollo · OneHistory</title>
-  <meta name="description" content="模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令">
+  <title>2026-030 Ratio · OneHistory</title>
+  <meta name="description" content="推理资源模块：本机推理服务与远端模型统一接成宿主指令">
   <meta name="color-scheme" content="dark light">
   <link rel="icon" href="/assets/favicon.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch.png">
@@ -48,20 +48,22 @@
       <a href="/library/">项目库</a>
       <span class="sep">/</span>
       <span class="id">2026-030</span>
-      <span class="crumb-name">HistoryApollo</span>
+      <span class="crumb-name">Ratio</span>
     </nav>
 
     <div class="page-grid">
       <article class="doc" id="doc">
-<h1>HistoryApollo</h1>
+<h1>Ratio</h1>
 <blockquote>
-<p>模型调用模块：把 OpenAI 兼容的对话补全接成宿主指令</p>
+<p>推理资源模块：本机推理服务与远端模型统一接成宿主指令</p>
 </blockquote>
 <h2>定位</h2>
-<p>HistoryApollo 把 OpenAI 兼容的对话补全接口变成 HistoryVulcan 指令，首发内置 DeepSeek，可按需联网搜索（博查），
-可附本机图片交给识图模型（内置通义千问），每一轮往返实时写进控制台。</p>
+<p>Ratio（拉丁语「推理、理性」；原名 HistoryApollo，0.6.0 改名）把本机与远端的推理资源变成 HistoryVulcan 指令：
+本机统一推理服务（WSL 里的 llama-server 加 C++ 代理，0.7.0 起源码在本仓 <code>b-Code-Service/</code>）是供应商 <code>local</code>，免密钥，
+启停与换模走 <code>ratio.local.*</code>；远端内置 DeepSeek，可按需联网搜索（博查），可附本机图片交给识图模型（内置通义千问）。
+每一轮往返实时写进控制台。</p>
 <ul>
-<li>它只做一件事——<strong>把一次模型调用说清楚</strong>。</li>
+<li>它只做一件事——<strong>把一次模型调用说清楚</strong>，外加本机推理服务的状态、启停与换模。</li>
 <li>会话历史、提示词工程、重试编排和逐字流式输出都属于调用方，不在这里。</li>
 </ul>
 <h2>概况</h2>
@@ -82,7 +84,7 @@
 </tr>
 <tr>
 <td>指令域</td>
-<td><code>apollo</code></td>
+<td><code>ratio</code></td>
 </tr>
 <tr>
 <td>界面</td>
@@ -94,7 +96,7 @@
 </tr>
 <tr>
 <td>版本与宿主下限</td>
-<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Code/HistoryApollo/HistoryApolloVersion.props"><code>HistoryApolloVersion.props</code></a></td>
+<td><a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Code/Ratio/RatioVersion.props"><code>RatioVersion.props</code></a></td>
 </tr>
 </tbody></table>
 <h2>能力</h2>
@@ -108,32 +110,40 @@
 </thead>
 <tbody><tr>
 <td><code>chat</code></td>
-<td><code>apollo.chat.ask</code> / <code>send</code></td>
+<td><code>ratio.chat.ask</code> / <code>send</code></td>
 <td>单轮提问 / 完整消息数组；<code>web=true</code> 时模型自行决定是否联网；<code>images=</code> 附图走识图供应商</td>
 </tr>
 <tr>
 <td><code>model</code></td>
-<td><code>apollo.model.list</code></td>
+<td><code>ratio.model.list</code></td>
 <td>模型清单</td>
 </tr>
 <tr>
 <td><code>provider</code></td>
-<td><code>apollo.provider.list</code> / <code>use</code> / <code>config</code></td>
+<td><code>ratio.provider.list</code> / <code>use</code> / <code>config</code></td>
 <td>供应商、默认模型与接入点</td>
 </tr>
 <tr>
 <td><code>key</code></td>
-<td><code>apollo.key.set</code> / <code>clear</code></td>
+<td><code>ratio.key.set</code> / <code>clear</code></td>
 <td>密钥读写（回执只出掩码）</td>
 </tr>
+<tr>
+<td><code>local</code></td>
+<td><code>ratio.local.status</code> / <code>start</code> / <code>stop</code> / <code>use</code></td>
+<td>本机推理服务：状态与可切换模型 / 启动 / 停止（先存 KV 缓存）/ 换模</td>
+</tr>
 </tbody></table>
-<pre><code>apollo.key.set token=&lt;密钥&gt; provider=deepseek
-apollo.chat.ask prompt=用一句话解释张量
-apollo.chat.ask prompt=&quot;CDQ2B20-10D 是哪个品牌的气缸&quot; web=true
-apollo.key.set token=&lt;密钥&gt; provider=qwen
-apollo.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
+<pre><code>ratio.local.status
+ratio.local.use qwen3.5:35b-a3b-q4_K_M
+ratio.chat.ask prompt=用一句话解释张量 provider=local
+ratio.key.set token=&lt;密钥&gt; provider=deepseek
+ratio.chat.ask prompt=用一句话解释张量
+ratio.chat.ask prompt=&quot;CDQ2B20-10D 是哪个品牌的气缸&quot; web=true
+ratio.key.set token=&lt;密钥&gt; provider=qwen
+ratio.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 </code></pre>
-<p>参数读注册自描述：<code>diana.docs.read domain=apollo</code>（宿主 6.1.0 起没有消费文档）；返回载荷、密钥与取舍见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<p>参数读注册自描述：<code>diana.docs.read domain=ratio</code>（宿主 6.1.0 起没有消费文档）；返回载荷、密钥与取舍见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
 <h2>入口</h2>
 <table>
 <thead>
@@ -164,12 +174,16 @@ apollo.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 </tr>
 </thead>
 <tbody><tr>
-<td><code>b-Code/HistoryApollo/</code></td>
+<td><code>b-Code/Ratio/</code></td>
 <td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
 </tr>
 <tr>
-<td><code>b-Code/HistoryApollo.Tests/</code></td>
+<td><code>b-Code/Ratio.Tests/</code></td>
 <td>自动验证</td>
+</tr>
+<tr>
+<td><code>b-Code-Service/</code></td>
+<td>本机推理服务源码（WSL 脚本、配置、C++ 代理与 KV 扩展），随 DLL 发布、启动时部署到运行区</td>
 </tr>
 <tr>
 <td><code>b-Code/</code></td>
@@ -185,19 +199,21 @@ apollo.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 </tr>
 </tbody></table>
 <h2>构建与验证</h2>
-<pre><code class="language-powershell">dotnet build .\b-Code\HistoryApollo\HistoryApollo.csproj -c Release -p:NuGetAudit=false
-dotnet run --project .\b-Code\HistoryApollo.Tests\HistoryApollo.Tests.csproj -c Release -p:NuGetAudit=false
+<pre><code class="language-powershell">dotnet build .\b-Code\Ratio\Ratio.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\Ratio.Tests\Ratio.Tests.csproj -c Release -p:NuGetAudit=false
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
 </code></pre>
-<p>自动验证全程离线：对话用例走假传输，不出网、不计费。需要联网实调时设 <code>APOLLO_LIVE=1</code> 再跑测试。</p>
+<p>自动验证全程离线：对话用例走假传输，不出网、不计费。需要联网实调时设 <code>RATIO_LIVE=1</code> 再跑测试。</p>
 <h2>开发与发布</h2>
 <p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
 <code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
-本仓不自行发布；<code>eng/Build-HistoryApolloPackage.ps1</code> 只用于本地候选构建。</p>
+本仓不自行发布；<code>eng/Build-RatioPackage.ps1</code> 只用于本地候选构建。</p>
 <h2>要点</h2>
 <ul>
-<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\ModuleData\HistoryApollo\providers.json</code>（宿主给的数据目录），或由环境变量提供（优先）：
-DeepSeek 为 <code>APOLLO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code>，博查为 <code>APOLLO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>，通义千问为 <code>APOLLO_QWEN_KEY</code> / <code>QWEN_API_KEY</code>。</li>
+<li>密钥只落在本机 <code>%AppData%\HistoryVulcan\ModuleData\Ratio\providers.json</code>（宿主给的数据目录），或由环境变量提供（优先）：
+DeepSeek 为 <code>RATIO_DEEPSEEK_KEY</code> / <code>DEEPSEEK_API_KEY</code>，博查为 <code>RATIO_BOCHA_KEY</code> / <code>BOCHA_API_KEY</code>，通义千问为 <code>RATIO_QWEN_KEY</code> / <code>QWEN_API_KEY</code>。
+改名后首次装载会把旧 <code>ModuleData\HistoryApollo\providers.json</code> 复制过来，不必重配。</li>
+<li>本机推理服务被 Echo、Codex 和本模块共用，同一时间只装一个模型：换模、停服对所有客户端生效。运行区是 F 盘特例 <code>F:\ModuleServicesData\Ratio</code>（编译产物、CUDA 运行库、KV 快照、状态与日志），可用 <code>RATIO_LOCAL_ROOT</code> 改；模型统一在 <code>F:\Models</code>。</li>
 <li><strong>密钥不入库。</strong> 项目合同检查会扫描全仓，拒绝任何形如 <code>sk-&lt;长串&gt;</code> 的真实密钥。</li>
 <li>嵌套调用的过程输出也逐轮进控制台；消费方不要再从载荷复述调用过程。</li>
 </ul>

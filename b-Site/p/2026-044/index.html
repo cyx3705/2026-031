@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-Hans" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-044 Norma · OneHistory</title>
+  <meta name="description" content="机械设计经验公式库：按标准条款自描述的公式与查表，供 AI 调用与扩展">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Tinos:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css?v=b7373f43">
+  <script>
+    (function () {
+      var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+</head>
+<body class="is-doc">
+  <a class="skip" href="#doc">跳到正文</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="nav-logo" href="/" aria-label="OneHistory 首页">
+        <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
+        <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
+      </a>
+      <span class="grow"></span>
+      <a class="nav-link" href="/">作品</a>
+      <a class="nav-link" href="/library/">项目库</a>
+      <a class="nav-link" href="https://github.com/cyx3705/2026-044" rel="noopener">GitHub</a>
+      <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <nav class="crumb" aria-label="面包屑">
+      <a href="/library/">项目库</a>
+      <span class="sep">/</span>
+      <span class="id">2026-044</span>
+      <span class="crumb-name">Norma</span>
+    </nav>
+
+    <div class="page-grid">
+      <article class="doc" id="doc">
+<h1>Norma</h1>
+<blockquote>
+<p>机械设计经验公式库：按标准条款自描述的公式与查表，供 AI 调用与扩展</p>
+</blockquote>
+<h2>定位</h2>
+<p>把机械设计里的经验公式和查表做成一条条可调用的指令，每条都带着自己的出处条款、变量、单位和适用范围，AI 通过自描述就能找到、调用和核对。目标是取代 R 机械设计这类老软件：切面统一，扩展只需按同一格式加一条公式。</p>
+<ul>
+<li>不做建模、出图和标注，那是 Strenua（SolidWorks）与 SolidEdgeMCP 的事；本模块只算数、查表、给判据。</li>
+<li>不搬没有许可证或限制非商业的第三方代码和表格数据；公式按标准原文自己实现，第三方项目只当核对样例。</li>
+</ul>
+<h2>概况</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>角色</td>
+<td>宿主模块（<code>kind=module</code>）</td>
+</tr>
+<tr>
+<td>指令域</td>
+<td><code>norma</code></td>
+</tr>
+<tr>
+<td>界面</td>
+<td>Aurora 描述式页面（场景 <code>HistoryNorma</code>）</td>
+</tr>
+<tr>
+<td>MCP 投影</td>
+<td><code>readonly</code></td>
+</tr>
+<tr>
+<td>版本与宿主下限</td>
+<td><a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Code/Norma/NormaVersion.props"><code>NormaVersion.props</code></a></td>
+</tr>
+</tbody></table>
+<h2>能力</h2>
+<p>每条计算是一条只读指令 <code>norma.&lt;类&gt;.&lt;方法&gt;</code>，全部投影到 MCP。</p>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>齿轮</td>
+<td><code>gear.geometry</code> 几何、<code>gear.contact</code> 接触强度、<code>gear.bending</code> 弯曲强度（ISO 6336 方法 B）、<code>gear.diameter</code> / <code>gear.module</code> 初估</td>
+</tr>
+<tr>
+<td>轴与疲劳</td>
+<td><code>drive.torque</code>、<code>shaft.torsion</code>、<code>shaft.combined</code>、<code>fatigue.endurance</code>、<code>fatigue.safety</code>、<code>fatigue.shaft</code></td>
+</tr>
+<tr>
+<td>连接</td>
+<td><code>key.flat</code>、<code>bolt.thread</code> / <code>torque</code> / <code>preload</code> / <code>tension</code> / <code>friction</code> / <code>shear</code>、<code>weld.fillet</code>、<code>fit.press</code></td>
+</tr>
+<tr>
+<td>传动</td>
+<td><code>screw.drive</code>、<code>belt.geometry</code>、<code>chain.geometry</code></td>
+</tr>
+<tr>
+<td>支承与弹性件</td>
+<td><code>bearing.load</code> / <code>life</code> / <code>required</code> / <code>static</code>、<code>spring.compression</code> / <code>wire</code></td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>fit.it</code> 标准公差、<code>beam.deflection</code> 梁</td>
+</tr>
+<tr>
+<td>目录</td>
+<td><code>norma.formula.list [topic=]</code>、<code>norma.formula.show id=</code></td>
+</tr>
+</tbody></table>
+<p>页面只有一张目录表，加一个按钮把目录列到控制台。</p>
+<p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；每条都带出处、适用范围、参数的符号/单位/范围。自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
+<h2>入口</h2>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/cyx3705/2026-044/blob/HEAD/AGENTS.md"><code>AGENTS.md</code></a></td>
+<td>AI 工作合同：读取顺序、真值判定、边界</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-044/blob/HEAD/project.manifest.json"><code>project.manifest.json</code></a></td>
+<td>项目身份、活动目录、文档与命令</td>
+</tr>
+<tr>
+<td><a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a></td>
+<td>唯一的长期文档：模板规则与模块起步约定</td>
+</tr>
+</tbody></table>
+<h2>目录</h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>b-Code/Norma/</code></td>
+<td>模块源码、manifest 与 <code>eng/</code> 构建脚本</td>
+</tr>
+<tr>
+<td><code>b-Code/Norma.Tests/</code></td>
+<td>离线自动验证（含宿主装载冒烟）</td>
+</tr>
+<tr>
+<td><code>b-Code/</code></td>
+<td>项目合同检查</td>
+</tr>
+<tr>
+<td><code>b-Office/</code></td>
+<td>唯一长期文档 <code>current/现行约定.md</code></td>
+</tr>
+<tr>
+<td><code>z-Publish/</code></td>
+<td>正式快照与 <code>history/</code> 归档，由宿主管线写入</td>
+</tr>
+</tbody></table>
+<h2>构建与验证</h2>
+<pre><code class="language-powershell">dotnet build .\b-Code\Norma\Norma.csproj -c Release -p:NuGetAudit=false
+dotnet run --project .\b-Code\Norma.Tests\Norma.Tests.csproj -c Release -p:NuGetAudit=false
+powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
+</code></pre>
+<p>离线测试最后一组用宿主真正的 <code>ModuleHost</code> 装一遍打好的包：版本漂移、manifest 写错在宿主那边
+都是静默跳过整个模块，这组用例在出包前拦住它们。</p>
+<h2>开发与发布</h2>
+<p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
+<code>vulcan.dev.start</code> → <code>vulcan.dev.submit</code>（候选构建并热装送审）→ <code>vulcan.dev.finish</code>（批准后并回并写入 <code>z-Publish</code>）。
+本仓不自行发布；<code>eng/Build-NormaPackage.ps1</code> 只用于本地候选构建。</p>
+<h2>要点</h2>
+<ul>
+<li>页面 owner 由指令域推出（<code>norma</code> → <code>HistoryNorma</code>），合同检查与离线测试都守着这条。</li>
+<li>版本只改 <code>NormaVersion.props</code>，再同步两份 manifest；三处不一致构建前就失败。</li>
+<li>每条公式都要有编号、出处条款、输入输出变量与单位、适用范围；缺一项就不算登记完成。</li>
+</ul>
+<h2>保留内容</h2>
+<h3>logo与作者</h3>
+<ul>
+<li>作者：pinavia</li>
+<li><img src="https://github.com/cyx3705/2026-044/raw/HEAD/Logo.png" alt="logo"></li>
+</ul>
+<h3>学习许可与权利保留</h3>
+<ul>
+<li>本项目允许个人、学校和研究者进行非商业性的学习、研究和引用。</li>
+<li>未经著作权人书面许可，不得将项目内容用于商业开发、产品制造、商业服务、商业宣传、投标交付、毕业设计成品交付或再授权。</li>
+<li>不得删除作者、来源、版本历史和第三方许可证声明，不得将本项目或其衍生成果宣称为与作者无关的原创项目。</li>
+<li>软件源码适用 <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/">PolyForm Noncommercial 1.0.0</a>；机械模型、PCB、原理图、图片、文档、Unity 工程和其他非软件资料适用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>。</li>
+<li>SE、SW、STEP/STP 及其他三维模型仅允许个人或学校进行非商业学习、评审和研究；未经著作权人书面许可，不得用于加工、打样、制造、销售、量产、投标、产品交付、商业宣传、改作或再授权。</li>
+<li>第三方组件、模板、元件库、外购件模型和工具仍受其原始许可证约束；本声明不扩大作者对第三方内容的权利。</li>
+</ul>
+<p>商业使用、产品化、公司内部长期使用、转让或排他性授权需另行取得著作权人的书面许可。</p>
+
+      </article>
+
+      <aside class="rail">
+        <details class="toc" id="toc">
+          <summary>
+            <span>目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          </summary>
+          <nav class="toc-list" id="toc-list" aria-label="页面目录"></nav>
+        </details>
+      </aside>
+    </div>
+
+    <p class="page-end">
+      <a href="/library/">← 返回项目库</a>
+      <a href="https://github.com/cyx3705/2026-044" rel="noopener">GitHub 仓库 ↗</a>
+    </p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <p class="foot-note">本页内容由 <a href="https://github.com/cyx3705/2026-044" rel="noopener">cyx3705/2026-044</a> 的 README 自动生成。</p>
+      <p class="foot-meta">
+        <span>OneHistory</span>
+        <span class="dot"></span>
+        <a href="https://exc0.top" rel="noopener">exc0</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js?v=9513e68c"></script>
+</body>
+</html>
