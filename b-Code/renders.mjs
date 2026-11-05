@@ -141,8 +141,11 @@ window.render = async (file, up, view, margin) => {
   const scene = new THREE.Scene(); scene.add(root);
   const box = new THREE.Box3().setFromObject(root), c = box.getCenter(new THREE.Vector3());
   const R = box.getSize(new THREE.Vector3()).length() / 2;
-  const sx = view === "SW" ? -1 : 1;                       // SE：从右前上方看；SW：从左前上方看
-  const dir = new THREE.Vector3(sx, 0.8, 1).normalize();
+  // SE：从右前上方看；SW：从左前上方看；hero：首屏 3D 动画的初始视角（stage.js 的方位 38°、天顶角 68°）
+  const sx = view === "SW" ? -1 : 1;
+  const dir = view === "hero"
+    ? new THREE.Vector3(Math.sin(68 * Math.PI / 180) * Math.sin(38 * Math.PI / 180), Math.cos(68 * Math.PI / 180), Math.sin(68 * Math.PI / 180) * Math.cos(38 * Math.PI / 180))
+    : new THREE.Vector3(sx, 0.8, 1).normalize();
   const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, R * 0.01, R * 10);
   cam.position.copy(c).addScaledVector(dir, R * 4); cam.lookAt(c); cam.updateMatrixWorld();
   // 按顶点在画面里的实际范围取景，模型撑满 4 : 3

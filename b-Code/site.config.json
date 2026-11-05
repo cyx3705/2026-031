@@ -66,12 +66,12 @@
     ],
     "_comment_renders": [
       "代表作品的展示图：由 b-Code/renders.mjs 从 GLB 渲染成等轴测 6 阶图（深浅两版），本机手动跑，产物入库到 assets/renders/。",
-      "有渲染图的作品不再用 README 截图做封面。view 是视角：SE 从右前上方看，SW 从左前上方看；up 同上（-y 表示模型导出时上下颠倒）。"
+      "有渲染图的作品不再用 README 截图做封面。view 是视角：SE 从右前上方看，SW 从左前上方看，hero 同首屏 3D 动画的初始视角；up 同上（-y 表示模型导出时上下颠倒）。"
     ],
     "renders": [
       { "id": "2025-004", "file": "/assets/models/2025-004.glb", "view": "SE" },
       { "id": "2026-012", "file": "/assets/models/2026-012.glb", "up": "z", "view": "SE" },
-      { "id": "2025-009", "file": "/assets/models/2025-009.glb", "up": "z", "view": "SW" },
+      { "id": "2025-009", "file": "/assets/models/2025-009.glb", "up": "z", "view": "hero" },
       { "id": "2026-001", "file": "/assets/models/2026-001.glb", "up": "-y", "view": "SE" }
     ],
     "more": ["2025-008", "2025-007", "2025-014", "2025-015", "2026-011", "2025-003"],
