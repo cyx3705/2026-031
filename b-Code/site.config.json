@@ -72,8 +72,7 @@
       { "id": "2025-004", "file": "/assets/models/2025-004.glb", "view": "SE" },
       { "id": "2026-012", "file": "/assets/models/2026-012.glb", "up": "z", "view": "SE" },
       { "id": "2025-009", "file": "/assets/models/2025-009.glb", "up": "z", "view": "SW" },
-      { "id": "2026-001", "file": "/assets/models/2026-001.glb", "up": "-y", "view": "SE" },
-      { "id": "2025-008", "file": "/assets/models/2025-008.glb", "up": "z", "view": "SE" }
+      { "id": "2026-001", "file": "/assets/models/2026-001.glb", "up": "-y", "view": "SE" }
     ],
     "more": ["2025-008", "2025-007", "2025-014", "2025-015", "2026-011", "2025-003"],
     "software": ["2026-023", "2026-034", "2026-024", "2026-040", "2026-028", "2026-022"]

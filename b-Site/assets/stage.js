@@ -25,7 +25,7 @@ const STAGGER = 0.35;                          // 外圈零件比内圈早走的
 
 /** 色阶 B 上的 6 档（0/20/40/60/80/100%），sRGB */
 const LEVELS = ["#121414", "#37342D", "#676258", "#9A9486", "#D1C9B7", "#FBFAF7"];
-const ACCENT_FALLBACK = { light: "#7F5E0F", dark: "#D9A441" };
+const ACCENT_FALLBACK = "#A97F22";               // 读不到 --accent 时用（= README 令牌 accent）
 
 const POST_VERT = `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 const POST_FRAG = `
@@ -210,7 +210,7 @@ export class Stage {
   /** 色阶颜色固定；金色层随主题：浅色主题最浅层、深色主题最深层，取页面的 --accent */
   applyTheme() {
     const dark = document.documentElement.getAttribute("data-theme") === "dark";
-    const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || ACCENT_FALLBACK[dark ? "dark" : "light"];
+    const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || ACCENT_FALLBACK;
     const pal = this.post.uniforms.pal.value;
     // 后处理直接输出 sRGB 值，所以存 sRGB 分量（Color.set 默认会转成线性）
     LEVELS.forEach((h, i) => pal[i].set(h).convertLinearToSRGB());
