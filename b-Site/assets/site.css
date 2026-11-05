@@ -8,27 +8,28 @@
    ============================================================ */
 
 /* ---------------------------------------------- 令牌 */
-/* 与 README §3 逐值相同。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
+/* 取 README §3 里网站用到的令牌，值与 README 相同；没用到的（surface-2、surface-hover、accent-wash）不写进来。
+   文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
    深浅两套分开设定（2026-10-24 起）：页面、条带、墨色块都是各主题自己的原值，不拿另一套主题的颜色来对齐。 */
 html[data-theme="light"] {
-  --canvas:#FBFAF7; --surface:#F3F1EC; --surface-2:#EBE9E4; --surface-hover:#E5E3DE;
+  --canvas:#FBFAF7; --surface:#F3F1EC;
   --text:#38352F; --text-2:#38352F;
   --hairline:#E5E3DE; --hairline-2:#D5D1C8;
   --code-bg:#EBE9E4;
-  --ink:#26231E; --on-ink:#FBFAF7; --text-2-on-ink:#ACA593;
+  --ink:#26231E; --on-ink:#FBFAF7;
 }
 html[data-theme="dark"] {
-  --canvas:#121414; --surface:#1D201F; --surface-2:#191C1B; --surface-hover:#2A2D2C;
+  --canvas:#121414; --surface:#1D201F;
   --text:#DAD7CE; --text-2:#DAD7CE;
   --hairline:#2A2D2C; --hairline-2:#343736;
   --code-bg:#171A19;
-  --ink:#E2DAC6; --on-ink:#121414; --text-2-on-ink:#6A6458;
+  --ink:#E2DAC6; --on-ink:#121414;
 }
 :root {
   /* 强调色只有一个：金 #A97F22，深浅两套共用，墨色块上的编号、计数也直接用它。
      对比度：浅 canvas 3.5、深 canvas 5.1；浅主题墨块 4.3、深主题米白墨块 2.6（: 1）。 */
   --accent:#A97F22;
-  --accent-soft:rgba(169,127,34,.42); --accent-wash:rgba(169,127,34,.10);
+  --accent-soft:rgba(169,127,34,.42);
 
   --nav-h:62px; --wrap:1200px;
   /* 粗细两级横线：粗线开头、细线收口（同 Office 表格） */
