@@ -27,15 +27,14 @@
 
 ## 2. 颜色
 
-色值的唯一定义在 [README.md §3](README.md)。Office 只用浅色主题的令牌，外加墨色背景用的 accent-dark、text-2-dark；各令牌在 Office 里的用途如下。
+色值的唯一定义在 [README.md §3](README.md)。Office 只用浅色主题的令牌，外加墨色背景用的 text-2-dark；各令牌在 Office 里的用途如下。
 
 | 本文称呼 | README 令牌 | Office 里的用途 |
 |---|---|---|
 | canvas | 浅色 `canvas` | 页面底色（Word 页面颜色、PPT 浅色页背景）；墨色块上的反白文字 |
 | ink（墨色） | 浅色 `text` | 正文、标题、墨色条、表格粗线、PPT 章节页背景 |
 | text-2 | 浅色 `text-2` | 次要文字：填写提示、标签、题注、占位符 `〔〕` |
-| accent | `accent`（`#A97F22`） | **只用于**浅色背景上的章节号或分节字母，以及 Excel 合计值 |
-| accent-dark | `accent`（2026-11-05 起与 accent 同值） | **只用于**墨色背景上的章节号（PPT 章节页）；保留这个称呼是为了不改模板里的样式名 |
+| accent | `accent`（`#A97F22`） | **只用于**章节号或分节字母（浅色背景和墨色背景都用它，如 PPT 章节页），以及 Excel 合计值 |
 | text-2-dark | 深色 `text-2` | 墨色背景上的次要文字 |
 | hairline | 浅色 `hairline` | 极浅分隔（如甘特图网格） |
 | hairline-2 | 浅色 `hairline-2` | 表格行间细线、标题栏内部分隔、图片占位框 |
@@ -154,12 +153,12 @@
   - 底部信息栏：顶部粗墨线，三栏分别为制作人、日期、编号，栏间用 hairline-2 竖线。
 - **章节页**（墨色背景）：
   - 左上角放纸色字标。
-  - 章节号 `01`：Times New Roman 110 pt，accent-dark。
+  - 章节号 `01`：Times New Roman 110 pt，accent。
   - 标题 44 pt 粗体，canvas 色；副标题 18 pt，text-2-dark。
   - 右下角写 `01 / 05`。
 - **内容页**（浅色）：
   - 标题 28 pt 粗体，后接圆角墨色条（高 0.46 in），一直到右边距，与 Word 的「标题 1」同一做法。标题上方不加横线。
-  - 章节标签反白写在墨色条右端：`01` 用 Times New Roman、accent-dark，后面接章节名，canvas 色，13 pt。
+  - 章节标签反白写在墨色条右端：`01` 用 Times New Roman、accent，后面接章节名，canvas 色，13 pt。
   - 墨色条是独立形状，左端按标题长度算出。**改了标题要把墨色条的左端拖到标题后面**（留约 0.3 in 间距）。
   - 左下角放墨色小字标，右下角放 Times New Roman 页码。
   - 目录页同样用「目录 + 墨色条」，条里写「共 N 部分」；各部分编号用 accent。
