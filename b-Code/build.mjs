@@ -7,7 +7,8 @@
  *
  * 产出：
  *   b-Site/index.html          代表作品页（site.config.json 的 showcase 挑选，含 3D 动画与模型选页）
- *   b-Site/assets/covers/      代表作品的封面图（裁掉白边/黑边后的 webp）
+ *   b-Site/assets/covers/      代表作品的封面图（裁掉白边/黑边后的 webp）；有模型展示图的作品不生成
+ *   （b-Site/assets/renders/ 的模型展示图不在这里生成，由 b-Code/renders.mjs 本机渲染后入库）
  *   b-Site/library/index.html  项目库：全部项目的统一列表（卡片数据内联，页面零请求）
  *   b-Site/p/<编号>/index.html 每个项目的说明页（README 渲染）
  *   b-Site/projects.json       结构化数据，便于其他地方复用
@@ -310,11 +311,18 @@ function work(entry) {
     ...p,
     text: p.fullNote || p.note,
     cover: e.cover ? assetUrl(e.cover, p.repo) : p.cover,
+    render: hasRender(p.id),
     tags: e.tags || [],
     caption: e.caption || "",
   };
 }
 const works = (list) => list.map(work).filter(Boolean);
+
+/** 有 renders.mjs 出的模型展示图（深浅两版）就用它，不再用 README 截图 */
+const RENDERS = path.join(SITE, "assets/renders");
+function hasRender(id) {
+  return existsSync(path.join(RENDERS, `${id}-light.webp`)) && existsSync(path.join(RENDERS, `${id}-dark.webp`));
+}
 
 /**
  * 封面图下载到本站、裁掉四周的纯色边（渲染图常见的大片白底/黑底），按原始长宽比展示。
@@ -322,7 +330,7 @@ const works = (list) => list.map(work).filter(Boolean);
  */
 const COVERS = path.join(SITE, "assets/covers");
 async function localCover(w) {
-  if (!w.cover) return;
+  if (!w.cover || w.render) return;
   try {
     const buf = await get(w.cover, { asBuf: true });
     const out = await sharp(buf, { limitInputPixels: false })
@@ -344,7 +352,12 @@ const ICON_GH = '<svg class="i-gh" viewBox="0 0 16 16" aria-hidden="true"><path 
 const repoBtn = (w) => `<a class="repo" href="https://github.com/${esc(w.repo)}" rel="noopener" aria-label="在 GitHub 打开 ${esc(w.name)}" title="在 GitHub 打开">${ICON_GH}</a>`;
 
 // 带上宽高：图按原始比例排，加载前就占好位，不会跳
-const img = (w, cls) => w.cover
+// 模型展示图有深浅两版（金色层不同），按 data-theme 显示其一，同字标的做法
+const img = (w, cls) => w.render
+  ? ["light", "dark"].map((t) =>
+      `<img class="${cls} render render-${t}" src="/assets/renders/${esc(w.id)}-${t}.webp" alt="${esc(w.name)} 模型图" ` +
+      `width="1600" height="1200" loading="lazy" decoding="async">`).join("")
+  : w.cover
   ? `<img class="${cls}" src="${esc(w.cover)}" alt="${esc(w.name)} 效果图" loading="lazy" decoding="async"` +
     (w.coverW ? ` width="${w.coverW}" height="${w.coverH}"` : "") + ">"
   : `<span class="${cls} no-cover" aria-hidden="true"><span class="id">${esc(w.id)}</span></span>`;

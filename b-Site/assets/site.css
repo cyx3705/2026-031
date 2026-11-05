@@ -80,6 +80,9 @@ img { max-width:100%; }
    否则会被后面 .nav img.logo 的 display 覆盖掉，两张字标叠在一起 */
 html[data-theme="light"] img.logo-dark { display:none; }
 html[data-theme="dark"] img.logo-light { display:none; }
+/* 模型展示图同理：深浅两版的金色层不同（风格 §2.5），透明底，不加圆角底板 */
+html[data-theme="light"] img.render-dark { display:none; }
+html[data-theme="dark"] img.render-light { display:none; }
 
 /* 墨色条：标题后接一段实心条，延伸到右缘；条里可以反白写一句说明 */
 .ink-bar {

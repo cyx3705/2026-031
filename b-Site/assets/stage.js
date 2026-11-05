@@ -48,6 +48,7 @@ function prepare(gltf, m) {
   const holder = new THREE.Group();
   holder.add(gltf.scene);
   if (m.up === "z") holder.rotation.x = -Math.PI / 2;
+  if (m.up === "-y") holder.rotation.x = Math.PI;      // 导出时上下颠倒的模型
   holder.updateMatrixWorld(true);
 
   const box = new THREE.Box3().setFromObject(holder);

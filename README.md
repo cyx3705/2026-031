@@ -20,7 +20,8 @@
 | `b-Site/assets/` | 样式、脚本、图标（手工维护） |
 | `b-Site/assets/stage.js` | 首页的 3D（three.js）：拆装动画与模型展示 |
 | `b-Site/assets/models/` | 首页的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
-| `b-Site/assets/covers/` | **生成产物**，代表作品封面（裁掉四周纯色边的 webp） |
+| `b-Site/assets/covers/` | **生成产物**，没有模型的代表作品封面（裁掉四周纯色边的 webp） |
+| `b-Site/assets/renders/` | 模型展示图，由 `b-Code/renders.mjs` 本机渲染后入库（等轴测、6 阶、深浅两版） |
 | `b-Site/CNAME` | 自定义域名 `onehistory.exc0.top` |
 | `b-Site/index.html` | **生成产物**，代表作品页，勿手改 |
 | `b-Site/library/index.html` | **生成产物**，项目库，勿手改 |
@@ -29,6 +30,7 @@
 | `b-Code/build.mjs` | 生成脚本 |
 | `b-Code/site.config.json` | 配置：收录规则、外挂条目、人工覆盖、首页作品挑选 |
 | `b-Code/models.py` | STEP → GLB 转换（本机手动跑） |
+| `b-Code/renders.mjs` | GLB → 模型展示图（本机手动跑，需 `npm i` 与 `npx playwright install chromium`） |
 
 ### 页面结构
 
