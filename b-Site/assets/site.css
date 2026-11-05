@@ -83,6 +83,9 @@ img { max-width:100%; }
    否则会被后面 .nav img.logo 的 display 覆盖掉，两张字标叠在一起 */
 html[data-theme="light"] img.logo-dark { display:none; }
 html[data-theme="dark"] img.logo-light { display:none; }
+/* 模型展示图同理：深浅两版的金色层不同（风格 §2.5），透明底，不加圆角底板 */
+html[data-theme="light"] img.render-dark { display:none; }
+html[data-theme="dark"] img.render-light { display:none; }
 
 /* 墨色条：标题后接一段实心条，延伸到右缘；条里可以反白写一句说明 */
 .ink-bar {
@@ -557,8 +560,8 @@ html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
 .feature-media { display:block; overflow:hidden; border-radius:var(--r-card); }
 .feature-img { display:block; width:100%; height:auto; transition:transform .6s var(--ease); }
 .feature-media:hover .feature-img { transform:scale(1.025); }
-.feature-body .id, .tile-body .id { display:flex; align-items:center; gap:10px; }
-.feature-body .id::after, .tile-body .id::after {
+.feature-body .id { display:flex; align-items:center; gap:10px; }
+.feature-body .id::after {
   content:""; flex:1; height:var(--rule); border-radius:3px; background:var(--ink);
   transition:height .24s var(--ease);
 }
@@ -609,24 +612,6 @@ html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
   display:flex; align-items:center; gap:10px;
 }
 .page-n { min-width:44px; text-align:center; font-family:var(--num); font-size:15px; color:var(--text-2); }
-
-/* 更多作品：瀑布流，图按原始比例 */
-.tiles { columns:4 230px; column-gap:clamp(14px, 1.6vw, 22px); }
-.tile { display:block; break-inside:avoid; margin:0 0 clamp(18px, 2.4vh, 26px); color:inherit; }
-.tile:hover { color:inherit; }
-.tile-img { display:block; width:100%; height:auto; border-radius:var(--r-card); transition:transform .6s var(--ease); }
-.tile > .tile-img { overflow:hidden; }
-.tile:hover .tile-img { transform:scale(1.02); }
-.no-cover { display:grid; place-items:center; aspect-ratio:4 / 3; background:var(--surface); }
-.no-cover .id { font-size:22px; }
-.no-cover .id::after { display:none; }
-.tile-body { display:flex; flex-direction:column; gap:5px; padding:12px 2px 0; }
-.tile-body strong { font-size:17px; font-weight:700; line-height:1.35; }
-.tile:hover .tile-body strong { color:var(--accent); }
-.tile-note {
-  color:var(--text-2); font-size:13.5px; line-height:1.55;
-  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
-}
 
 /* 去项目库的收尾块 */
 .to-lib {
@@ -701,9 +686,6 @@ html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
 
   .slide h1 { font-size:32px; }
   .dot-bar { min-width:56px; }
-  .tiles { columns:2; column-gap:12px; }
-  .tile-body strong { font-size:15.5px; }
-  .tile-note { display:none; }
   .feature-links { gap:14px; }
 
   .doc { font-size:16.5px; }

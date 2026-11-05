@@ -4,11 +4,15 @@
 
    拆装动画是通用的「爆炸图」：把装配里每个零件拿出来，按它离整机中心的方向推开，
    外圈的先走、内圈的后走，拆开停一会儿再按反序装回去。任何 STEP 装配都能直接用，
-   不需要在 CAD 里另做动画。 */
+   不需要在 CAD 里另做动画。
+
+   画面是 6 阶风格（网站风格 §2.5.2，与 renders.mjs 出的静态展示图同一套）：
+   场景先按装配颜色渲染到离屏纹理，再由一道后处理按明度分成 6 层，每层整块填色阶 B 的一档；
+   与页面底色相同的那一层换成金色（浅色主题最浅层、深色主题最深层），金色取页面的 --accent。
+   分层阈值在每个模型第一次出现时按画面明度聚类算出，同一个零件总落在同一层。 */
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const loader = new GLTFLoader();
@@ -18,6 +22,42 @@ const files = new Map();                       // 同一个 GLB 只下载一次
 const T = { hold: 1.4, out: 2.2, open: 2.8, back: 2.2, rest: 1.4 };
 export const CYCLE = T.hold + T.out + T.open + T.back + T.rest;
 const STAGGER = 0.35;                          // 外圈零件比内圈早走的比例
+
+/** 色阶 B 上的 6 档（0/20/40/60/80/100%），sRGB */
+const LEVELS = ["#121414", "#37342D", "#676258", "#9A9486", "#D1C9B7", "#FBFAF7"];
+const ACCENT_FALLBACK = "#A97F22";               // 读不到 --accent 时用（= README 令牌 accent）
+
+const POST_VERT = `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
+const POST_FRAG = `
+  uniform sampler2D tColor; uniform float thr[5]; uniform vec3 pal[6]; varying vec2 vUv;
+  float toSrgb(float c) { return c <= 0.0031308 ? 12.92 * c : 1.055 * pow(c, 1.0 / 2.4) - 0.055; }
+  void main() {
+    vec4 c = texture2D(tColor, vUv);
+    if (c.a < 0.004) { gl_FragColor = vec4(0.0); return; }
+    vec3 rgb = c.rgb / c.a;
+    float L = 0.2126 * toSrgb(rgb.r) + 0.7152 * toSrgb(rgb.g) + 0.0722 * toSrgb(rgb.b);
+    vec3 col = pal[5];
+    for (int i = 4; i >= 0; i--) if (L < thr[i]) col = pal[i];
+    gl_FragColor = vec4(col * c.a, c.a);
+  }`;
+
+/** 一维 k-means：明度聚成 k 层，返回相邻两层中心的中点（k-1 个阈值） */
+function thresholds(values, k) {
+  const sorted = Float32Array.from(values).sort();
+  if (!sorted.length) return [0.2, 0.4, 0.6, 0.8, 0.9];
+  const c = Array.from({ length: k }, (_, i) => sorted[Math.floor((0.05 + 0.9 * i / (k - 1)) * (sorted.length - 1))]);
+  for (let it = 0; it < 30; it++) {
+    const sum = new Float64Array(k), n = new Float64Array(k);
+    for (const v of sorted) {
+      let j = 0, best = Infinity;
+      for (let q = 0; q < k; q++) { const d = Math.abs(v - c[q]); if (d < best) { best = d; j = q; } }
+      sum[j] += v; n[j]++;
+    }
+    for (let q = 0; q < k; q++) if (n[q]) c[q] = sum[q] / n[q];
+  }
+  c.sort((a, b) => a - b);
+  return c.slice(1).map((v, i) => (v + c[i]) / 2);
+}
 
 const clamp = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
 const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -48,6 +88,7 @@ function prepare(gltf, m) {
   const holder = new THREE.Group();
   holder.add(gltf.scene);
   if (m.up === "z") holder.rotation.x = -Math.PI / 2;
+  if (m.up === "-y") holder.rotation.x = Math.PI;      // 导出时上下颠倒的模型
   holder.updateMatrixWorld(true);
 
   const box = new THREE.Box3().setFromObject(holder);
@@ -65,12 +106,9 @@ function prepare(gltf, m) {
     const mtx = norm.clone().multiply(mesh.matrixWorld);
     mesh.removeFromParent();
     mtx.decompose(mesh.position, mesh.quaternion, mesh.scale);
-    mesh.castShadow = true;
-    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    for (const mat of mats) {
-      mat.envMapIntensity = 0.9;
-      if (mat.transparent) mat.depthWrite = false;   // 透明外壳不挡住里面的零件
-    }
+    // 只保留装配颜色：6 阶分层看的是明度，金属感、透明度都不要（同 renders.mjs）
+    const src = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+    mesh.material = new THREE.MeshStandardMaterial({ color: src.color || 0xffffff, roughness: 0.7, metalness: 0, side: THREE.DoubleSide });
     parts.add(mesh);
   }
   parts.updateMatrixWorld(true);
@@ -115,32 +153,32 @@ export class Stage {
     this.opt = opt;
     this.models = new Map();
 
-    const r = this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const r = this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, premultipliedAlpha: true });
     r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    r.outputColorSpace = THREE.SRGBColorSpace;
-    r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.05;
-    r.shadowMap.enabled = true;
-    r.shadowMap.type = THREE.PCFSoftShadowMap;
+    r.setClearColor(0x000000, 0);
     el.appendChild(r.domElement);
 
+    // 离屏纹理（多重采样抗锯齿），后处理在它上面分层上色
+    this.rt = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType });
+    this.post = new THREE.ShaderMaterial({
+      uniforms: { tColor: { value: this.rt.texture }, thr: { value: [0.2, 0.4, 0.6, 0.8, 0.9] }, pal: { value: LEVELS.map(() => new THREE.Color()) } },
+      vertexShader: POST_VERT, fragmentShader: POST_FRAG, depthTest: false, depthWrite: false,
+    });
+    this.postScene = new THREE.Scene();
+    this.postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.post));
+    this.postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this.applyTheme();
+    new MutationObserver(() => this.applyTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    // 灯光与 renders.mjs 一致：天光打底，主光从右上方，弱补光从左后方；不投影（展示图也没有影子）
     const scene = this.scene = new THREE.Scene();
-    const pmrem = new THREE.PMREMGenerator(r);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-
-    const key = new THREE.DirectionalLight(0xffffff, 1.4);
-    key.position.set(2.5, 6, 3.5);
-    key.castShadow = true;
-    key.shadow.mapSize.set(1024, 1024);
-    Object.assign(key.shadow.camera, { left: -3.5, right: 3.5, top: 3.5, bottom: -3.5, near: 0.5, far: 20 });
-    key.shadow.radius = 6;
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x2a2a2a, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 2.6);
+    key.position.set(1.5, 3, 2);
     scene.add(key);
-
-    // 只接影子的地面：页面底色透出来，模型落在页面上而不是装在盒子里
-    this.ground = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.ShadowMaterial({ opacity: 0.16 }));
-    this.ground.rotation.x = -Math.PI / 2;
-    this.ground.receiveShadow = true;
-    scene.add(this.ground);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+    fill.position.set(-2, 1, -1);
+    scene.add(fill);
 
     this.turn = new THREE.Group();
     scene.add(this.turn);
@@ -169,9 +207,42 @@ export class Stage {
     r.setAnimationLoop(() => this.tick());
   }
 
+  /** 色阶颜色固定；金色层随主题：浅色主题最浅层、深色主题最深层，取页面的 --accent */
+  applyTheme() {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || ACCENT_FALLBACK;
+    const pal = this.post.uniforms.pal.value;
+    // 后处理直接输出 sRGB 值，所以存 sRGB 分量（Color.set 默认会转成线性）
+    LEVELS.forEach((h, i) => pal[i].set(h).convertLinearToSRGB());
+    pal[dark ? 0 : LEVELS.length - 1].set(accent).convertLinearToSRGB();
+  }
+
+  /** 按当前画面的明度把模型分成 6 层，阈值记在模型上 */
+  calibrate(model) {
+    const r = this.renderer, N = 192;
+    const rt = new THREE.WebGLRenderTarget(N, N, { type: THREE.HalfFloatType });
+    r.setRenderTarget(rt);
+    r.clear();
+    r.render(this.scene, this.camera);
+    const buf = new Uint16Array(N * N * 4);
+    r.readRenderTargetPixels(rt, 0, 0, N, N, buf);
+    r.setRenderTarget(null);
+    rt.dispose();
+    const f = THREE.DataUtils.fromHalfFloat;
+    const s = (c) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
+    const L = [];
+    for (let i = 0; i < N * N; i++) {
+      const a = f(buf[i * 4 + 3]);
+      if (a > 0.5) L.push(0.2126 * s(f(buf[i * 4]) / a) + 0.7152 * s(f(buf[i * 4 + 1]) / a) + 0.0722 * s(f(buf[i * 4 + 2]) / a));
+    }
+    model.thr = thresholds(L, LEVELS.length);
+  }
+
   resize() {
     const w = this.el.clientWidth || 1, h = this.el.clientHeight || 1;
     this.renderer.setSize(w, h, false);
+    const pr = this.renderer.getPixelRatio();
+    this.rt.setSize(Math.round(w * pr), Math.round(h * pr));
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     if (this.cur) this.frame(false);
@@ -213,11 +284,14 @@ export class Stage {
     this.turn.rotation.y = 0;
     this.turn.add(model.group);
     for (const p of model.parts) p.mesh.position.copy(p.base);
-    this.ground.position.y = model.floor - 0.002;
+    this.turn.scale.setScalar(1);
+    this.turn.position.y = 0;
     this.cur = model;
     this.t = 0;
     this.dragged = false;
     this.frame(true);
+    if (!model.thr) this.calibrate(model);
+    this.post.uniforms.thr.value = model.thr;
   }
 
   tick() {
@@ -242,7 +316,13 @@ export class Stage {
     }
 
     this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    const r = this.renderer;
+    r.setRenderTarget(this.rt);
+    r.clear();
+    r.render(this.scene, this.camera);
+    r.setRenderTarget(null);
+    r.clear();
+    r.render(this.postScene, this.postCam);
     this.opt.onTime && this.opt.onTime(t);
   }
 }
