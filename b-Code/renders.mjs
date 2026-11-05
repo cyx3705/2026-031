@@ -4,7 +4,7 @@
  * 规则见 z-OneHistoryID/网站风格.md §2.5「模型展示图」：
  *   - 正交等轴测（SE 或 SW），统一 4 : 3，透明底，模型撑满画面；
  *   - 保留 CAD 装配颜色渲染，再按明度聚成 6 层，每层整块填色阶 B 的 0/20/40/60/80/100%；
- *   - 浅色版：最浅一层换成金色；深色版：最深一层换成金色。金色 = accent #A97F22（深浅同值，
+ *   - 浅色版：最浅一层换成金色；深色版：最深一层换成金色。金色 = accent #A97F22（深浅同一个值，
  *     改强调色时同步这里的 GOLD 并重跑本脚本）。
  *     与页面底色相同的那一层变成金色，图片就不需要底板和边框，可以直接摊在页面上。
  *
@@ -37,7 +37,7 @@ const W = 1600, H = 1200, SS = 2;          // 成图 1600×1200（4 : 3），按
 
 const STOPS = [[0, "#121414"], [0.12, "#26231E"], [0.86, "#E2DAC6"], [1, "#FBFAF7"]];
 const LEVELS = [0, 0.2, 0.4, 0.6, 0.8, 1];
-const GOLD = { light: "#A97F22", dark: "#A97F22" };   // = README 令牌 accent，深浅同值
+const GOLD = "#A97F22";                     // = README 令牌 accent（深浅同一个值）
 
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
 const lin = (v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
@@ -105,9 +105,10 @@ async function stylize(png, id) {
     for (let q = 0; q < centers.length; q++) { const d = Math.abs(L[i] - centers[q]); if (d < best) { best = d; j = q; } }
     layer[i] = j;
   }
-  const accentLayer = { light: LEVELS.length - 1, dark: 0 };
+  const gold = to255(hex(GOLD));
+  const goldLayer = { light: LEVELS.length - 1, dark: 0 };   // 与页面底色相同的那一层
   for (const theme of ["light", "dark"]) {
-    const pal = PALETTE.map((c, j) => (j === accentLayer[theme] ? to255(hex(GOLD[theme])) : c));
+    const pal = PALETTE.map((c, j) => (j === goldLayer[theme] ? gold : c));
     const out = Buffer.alloc(n * 4);
     for (let i = 0; i < n; i++) {
       const c = pal[layer[i]], o = i * 4;

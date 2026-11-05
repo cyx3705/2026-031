@@ -24,14 +24,12 @@ html[data-theme="dark"] {
   --code-bg:#171A19;
   --ink:#E2DAC6; --on-ink:#121414; --text-2-on-ink:#6A6458;
 }
-/* 强调色（2026-11-05 起）：金 #A97F22，深浅两套共用一个值，墨色块沿用各主题原值。
-   对比度：浅 canvas 3.5、深 canvas 5.1；浅主题墨块 4.3、深主题米白墨块 2.6（: 1）。 */
 :root {
+  /* 强调色只有一个：金 #A97F22，深浅两套共用，墨色块上的编号、计数也直接用它。
+     对比度：浅 canvas 3.5、深 canvas 5.1；浅主题墨块 4.3、深主题米白墨块 2.6（: 1）。 */
   --accent:#A97F22;
   --accent-soft:rgba(169,127,34,.42); --accent-wash:rgba(169,127,34,.10);
-  --accent-on-ink:var(--accent);
-}
-:root {
+
   --nav-h:62px; --wrap:1200px;
   /* 粗细两级横线：粗线开头、细线收口（同 Office 表格） */
   --rule:2px; --rule-thin:1px;
@@ -264,7 +262,7 @@ html[data-theme="light"] .i-sun { display:none; }
 .chip:hover { color:var(--text); background:var(--surface); }
 .chip.is-on { z-index:1; color:var(--on-ink); border-color:var(--ink); background:var(--ink); font-weight:600; }
 .chip-n { font-family:var(--num); font-size:13px; color:var(--text-2); }
-.chip.is-on .chip-n { color:var(--accent-on-ink); }
+.chip.is-on .chip-n { color:var(--accent); }
 
 /* 排序：文字按钮，选中的一项下方一道粗墨线 */
 .sort { flex:0 0 auto; display:inline-flex; gap:14px; }
@@ -601,7 +599,7 @@ html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
 }
 .page-btn:hover { color:var(--text); background:var(--surface); }
 .page-btn.is-on { color:var(--on-ink); background:var(--ink); border-radius:var(--r-bar); border-bottom-color:transparent; font-weight:600; }
-.page-btn.is-on .id { color:var(--accent-on-ink); }
+.page-btn.is-on .id { color:var(--accent); }
 .shelf-cap p { margin:0 0 6px; }
 .shelf-name { color:var(--text); font-weight:600; }
 .shelf-note { color:var(--text-2); font-size:14.5px; line-height:1.65; }
