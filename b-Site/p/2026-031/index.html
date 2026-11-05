@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Tinos:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/site.css?v=37be872a">
+  <link rel="stylesheet" href="/assets/site.css?v=e840bc61">
   <script>
     (function () {
       var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
@@ -94,8 +94,8 @@
 <td>首页的 GLB 模型，由 <code>b-Code/models.py</code> 从本机 STEP 转出</td>
 </tr>
 <tr>
-<td><code>b-Site/assets/covers/</code></td>
-<td><strong>生成产物</strong>，代表作品封面（裁掉四周纯色边的 webp）</td>
+<td><code>b-Site/assets/renders/</code></td>
+<td>模型展示图，由 <code>b-Code/renders.mjs</code> 本机渲染后入库（等轴测、6 阶、深浅两版）</td>
 </tr>
 <tr>
 <td><code>b-Site/CNAME</code></td>
@@ -129,16 +129,20 @@
 <td><code>b-Code/models.py</code></td>
 <td>STEP → GLB 转换（本机手动跑）</td>
 </tr>
+<tr>
+<td><code>b-Code/renders.mjs</code></td>
+<td>GLB → 模型展示图（本机手动跑，需 <code>npm i</code> 与 <code>npx playwright install chromium</code>）</td>
+</tr>
 </tbody></table>
 <h3>页面结构</h3>
 <p><strong>首页 <code>/</code> 是代表作品页</strong>：</p>
 <ul>
-<li><strong>首屏</strong>是开放式的，没有框：三件代表作（<code>showcase.hero</code>）的三维模型直接落在页面上做<strong>拆装动画</strong>——外圈零件先拆、拆开停一会儿、再按反序装回，一轮转完自动换下一件；可以拖动旋转，拖过就停在这一件上。动画是通用的爆炸图算法（<code>assets/stage.js</code>），任何 STEP 装配都能直接用，不需要在 CAD 里另做动画。系统开了「减少动效」时只演一轮、不自转。</li>
-<li><strong>代表作品</strong>：大图 + 名称 + 功能说明 + 标签，左右交替。</li>
+<li><strong>首屏</strong>是开放式的，没有框：三件代表作（<code>showcase.hero</code>）的三维模型直接落在页面上做<strong>拆装动画</strong>——外圈零件先拆、拆开停一会儿、再按反序装回，一轮转完自动换下一件；可以拖动旋转，拖过就停在这一件上。动画是通用的爆炸图算法（<code>assets/stage.js</code>），任何 STEP 装配都能直接用，不需要在 CAD 里另做动画。画面是 6 阶风格，和代表作品的静态图同一套（见风格文件 §2.5.2）。系统开了「减少动效」时只演一轮、不自转。</li>
+<li><strong>代表作品</strong>：模型展示图 + 名称 + 功能说明 + 标签，左右交替。只放有模型展示图（<code>showcase.renders</code>）的作品。</li>
 <li><strong>模型展示</strong>（<code>showcase.models</code>）：选页，一页一个模型，只转不拆。</li>
-<li><strong>更多作品</strong>：瀑布流小卡；<strong>软件与工具</strong>；最后是去项目库的入口。</li>
+<li><strong>更多作品</strong>：只有文字的卡片；<strong>软件与工具</strong>；最后是去项目库的入口。</li>
 </ul>
-<p>挑哪些作品写在 <code>site.config.json</code> 的 <code>showcase</code> 里，只写编号——名称、描述、封面图都从对应仓库 README 自动取，封面是 README 里第一张不是 Logo 的图。封面在构建时下载下来，<strong>裁掉四周的纯色白边/黑边</strong>，按原始长宽比显示，不加框、不垫底色。</p>
+<p>挑哪些作品写在 <code>site.config.json</code> 的 <code>showcase</code> 里，只写编号——名称、描述都从对应仓库 README 自动取。代表作品的图不用 README 截图，而是 <code>b-Code/renders.mjs</code> 从模型渲染的等轴测 6 阶图（4 : 3、透明底、深浅两版），本机生成后入库。</p>
 <p><strong>项目库在 <code>/library/</code></strong>：一个不分类的统一列表，带搜索、年份筛选和排序（最近更新 / 编号）。搜索状态会写进地址栏的 <code>?q=</code> 和 <code>?g=</code>，可以直接把筛好的视图分享出去；以前分享的 <code>/?q=…</code> 链接会自动转到 <code>/library/?q=…</code>。</p>
 <p>项目说明页在桌面端右侧带一个自动生成的目录（取正文的 <code>##</code> / <code>###</code>，少于两条就不显示），手机端折叠成顶部一个「目录」按钮。</p>
 <h3>分类是算出来的，不是配出来的</h3>
