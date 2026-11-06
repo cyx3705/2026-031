@@ -7,6 +7,16 @@
    容器一律走 .wrap：max-width + margin-inline:auto，宽屏下不会贴左。
    ============================================================ */
 
+/* 西文与数字：自托管的可变字体，保留连续字重及斜体。 */
+@font-face {
+  font-family:"Noto Serif"; font-style:normal; font-weight:100 900; font-display:swap;
+  src:url("fonts/noto-serif-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family:"Noto Serif"; font-style:italic; font-weight:100 900; font-display:swap;
+  src:url("fonts/noto-serif-latin-wght-italic.woff2") format("woff2");
+}
+
 /* ---------------------------------------------- 令牌 */
 /* 与 README §3 逐值相同。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
    深浅两套分开设定（2026-10-24 起）：页面、条带、墨色块都是各主题自己的原值，不拿另一套主题的颜色来对齐。 */
@@ -38,10 +48,9 @@ html[data-theme="dark"] {
   /* 块用圆角、线用直线：卡片/空状态 → 控件（输入、按钮、代码块、图片）→ 墨色条与选中块 → 小标签 */
   --r-card:16px; --r-ctl:10px; --r-bar:7px; --r-sm:5px;
   --ease:cubic-bezier(.22,.7,.3,1);
-  /* 字体（README §4）：中文思源宋体；西文与数字一律罗马体 Times New Roman，缺字时用度量相同的 Tinos。
-     罗马体放在最前，西文和数字取罗马体、中文落到宋体。代码块单独用等宽。 */
-  --serif:"Times New Roman", Tinos, "Noto Serif SC", "Songti SC", STSong, SimSun, serif;
-  --num:"Times New Roman", Tinos, serif;
+  /* WEB-FONT-001：西文与数字 Noto Serif Variable，中文思源宋体；正文均为 500。 */
+  --serif:"Noto Serif", "Noto Serif SC", "Times New Roman", "Songti SC", STSong, SimSun, serif;
+  --num:"Noto Serif", "Times New Roman", serif;
   --mono:Consolas, ui-monospace, monospace;
 }
 
@@ -51,12 +60,10 @@ html, body { margin:0; min-height:100%; }
 body {
   background:var(--canvas); color:var(--text);
   font-family:var(--serif);
-  font-size:17px; line-height:1.75;
+  font-size:17px; font-weight:500; line-height:1.75;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-/* 深色底上宋体横画发虚，正文加一档 */
-html[data-theme="dark"] body { font-weight:500; }
 a { color:var(--text); text-decoration:none; }
 a:hover { color:var(--accent); }
 img { max-width:100%; }

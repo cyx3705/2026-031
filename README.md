@@ -18,6 +18,7 @@
 | `b-Site/library.template.html` | 项目库模板，`/*__PROJECTS__*/` 等占位符由脚本填充 |
 | `b-Site/p.template.html` | 项目说明页模板 |
 | `b-Site/assets/` | 样式、脚本、图标（手工维护） |
+| `b-Site/assets/fonts/` | Noto Serif Variable 正体 / 斜体及 SIL OFL 许可证；规则见 OneHistoryID §4 |
 | `b-Site/assets/stage.js` | 首页的 3D（three.js）：拆装动画与模型展示 |
 | `b-Site/assets/models/` | 首页的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
 | `b-Site/assets/renders/` | 模型展示图，由 `b-Code/renders.mjs` 本机渲染后入库（等轴测、6 阶、深浅两版） |

@@ -70,20 +70,21 @@
 
 ## 4. 字体
 
-整套用衬线体（2026-11-02 起）：中文宋体，西文与数字按国标公文惯例用罗马体 Times New Roman。宋体呼应衬线字标与书页母题。
+整套用衬线体。网页自 2026-11-06 起采用西文与数字 Noto Serif Variable、中文 Noto Serif SC（思源宋体），正文字重均为 500。Office 继续采用宋体与 Times New Roman。
 
 | 用途 | 网站 | Office | 说明 |
 |---|---|---|---|
-| 中文（标题与正文） | Noto Serif SC（思源宋体） | 宋体（SimSun） | Office 里可变字体不可靠、发给别人也可能缺字体，故用系统自带的宋体 |
-| 西文（标题与正文） | Times New Roman → Tinos | Times New Roman | Tinos 与 Times New Roman 度量一致，给没有 TNR 的 Android / Linux 兜底 |
-| 数字、编号、英文标签 | Times New Roman → Tinos | Times New Roman | 同上；不再用几何体 |
-| 行内代码（路径、文件名） | 同正文罗马体，靠 `code` 底色区分 | — | |
-| 多行代码块 | Consolas → 等宽 | Consolas | 唯一保留等宽的地方，缩进要对齐 |
+| 中文（标题与正文） | Noto Serif SC（思源宋体） | 宋体（SimSun） | Office 保留系统字体，便于交换文件 |
+| 西文（标题与正文） | Noto Serif Variable | Times New Roman | 网页采用真正的可变字体，连续字重 100–900 |
+| 数字、编号、英文标签 | Noto Serif Variable | Times New Roman | 与西文正文同一字体 |
+| 行内代码（路径、文件名） | 同正文衬线体，靠代码底色区分 | — | |
+| 多行代码块 | Consolas → 等宽 | Consolas | 缩进需要对齐 |
 
-- 网站字体经 Google Fonts 加载：Noto Serif SC 400 / 500 / 600 / 700，Tinos 400 / 700 / 400 斜体。字体栈写作 `"Times New Roman", Tinos, "Noto Serif SC", …`：罗马体在前，西文和数字取罗马体，中文落到宋体。
-- 罗马体的数字比几何体矮，同字号显小：网站上编号、页码等数字比原先大 1–1.5 px。
-- 标题不再收紧字距（衬线体收紧会挤），字重 700。
-- 宋体横画细：网站深色主题正文字重 500；Office 只用浅色，不需要。
+- **WEB-FONT-001**：网页正文、说明文字及继承正文样式的控件，西文、数字和中文统一字重 500，深浅主题相同；标题保留 700，已有强调层级可用 600 / 700。字号、行高沿用各页面现行规格。
+- 西文与数字由站点自托管 Noto Serif Variable（Fontsource Variable 5.3.0 的 Latin WOFF2，正体与斜体，100–900）；文件及 SIL OFL 1.1 许可证放在 `b-Site/assets/fonts/`。中文经 Google Fonts 加载 Noto Serif SC 400 / 500 / 600 / 700。
+- 字体栈以 Noto Serif、Noto Serif SC 为先，再由 Times New Roman 和系统宋体兜底；西文、数字取 Noto Serif，中文落到思源宋体。数字专用字体栈也以 Noto Serif 为首。
+- 标题字重 700，不收紧字距；首屏大标题的例外见网站风格 §2.1。
+- 验收：检查首页、项目库、说明页在深浅主题及桌面 / 手机宽度下的计算字重和实际字体；正文为 500，西文与数字使用 Noto Serif，中文使用 Noto Serif SC，标题层级及布局保留。
 
 ## 5. 语气
 
