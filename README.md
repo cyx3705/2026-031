@@ -96,6 +96,10 @@ python b-Code/models.py 2026-012 # 只转一个
 
 加一个模型：在 `models.py` 的 `MODELS` 里写上 STEP 路径和公差，再在 `site.config.json` 的 `showcase.hero`（要拆装动画）或 `showcase.models`（只展示）里登记。模型躺倒时写 `"up": "z"`；`explode` 选 `radial`（向四周散开）或 `y`（竖直拉开，适合筒状叠层）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。
 
+### 共享文字令牌
+
+WEB-FONT-002：字体栈与字重只在 `z-OneHistoryID/typography.json` 定义；网站构建自动生成 CSS。`npm run typography` 只更新文字令牌产物，`npm run test:typography` 验证其与权威对象一致；`npm run test:typography:browser` 检查现有三类页面的浅深主题及手机布局。Aurora / Mercury 用各自 manifest 的 syncTypography 指令经 Diana Z 级消费，再以 checkTypography 检查漂移。
+
 ### 本地构建
 
 ```bash

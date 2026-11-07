@@ -6,7 +6,10 @@
   "description": "OneHistory 公开项目目录站，内容由各项目仓库 README 自动生成",
   "scripts": {
     "build": "node b-Code/build.mjs",
-    "dry": "node b-Code/build.mjs --dry"
+    "dry": "node b-Code/build.mjs --dry",
+    "typography": "node b-Code/typography.mjs",
+    "test:typography": "node --test b-Code/typography.test.mjs",
+    "test:typography:browser": "node --test b-Code/typography-browser.test.mjs"
   },
   "dependencies": {
     "marked": "^14.1.3",

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "onehistory.typography",
+  "families": {
+    "serif": ["Noto Serif", "Noto Serif SC", "Source Han Serif SC", "Times New Roman", "Tinos", "SimSun", "Songti SC", "serif"],
+    "numerals": ["Noto Serif", "Times New Roman", "serif"],
+    "mono": ["Consolas", "Courier New", "monospace"],
+    "desktopSerif": ["Noto Serif", "Noto Serif SC", "Times New Roman", "SimSun"]
+  },
+  "weights": { "body": 400, "heading": 600 }
+}

@@ -6,11 +6,12 @@
 
 | 内容 | 权威文件 | 实现（跟随权威） |
 |---|---|---|
-| 字标、颜色令牌、字体 | 本文件 | `b-Site/assets/site.css`、HistoryAurora `AuroraTokens.xaml`、各 Office 模板 |
+| 字标、颜色令牌 | 本文件 | `b-Site/assets/site.css`、HistoryAurora `aurora.css`、各 Office 模板 |
+| 屏幕字体栈与字重 | [`typography.json`](typography.json) | 网站生成 CSS；Aurora / Mercury 经 Diana Z 级指令消费为离线快照 |
 | 网站风格 | [网站风格.md](网站风格.md) | `b-Site/`（模板、样式、脚本） |
 | Office 风格 | [Office风格.md](Office风格.md) | `0000-000-Template/z-Unused/b-Office/` |
 
-- 改色的顺序：先改本文件，再同步 `site.css` 和 `AuroraTokens.xaml`，最后同步 Office 模板。
+- 改色的顺序：先改本文件，再同步 `site.css` 和 `aurora.css`，最后同步 Office 模板。
 - 实现与本目录冲突时，以本目录为准，并回头修实现。
 - 其他仓库需要说明风格时，只放一个指向本目录的引用文件（例如 `b-Office/风格.md`），不要复制规则。
 
@@ -70,7 +71,9 @@
 
 ## 4. 字体
 
-整套用衬线体。网页自 2026-11-06 起采用西文与数字 Noto Serif Variable、中文 Noto Serif SC（思源宋体），正文字重均为 500。Office 继续采用宋体与 Times New Roman。
+- **WEB-FONT-002**：机器可读文字令牌唯一源为本目录 [`typography.json`](typography.json)。网站构建生成 `b-Site/assets/onehistory-typography.css`；Aurora 与 Mercury 通过 `diana.z.read path=2026-031-OneHistorySite/z-OneHistoryID/typography.json` 消费，生成带源地址与 SHA-256 的离线快照。只改源对象，不手改消费快照；字体栈与字重取令牌，字号及布局留在各介质。Diana 3.1 现有 `z.read` 已满足消费，无新增专用指令。消费端同步脚本的 `--check` 会拒绝过期快照；构建与运行使用随源码、随包快照，无需在线宿主。
+
+整套用衬线体。网页自 2026-11-06 起采用西文与数字 Noto Serif Variable、中文 Noto Serif SC（思源宋体），正文字重均为 400。Office 继续采用宋体与 Times New Roman。
 
 | 用途 | 网站 | Office | 说明 |
 |---|---|---|---|
@@ -80,11 +83,11 @@
 | 行内代码（路径、文件名） | 同正文衬线体，靠代码底色区分 | — | |
 | 多行代码块 | Consolas → 等宽 | Consolas | 缩进需要对齐 |
 
-- **WEB-FONT-001**：网页正文、说明文字及继承正文样式的控件，西文、数字和中文统一字重 500，深浅主题相同；标题保留 700，已有强调层级可用 600 / 700。字号、行高沿用各页面现行规格。
-- 西文与数字由站点自托管 Noto Serif Variable（Fontsource Variable 5.3.0 的 Latin WOFF2，正体与斜体，100–900）；文件及 SIL OFL 1.1 许可证放在 `b-Site/assets/fonts/`。中文经 Google Fonts 加载 Noto Serif SC 400 / 500 / 600 / 700。
+- **WEB-FONT-001**：网页正文、说明文字及继承正文样式的控件，西文、数字和中文统一字重 400，深浅主题相同；标题、表头与强调层级统一引用 heading 字重 600。字号、行高沿用各页面现行规格。
+- 西文与数字由站点自托管 Noto Serif Variable（Fontsource Variable 5.3.0 的 Latin WOFF2，正体与斜体，100–900）；文件及 SIL OFL 1.1 许可证放在 `b-Site/assets/fonts/`。中文经 Google Fonts 加载 Noto Serif SC 400 / 600。
 - 字体栈以 Noto Serif、Noto Serif SC 为先，再由 Times New Roman 和系统宋体兜底；西文、数字取 Noto Serif，中文落到思源宋体。数字专用字体栈也以 Noto Serif 为首。
-- 标题字重 700，不收紧字距；首屏大标题的例外见网站风格 §2.1。
-- 验收：检查首页、项目库、说明页在深浅主题及桌面 / 手机宽度下的计算字重和实际字体；正文为 500，西文与数字使用 Noto Serif，中文使用 Noto Serif SC，标题层级及布局保留。
+- 标题字重 600，不收紧字距；首屏大标题的例外见网站风格 §2.1。
+- 验收：检查首页、项目库、说明页在深浅主题及桌面 / 手机宽度下的计算字重和实际字体；正文为 400，西文与数字使用 Noto Serif，中文使用 Noto Serif SC，标题层级及布局保留。
 
 ## 5. 语气
 
