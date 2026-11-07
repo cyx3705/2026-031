@@ -7,6 +7,8 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
 const {chromium}=createRequire(import.meta.url)('playwright');
+const colors=JSON.parse(await readFile(new URL('../z-OneHistoryID/colors.json',import.meta.url),'utf8'));
+const rgb=hex=>'rgb('+hex.slice(1).match(/../g).map(x=>parseInt(x,16)).join(', ')+')';
 const site=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../b-Site');
 test('WEB-FONT-002: home, library and detail use shared 400/600 in both themes and mobile',async()=>{
   const server=createServer(async(req,res)=>{
@@ -35,7 +37,8 @@ test('WEB-FONT-002: home, library and detail use shared 400/600 in both themes a
         await page.setViewportSize({width,height:900});
         for(const theme of ['light','dark']) {
           await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
-          const actual=await page.evaluate(()=>({body:getComputedStyle(document.body).fontWeight,heading:getComputedStyle(document.querySelector('h1,h2,h3')).fontWeight,family:getComputedStyle(document.body).fontFamily,overflow:document.documentElement.scrollWidth>innerWidth}));
+          const actual=await page.evaluate(()=>({background:getComputedStyle(document.body).backgroundColor,color:getComputedStyle(document.body).color,body:getComputedStyle(document.body).fontWeight,heading:getComputedStyle(document.querySelector('h1,h2,h3')).fontWeight,family:getComputedStyle(document.body).fontFamily,overflow:document.documentElement.scrollWidth>innerWidth}));
+          assert.equal(actual.background,rgb(colors.themes[theme].canvas),location);assert.equal(actual.color,rgb(colors.themes[theme].text),location);
           assert.equal(actual.body,'400',location);assert.equal(actual.heading,'600',location);
           assert.match(actual.family,/Noto Serif/);assert.equal(actual.overflow,false,location);
         }

@@ -6,7 +6,7 @@
 
 | 内容 | 权威文件 | 实现（跟随权威） |
 |---|---|---|
-| 字标、颜色令牌 | 本文件 | `b-Site/assets/site.css`、HistoryAurora `aurora.css`、各 Office 模板 |
+| 字标 | 本文件 | `b-Site/assets/site.css`、HistoryAurora `aurora.css`、各 Office 模板 |
 | 屏幕字体栈与字重 | [`typography.json`](typography.json) | 网站生成 CSS；Aurora / Mercury 经 Diana Z 级指令消费为离线快照 |
 | 网站风格 | [网站风格.md](网站风格.md) | `b-Site/`（模板、样式、脚本） |
 | Office 风格 | [Office风格.md](Office风格.md) | `0000-000-Template/z-Unused/b-Office/` |
@@ -33,7 +33,7 @@
 
 ## 3. 颜色令牌
 
-两套主题共用同一组令牌名。
+**WEB-COLOR-001：颜色唯一权威源为 [`colors.json`](colors.json)。** 两套主题共用同一组令牌名。`common` 为共用强调色，`themes` 为浅深主题与控件语义色，`desktop` 为桌面磁贴和项目图标专用色。网站生成 CSS；Aurora 与 Mercury 使用 manifest 的 `syncColors` 经 `diana.z.read` 获取完整对象、校验 schema 和 SHA-256，再生成离线快照；`checkColors` 检查漂移。改色只改此对象，不手改产物。验收：网站 colors.test.mjs 与主题浏览器测试、Aurora colors.test.mjs、Mercury Smoke。
 
 - **深浅两套分开设定**（2026-10-24 起）：不拿一套主题的颜色去当另一套的颜色。2026-10-23 试过反色对齐（条带 = 另一套主题的墨色块），
   无论怎么调，总有一种颜色在某一套主题里显得突兀，已退回。改色时两套各自调、各自看。
@@ -46,24 +46,7 @@
   金色只做粗体编号和数字，正文文字不用它，所以不按正文的 AA（4.5 : 1）要求。深色米白墨块上偏淡，是保留米白墨块的代价。
 - 层级是「底色 → 卡片 → 条带」三层小台阶，浅色越往上越深，深色与之对应。
 
-| 令牌 | 浅色 | 深色 | 用途 |
-|---|---|---|---|
-| `canvas` | `#FBFAF7` | `#121414` | 页面底色；墨色块上的反白字 |
-| `surface` | `#F3F1EC` | `#1D201F` | 卡片、输入框、按钮底 |
-| `surface-2` | `#EBE9E4` | `#191C1B` | 条带、分段控件底、快捷键提示 |
-| `surface-hover` | `#E5E3DE` | `#2A2D2C` | 悬停底色 |
-| `text` | `#38352F` | `#DAD7CE` | 正文、标题 |
-| `text-2` | `#38352F` | `#DAD7CE` | 次要文字、标签、说明（与 `text` 同值） |
-| `ink` | `#26231E` | `#E2DAC6` | 墨色条、粗细墨线、选中块（Office 里称 ink） |
-| `accent` | `#A97F22` | `#A97F22` | 主题色：链接、编号、选中态、章节号（深浅同值） |
-| `accent-soft` | `rgba(169,127,34,.42)` | `rgba(169,127,34,.42)` | 选中 / 悬停时的描边 |
-| `accent-wash` | `rgba(169,127,34,.10)` | `rgba(169,127,34,.10)` | 选中底、首屏光晕 |
-| `hairline` | `#E5E3DE` | `#2A2D2C` | 常规分隔线、卡片边框 |
-| `hairline-2` | `#D5D1C8` | `#343736` | 较深的分隔线、虚线框 |
-| `code-bg` | `#EBE9E4` | `#171A19` | 代码底色 |
-| `shadow` | `0 10px 30px rgba(38,35,30,.06)` | `0 16px 40px rgba(0,0,0,.26)` | 只给浮在上面的弹层（网站与 Office 都不用） |
-| `shadow-lift` | `0 16px 38px rgba(38,35,30,.12)` | `0 22px 52px rgba(0,0,0,.40)` | 同上，较高的弹层 |
-| `ring` | `0 0 0 4px rgba(169,127,34,.16)` | `0 0 0 4px rgba(169,127,34,.18)` | 暂不使用（网站聚焦改为边线变墨色） |
+
 
 - 主题色只用来强调，不做大面积底色。
 - 「墨色」（`ink`）：墨色条、粗细墨线、选中块都用它，比正文略深。墨色块上的反白字是本主题 `canvas`，其余见 [网站风格.md §2.4](网站风格.md)。

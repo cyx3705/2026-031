@@ -12,6 +12,7 @@ on:
     paths:
       - "b-Code/**"
       - "z-OneHistoryID/typography.json"
+      - "z-OneHistoryID/colors.json"
       - "b-Site/index.template.html"
       - "b-Site/library.template.html"
       - "b-Site/p.template.html"
@@ -42,7 +43,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run typography && npm run test:typography
+      - run: npm run typography && npm run colors && npm run test:typography && npm run test:colors
 
       - name: 从各仓库 README 生成目录与说明页
         run: node b-Code/build.mjs

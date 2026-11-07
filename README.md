@@ -143,3 +143,8 @@ npm run dry        # 只抓取和解析，不写文件
 - 第三方组件、模板、元件库、外购件模型和工具仍受其原始许可证约束；本声明不扩大作者对第三方内容的权利。
 
 商业使用、产品化、公司内部长期使用、转让或排他性授权需另行取得著作权人的书面许可。
+
+
+### 共享颜色令牌
+
+WEB-COLOR-001：`z-OneHistoryID/colors.json` 是唯一颜色源；`npm run colors` 生成 CSS，`npm run test:colors` 校验源与产物。Aurora / Mercury 经 Diana Z 消费并以 checkColors 检查漂移，运行使用离线快照。主题浏览器测试覆盖三类页面、两套主题和手机布局。

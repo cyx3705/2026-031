@@ -9,7 +9,9 @@
     "dry": "node b-Code/build.mjs --dry",
     "typography": "node b-Code/typography.mjs",
     "test:typography": "node --test b-Code/typography.test.mjs",
-    "test:typography:browser": "node --test b-Code/typography-browser.test.mjs"
+    "test:typography:browser": "node --test b-Code/typography-browser.test.mjs",
+    "colors": "node b-Code/colors.mjs",
+    "test:colors": "node --test b-Code/colors.test.mjs"
   },
   "dependencies": {
     "marked": "^14.1.3",

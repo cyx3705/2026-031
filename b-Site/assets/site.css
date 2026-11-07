@@ -1,8 +1,9 @@
+@import url("onehistory-colors.css");
 @import url("onehistory-typography.css");
 /* ============================================================
    OneHistory 站点样式
    风格权威：z-OneHistoryID/网站风格.md（颜色令牌见同目录 README.md）。
-   改色顺序：先改 README，再同步本文件与 2026-026 的 AuroraTokens.xaml。
+   颜色唯一源为 z-OneHistoryID/colors.json；本文件只作语义别名。
    结构：令牌 → 骨架/容器 → 导航 → 首屏(书页+标题栏) → 项目库 → 卡片
         → 页脚 → 说明页(正文+目录) → 响应式 → 动效
    容器一律走 .wrap：max-width + margin-inline:auto，宽屏下不会贴左。
@@ -21,27 +22,25 @@
 /* ---------------------------------------------- 令牌 */
 /* 与 README §3 逐值相同。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
    深浅两套分开设定（2026-10-24 起）：页面、条带、墨色块都是各主题自己的原值，不拿另一套主题的颜色来对齐。 */
-html[data-theme="light"] {
-  --canvas:#FBFAF7; --surface:#F3F1EC; --surface-2:#EBE9E4; --surface-hover:#E5E3DE;
-  --text:#38352F; --text-2:#38352F;
-  --hairline:#E5E3DE; --hairline-2:#D5D1C8;
-  --code-bg:#EBE9E4;
-  --ink:#26231E; --on-ink:#FBFAF7; --text-2-on-ink:#ACA593;
-}
-html[data-theme="dark"] {
-  --canvas:#121414; --surface:#1D201F; --surface-2:#191C1B; --surface-hover:#2A2D2C;
-  --text:#DAD7CE; --text-2:#DAD7CE;
-  --hairline:#2A2D2C; --hairline-2:#343736;
-  --code-bg:#171A19;
-  --ink:#E2DAC6; --on-ink:#121414; --text-2-on-ink:#6A6458;
-}
-/* 强调色（2026-11-05 起）：金 #A97F22，深浅两套共用一个值，墨色块沿用各主题原值。
-   对比度：浅 canvas 3.5、深 canvas 5.1；浅主题墨块 4.3、深主题米白墨块 2.6（: 1）。 */
 :root {
-  --accent:#A97F22;
-  --accent-soft:rgba(169,127,34,.42); --accent-wash:rgba(169,127,34,.10);
+  --canvas:var(--oh-color-canvas);
+  --surface:var(--oh-color-surface);
+  --surface-2:var(--oh-color-surface-2);
+  --surface-hover:var(--oh-color-surface-hover);
+  --text:var(--oh-color-text);
+  --text-2:var(--oh-color-text-2);
+  --hairline:var(--oh-color-hairline);
+  --hairline-2:var(--oh-color-hairline-2);
+  --code-bg:var(--oh-color-code-bg);
+  --ink:var(--oh-color-ink);
+  --on-ink:var(--oh-color-on-ink);
+  --text-2-on-ink:var(--oh-color-text-2-on-ink);
+  --accent:var(--oh-color-accent);
+  --accent-soft:var(--oh-color-accent-soft);
+  --accent-wash:var(--oh-color-accent-wash);
   --accent-on-ink:var(--accent);
 }
+
 :root {
   --nav-h:62px; --wrap:1200px;
   /* 粗细两级横线：粗线开头、细线收口（同 Office 表格） */
