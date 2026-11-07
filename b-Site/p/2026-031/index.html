@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/site.css?v=2416f495">
+  <link rel="stylesheet" href="/assets/site.css?v=d298e99a">
   <script>
     (function () {
       var t; try { t = localStorage.getItem("oh-theme"); } catch (e) {}
@@ -180,6 +180,8 @@ python b-Code/models.py 2026-012 # 只转一个
 </code></pre>
 <p><code>models.py</code> 会在 HistoryClio 和 <code>HistorySaturn/HistoryVesta</code> 两处找项目文件夹。只有 Solid Edge 装配（<code>.asm</code>）没有 STEP 的项目，先在 Solid Edge 里打开装配另存为 <code>.stp</code>，放进该项目的 <code>b-Module-GE</code>（2025-009 沙拉售卖机就是这样来的）。</p>
 <p>加一个模型：在 <code>models.py</code> 的 <code>MODELS</code> 里写上 STEP 路径和公差，再在 <code>site.config.json</code> 的 <code>showcase.hero</code>（要拆装动画）或 <code>showcase.models</code>（只展示）里登记。模型躺倒时写 <code>&quot;up&quot;: &quot;z&quot;</code>；<code>explode</code> 选 <code>radial</code>（向四周散开）或 <code>y</code>（竖直拉开，适合筒状叠层）。单个 GLB 尽量控制在 5 MB 内，公差调大文件就小。</p>
+<h3>共享文字令牌</h3>
+<p>WEB-FONT-002：字体栈与字重只在 <code>z-OneHistoryID/typography.json</code> 定义；网站构建自动生成 CSS。<code>npm run typography</code> 只更新文字令牌产物，<code>npm run test:typography</code> 验证其与权威对象一致；<code>npm run test:typography:browser</code> 检查现有三类页面的浅深主题及手机布局。Aurora / Mercury 用各自 manifest 的 syncTypography 指令经 Diana Z 级消费，再以 checkTypography 检查漂移。</p>
 <h3>本地构建</h3>
 <pre><code class="language-bash">npm install
 npm run build      # 生成 b-Site/index.html、p/**、projects.json
