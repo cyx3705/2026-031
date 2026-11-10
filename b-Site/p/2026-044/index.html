@@ -129,8 +129,20 @@
 <td>目录</td>
 <td><code>norma.formula.list [topic=]</code>、<code>norma.formula.show id=</code></td>
 </tr>
+<tr>
+<td>手册查询</td>
+<td><code>norma.manual.search root= q= [scope=title/text]</code> 搜索/浏览目录，<code>norma.manual.read root= id=</code> 分页读正文或 HTML</td>
+</tr>
+<tr>
+<td>标准代号</td>
+<td><code>norma.std.lookup q=</code> 按代号或名称互查（机械工程师手册「国内/国外部分标准代号」两页）</td>
+</tr>
+<tr>
+<td>金属强度</td>
+<td><code>norma.metal.strength family= value= scale= grade=</code> 钢/变形铝合金/铜合金的硬度互转与强度换算（PCHIP 保形插值，含肖氏 HS、表面洛氏、维氏、布氏）</td>
+</tr>
 </tbody></table>
-<p>页面只有一张目录表，加一个按钮把目录列到控制台。</p>
+<p>页面有一张目录表，加两个操作面板：标准代号查表、金属强度换算。</p>
 <p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；每条都带出处、适用范围、参数的符号/单位/范围。自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
 <p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
 <h2>入口</h2>
