@@ -59,12 +59,12 @@
 </blockquote>
 <h2>定位</h2>
 <p>Ratio（拉丁语「推理、理性」；原名 HistoryApollo，0.6.0 改名）把本机与远端的推理资源变成 HistoryVulcan 指令：
-本机统一推理服务（WSL 里的 llama-server 加 C++ 代理，0.7.0 起源码在本仓 <code>b-Code-Service/</code>）是供应商 <code>local</code>，免密钥，
+本机推理缺省由 Ratio 直接加载自有 <code>ratio-inference.dll</code>（Windows x64/CUDA，源码在 <code>b-Code-Service/</code>），供应商仍为 <code>local</code>，免密钥，
 启停与换模走 <code>ratio.local.*</code>；远端内置 DeepSeek，可按需联网搜索（博查），可附本机图片交给识图模型（内置通义千问）。
 每一轮往返实时写进控制台。</p>
 <ul>
-<li>它只做一件事——<strong>把一次模型调用说清楚</strong>，外加本机推理服务的状态、启停与换模。</li>
-<li>会话历史、提示词工程、重试编排和逐字流式输出都属于调用方，不在这里。</li>
+<li>Ratio 拥有本机推理库、模型生命周期、共享 KV 与调度，同时把远端推理接成统一指令。</li>
+<li>会话历史、提示词工程、业务重试编排和逐字流式输出都属于调用方；原生后端首次调用按需加载模型。</li>
 </ul>
 <h2>概况</h2>
 <table>
@@ -183,7 +183,7 @@ ratio.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 </tr>
 <tr>
 <td><code>b-Code-Service/</code></td>
-<td>本机推理服务源码（WSL 脚本、配置、C++ 代理与 KV 扩展），随 DLL 发布、启动时部署到运行区</td>
+<td>本机推理源码（Windows DLL 接口、构建、配置与共用 KV 扩展），随 DLL 发布、启动时部署到运行区</td>
 </tr>
 <tr>
 <td><code>b-Code/</code></td>
@@ -191,7 +191,7 @@ ratio.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 </tr>
 <tr>
 <td><code>b-Office/</code></td>
-<td><code>current/现行约定.md</code>，唯一的长期文档</td>
+<td><code>现行约定.md</code>，唯一的长期文档</td>
 </tr>
 <tr>
 <td><code>z-Publish/</code></td>
@@ -203,6 +203,7 @@ ratio.chat.ask prompt=这张图纸是什么零件 images=D:\图纸.png
 dotnet run --project .\b-Code\Ratio.Tests\Ratio.Tests.csproj -c Release -p:NuGetAudit=false
 powershell -NoProfile -ExecutionPolicy Bypass -File .\b-Code\Test-ProjectContract.ps1 -Instantiation
 </code></pre>
+<p>原生 DLL 构建与验收见 <a href="https://github.com/cyx3705/2026-030/blob/HEAD/b-Code-Service/README.md">服务源码说明</a>。正式候选构建需要 <code>RatioNativeRoot</code> 或 <code>RATIO_NATIVE_ROOT</code> 指向已构建的 DLL 目录；运行机无需安装编译器或 CUDA Toolkit。本机仅支持定制 DLL；不再提供 WSL 或 HTTP 后端。原生模式不开放 HTTP 监听，外部调用统一经 <code>ratio.*</code>。</p>
 <p>自动验证全程离线：对话用例走假传输，不出网、不计费。需要联网实调时设 <code>RATIO_LIVE=1</code> 再跑测试。</p>
 <h2>开发与发布</h2>
 <p>改动只进 <code>vulcan.dev.start</code> 创建的工作区，经宿主 Console CLI 走
