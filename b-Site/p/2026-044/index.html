@@ -92,8 +92,9 @@
 <td><a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Code/Norma/NormaVersion.props"><code>NormaVersion.props</code></a></td>
 </tr>
 </tbody></table>
+<p>0.12.0 已完成材料卷911个叶页的目录核对，补充牌号物性/工艺及产品指标；计算数据与未整理范围见 <code>b-Office/现行约定.md</code> 和 <code>b-Code/Norma/Formulas/materials-volume-audit.json</code>。页级核对不表示整卷表格全部入库。</p>
 <h2>能力</h2>
-<p>每条计算是一条只读指令 <code>norma.&lt;类&gt;.&lt;方法&gt;</code>，全部投影到 MCP。</p>
+<p>每条计算是一条只读指令 <code>norma.&lt;类&gt;.&lt;方法&gt;</code>，全部投影到 MCP。0.13.0的“基础标准”类提供六个独立查询入口，覆盖极限与配合第2～47、49～62页（含孔轴极限偏差、公差带常用级别、优先/常用配合卡、IT等级加工资料及配合应用），术语定义暂存Usus，第48页工作状况影响整表纳入Usus单条U0041，整章62页的逐页归属与验收见现行约定及<code>limits-fits-audit.json</code>。</p>
 <table>
 <thead>
 <tr>
@@ -115,15 +116,35 @@
 </tr>
 <tr>
 <td>传动</td>
-<td><code>screw.drive</code>、<code>belt.geometry</code>、<code>chain.geometry</code></td>
+<td><code>screw.drive</code>、<code>belt.geometry</code>、<code>chain.geometry</code>；<code>norma.drive.efficiency q=</code> 按类型/工况查53条机械传动效率概略值，省略q分页浏览</td>
 </tr>
 <tr>
 <td>支承与弹性件</td>
 <td><code>bearing.load</code> / <code>life</code> / <code>required</code> / <code>static</code>、<code>spring.compression</code> / <code>wire</code></td>
 </tr>
 <tr>
+<td>基础标准</td>
+<td><code>norma.basic.tolerance grade=IT7</code> 查IT等级卡（应用范围、选用举例、可达/经济加工方法、成本比），追加property=圆锥最大角误差或圆锥轴向公差可查第56/59页固定条件参考值；加size=25查标准公差，property/process/feature正交筛选；<code>norma.basic.band band=H7 size=25</code> 查单个公差带卡（标准公差、基本偏差、孔轴上/下偏差和常用级别、基本偏差应用、C=1:10圆锥轴向基本偏差）；<code>band=g6 property=基本偏差应用</code>无需尺寸查第46页应用说明，<code>band=* size=25 property=常用级别 usage=4</code>列圈选公差带；不接收H7/g6配合组合；无表名参数，缺条件一次给齐，一个显式*才展开，未定义不回退估算</td>
+</tr>
+<tr>
+<td>一般公差</td>
+<td><code>norma.basic.general size=25 grade=m</code>：尺寸mm、f/m/c/v等级两个坐标，增加可选property=线性尺寸/倒圆半径和倒角高度/角度尺寸；省略返回线性尺寸、倒圆半径/倒角高度、角度尺寸的极限偏差；角度按较短边长度查询，返回°并保留原角分文字。缺参一次给齐，一个显式*展开整表；无表名参数，横线/各项超范围返回null</td>
+</tr>
+<tr>
+<td>基础标准配合</td>
+<td><code>norma.basic.fit fit=H7/g6 size=25</code> 查配合卡及原表带符号极限间隙/过盈；<code>fit=* size=25 usage=3 property=选用级别</code> 列优先配合，usage=2列常用非优先；<code>fit=H7/g6 property=应用举例</code>无需尺寸查应用，可选装配方法/配合特性及使用条件/过盈概率；<code>property=统计最大间隙或最小过盈</code>或<code>统计最小间隙或最大过盈</code>查统计极限，条件T:Wc=2:1、Pcmin=86%；来源38～40、47及52页，未列数值仍为null</td>
+</tr>
+<tr>
+<td>角度与斜度系列</td>
+<td><code>norma.basic.angular designation=C1:10</code> 查圆锥锥度卡，<code>α60°</code>查圆锥角，<code>β45°</code>查棱体角，<code>S1:20</code>查棱体斜度；支持<code>MT0</code>及<code>贾氏2</code>别名，返回系列、原表推算值及用途。<code>property=圆锥换算系数</code>查以1:10为基准的原表系数，支持36个已有圆锥基本值；可选property/series/standard，无表名参数；一个显式*展开</td>
+</tr>
+<tr>
+<td>圆锥计算与角公差</td>
+<td><code>norma.cone.fundamental taper=0.1 deviation=-7</code> 由直径基本偏差μm算轴向基本偏差mm；<code>norma.cone.limits taper=0.1 upper=-7 lower=-20</code> 算轴向上下偏差和公差，自动反号并交换端点；<code>norma.basic.coneangle grade=AT7 length=50</code> 按AT等级、圆锥长度mm查角公差，返回315μrad、1′05″及按实际L计算的ATD=15.8μm。详见REQ-BASIC-025/026</td>
+</tr>
+<tr>
 <td>其他</td>
-<td><code>fit.it</code> 标准公差、<code>beam.deflection</code> 梁</td>
+<td><code>fit.it</code> 标准公差公式估算、<code>beam.deflection</code> 梁</td>
 </tr>
 <tr>
 <td>目录</td>
@@ -131,20 +152,41 @@
 </tr>
 <tr>
 <td>手册查询</td>
-<td><code>norma.manual.search root= q= [scope=title/text]</code> 搜索/浏览目录，<code>norma.manual.read root= id=</code> 分页读正文或 HTML</td>
+<td><code>norma.manual.search q= [scope=title/text]</code> 搜索/浏览目录，<code>norma.manual.read id=</code> 分页读正文或 HTML；<code>norma.manual.open name= [scroll_y=0]</code> 按页名打开并可滚动长页，<code>norma.manual.directory</code> 仅以文字查看左侧目录；<code>norma.manual.screenshot full_page=true</code> 双向滚动拼接整页正文含脚注并恢复位置，默认仅截可见视口；x/y/width/height相对正文局部裁切；<code>mode=html id=</code>才渲染提取HTML</td>
 </tr>
 <tr>
 <td>标准代号</td>
 <td><code>norma.std.lookup q=</code> 按代号或名称互查（机械工程师手册「国内/国外部分标准代号」两页）</td>
 </tr>
 <tr>
-<td>金属强度</td>
+<td>机械材料</td>
+<td><code>norma.material.limits material= sigma_b=</code> 从抗拉强度估算材料对称/脉动疲劳极限，保留区间与无定义项</td>
+</tr>
+<tr>
+<td>机械材料</td>
 <td><code>norma.metal.strength family= value= scale= grade=</code> 钢/变形铝合金/铜合金的硬度互转与强度换算（PCHIP 保形插值，含肖氏 HS、表面洛氏、维氏、布氏）</td>
 </tr>
 </tbody></table>
-<p>页面有一张目录表，加两个操作面板：标准代号查表、金属强度换算。</p>
+<p>| 材料牌号库 | <code>norma.material.grade grade=HT250</code>：牌号是主键；成分、力学、物理、工艺合一，category/property/condition/family可选 |
+| 材料库 | <code>norma.material.library name=PTFE</code>：非金属/复合材料按名称或型号查卡；通用物性、堆积、摩擦及无明确牌号的产品性能也在此，以category分类 |
+| 产品规格库 | <code>norma.product.spec name=结构用热轧无缝钢管 spec=&#39;{&quot;外径&quot;:32,&quot;壁厚&quot;:3}&#39; property=理论重量</code>：尺寸、重量、截面参数、供应组合及公差；产品全名/坐标见工具自描述 |</p>
+<p>0.12.1 合并了9个重复入口：<code>material.strength</code>改为牌号库<code>category=力学</code>；8个物性/摩擦专用入口改为材料库可选分类。Norma总注册指令57→48，对MCP公开54→45。材料数据查询固定为牌号库、材料库、规格库三个入口；硬度换算和疲劳极限估算保留独立计算。</p>
+<p>材料库支持category=非金属/复合材料/弹性/密度/热学/线膨胀/堆积/滑动摩擦/物体摩擦/滚动摩擦力臂/产品性能。例如<code>name=铅 category=密度 property=密度</code>或<code>name=钢-钢 category=滑动摩擦</code>。通用参考值不归给具体牌号，原表温区、载荷、配方和单位保持独立；缺值保留null及原因。类别/属性均不需要新增工具。</p>
+<p>原产品数据中的791格纯力学/试验性能转由材料库<code>category=产品性能</code>查询；不推定钢带/钢丝的牌号。规格入口当前为99页150表、9126条规则、22018格、106个产品/专表；存储仍保留全部原表用于追溯，整卷未整理范围不变。</p>
+<p>牌号库仍以材料牌号为主键，保留ZL101、LY12等明确代号映射；category=成分/力学/物理/工艺过滤，省略返回完整牌号卡。非金属和复合材料使用独立材料库的name主键。缺变量返回default=null及选项，一个显式*才返回变化表；完整卡片不受limit截断。原有用途代表选型和basis=source仍保留，并明确非等同或替代认证。</p>
+<pre><code class="language-text">norma.material.grade grade=HT250
+norma.material.grade grade=QSn6.5-0.1
+norma.material.grade grade=6061
+norma.material.grade grade=ZL101
+norma.material.grade grade=MTCrMoCu35
+norma.material.grade grade=钨铸铁
+norma.material.grade grade=钨铸铁 basis=source
+norma.material.grade grade=KmTBCr15Mo property=Cr
+norma.material.grade grade=HT250 category=力学 property=抗拉强度 condition=单铸试棒
+</code></pre>
+<p>6个合金体系名称关联到17个导轨牌号；各用途原数据写入对应卡片“同族参考配方（非本牌号标准指标）”，不覆盖牌号标准成分/性能，不宣称跨用途等同。其余29个分支名称条目（27个名称）依REQ-MATERIAL-008选用5个用途基准：HT250、HT350、东亚DH33、KmTBCr2、KmTBNi4Cr2-GT。名称默认返回代表卡及原配方；basis=source只查原数据。DH33新增厂家公开抗弯强度与HV30硬度，化学成分未公开；其他牌号沿用手册原数据。</p>
+<p>页面有一张目录表，加两个操作面板：标准代号查表、强度换算（保留命令<code>norma.metal.strength</code>）。</p>
 <p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；每条都带出处、适用范围、参数的符号/单位/范围。自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
-<p>指令说明就是注册时的自描述（<code>diana.docs.read domain=norma</code>，宿主 6.1.0 起没有消费文档）；自描述装不下的取舍写进 <a href="https://github.com/cyx3705/2026-044/blob/HEAD/b-Office/%E7%8E%B0%E8%A1%8C%E7%BA%A6%E5%AE%9A.md">现行约定</a>。</p>
 <h2>入口</h2>
 <table>
 <thead>
