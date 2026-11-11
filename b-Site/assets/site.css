@@ -20,13 +20,11 @@
 }
 
 /* ---------------------------------------------- 令牌 */
-/* 与 README §3 逐值相同。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
+/* 仅映射网站用到的共享令牌；完整颜色源仍供 Aurora / Mercury 使用。文字只有一种颜色：--text = --text-2；--on-ink 是墨色块上的反白字 = 本主题 canvas。
    深浅两套分开设定（2026-10-24 起）：页面、条带、墨色块都是各主题自己的原值，不拿另一套主题的颜色来对齐。 */
 :root {
   --canvas:var(--oh-color-canvas);
   --surface:var(--oh-color-surface);
-  --surface-2:var(--oh-color-surface-2);
-  --surface-hover:var(--oh-color-surface-hover);
   --text:var(--oh-color-text);
   --text-2:var(--oh-color-text-2);
   --hairline:var(--oh-color-hairline);
@@ -34,11 +32,8 @@
   --code-bg:var(--oh-color-code-bg);
   --ink:var(--oh-color-ink);
   --on-ink:var(--oh-color-on-ink);
-  --text-2-on-ink:var(--oh-color-text-2-on-ink);
   --accent:var(--oh-color-accent);
   --accent-soft:var(--oh-color-accent-soft);
-  --accent-wash:var(--oh-color-accent-wash);
-  --accent-on-ink:var(--accent);
 }
 
 :root {
@@ -271,7 +266,7 @@ html[data-theme="light"] .i-sun { display:none; }
 .chip:hover { color:var(--text); background:var(--surface); }
 .chip.is-on { z-index:1; color:var(--on-ink); border-color:var(--ink); background:var(--ink); font-weight:var(--oh-font-weight-heading); }
 .chip-n { font-family:var(--num); font-size:13px; color:var(--text-2); }
-.chip.is-on .chip-n { color:var(--accent-on-ink); }
+.chip.is-on .chip-n { color:var(--accent); }
 
 /* 排序：文字按钮，选中的一项下方一道粗墨线 */
 .sort { flex:0 0 auto; display:inline-flex; gap:14px; }
@@ -608,7 +603,7 @@ html.js .slide.is-on > :nth-child(5) { animation-delay:.20s; }
 }
 .page-btn:hover { color:var(--text); background:var(--surface); }
 .page-btn.is-on { color:var(--on-ink); background:var(--ink); border-radius:var(--r-bar); border-bottom-color:transparent; font-weight:var(--oh-font-weight-heading); }
-.page-btn.is-on .id { color:var(--accent-on-ink); }
+.page-btn.is-on .id { color:var(--accent); }
 .shelf-cap p { margin:0 0 6px; }
 .shelf-name { color:var(--text); font-weight:var(--oh-font-weight-heading); }
 .shelf-note { color:var(--text-2); font-size:14.5px; line-height:1.65; }

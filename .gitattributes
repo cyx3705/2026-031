@@ -27,3 +27,9 @@ Unused/b-Module-cam/T.mcam -text
 Unused/b-Office/BOM表.xlsx -text
 Unused/b-Office/立项报告.doc -text
 Unused/b-Office/项目报告.pptx -text
+
+# WEB-COLOR-003: shared token hashes and generated CSS must survive Windows checkouts.
+/z-OneHistoryID/colors.json text eol=lf
+/z-OneHistoryID/typography.json text eol=lf
+/b-Site/assets/onehistory-colors.css text eol=lf
+/b-Site/assets/onehistory-typography.css text eol=lf

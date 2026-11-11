@@ -148,3 +148,5 @@ npm run dry        # 只抓取和解析，不写文件
 ### 共享颜色令牌
 
 WEB-COLOR-001：`z-OneHistoryID/colors.json` 是唯一颜色源；`npm run colors` 生成 CSS，`npm run test:colors` 校验源与产物。Aurora / Mercury 经 Diana Z 消费并以 checkColors 检查漂移，运行使用离线快照。主题浏览器测试覆盖三类页面、两套主题和手机布局。
+
+WEB-COLOR-003：收口旧 AI 清理分支，网站只映射实际使用的颜色令牌，墨色块编号直接使用 accent；模型展示图渲染读取 colors.json 的共用强调色。完整共享颜色对象继续供其他模块使用，Office 文档统一称 accent。共享令牌 JSON 与生成 CSS 固定 LF，避免 Windows 检出导致 SHA-256 或快照内容误报漂移。验收：颜色及文字令牌测试、三类页面深浅主题与手机布局浏览器测试、渲染脚本语法检查。
