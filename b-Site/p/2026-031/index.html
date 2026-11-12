@@ -198,12 +198,13 @@ npm run dry        # 只抓取和解析，不写文件
 Actions 默认的 <code>GITHUB_TOKEN</code> 权限不够，所以第一次仍得手动开启。开启后即可全自动。</p>
 </blockquote>
 <h3>自动发布</h3>
+<p>自有上海服务器的部署、模型压缩和访问日志说明见 <a href="https://github.com/cyx3705/2026-031/blob/HEAD/b-Deploy/README.md">b-Deploy/README.md</a>。2026-11-12 已将正式域名和自动发布切到上海服务器，启用 HTTPS；GitHub Actions 构建后通过受限 SSH 通道发布。</p>
 <p><code>.github/workflows/build-site.yml</code>：</p>
 <ul>
 <li>每天 UTC 20:00（北京时间 04:00）刷新一次</li>
 <li>改模板/脚本/样式后 push 立即重建</li>
 <li>也可在 Actions 页面手动触发</li>
-<li>生成结果提交回 <code>main</code>（<strong>只提交有差异的部分</strong>），随后发布到 GitHub Pages</li>
+<li>生成结果提交回 <code>main</code>（<strong>只提交有差异的部分</strong>），随后预压缩模型与文本并发布到上海服务器，HTTPS 检查成功后完成；失败自动切回旧版本</li>
 </ul>
 <h2>保留内容</h2>
 <h3>logo与作者</h3>
