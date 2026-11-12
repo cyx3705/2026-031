@@ -19,8 +19,8 @@ try {
     $options = @('-i', $Key, '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes', '-o', 'ConnectTimeout=15')
     & ssh @options $Server 'mkdir -p /opt/onehistory/incoming'
     if ($LASTEXITCODE -ne 0) { throw 'SSH 连接失败' }
-    & scp @options b-Deploy/out/site.tar.gz b-Deploy/onehistory.nginx.conf b-Deploy/activate.sh b-Deploy/access-report.py "${Server}:/opt/onehistory/incoming/"
+    & scp @options b-Deploy/out/site.tar.gz b-Deploy/onehistory.nginx.conf b-Deploy/activate.sh b-Deploy/access-report.py b-Admin/server.py b-Admin/index.html b-Admin/install.sh b-Admin/onehistory-admin.service "${Server}:/opt/onehistory/incoming/"
     if ($LASTEXITCODE -ne 0) { throw '上传失败，保留现有版本' }
-    & ssh @options $Server 'bash /opt/onehistory/incoming/activate.sh'
+    & ssh @options $Server 'bash /opt/onehistory/incoming/install.sh && bash /opt/onehistory/incoming/activate.sh'
     if ($LASTEXITCODE -ne 0) { throw '服务器发布失败，请检查 Nginx 日志' }
 } finally { Pop-Location }

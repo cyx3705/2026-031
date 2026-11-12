@@ -33,3 +33,6 @@ Unused/b-Office/项目报告.pptx -text
 /z-OneHistoryID/typography.json text eol=lf
 /b-Site/assets/onehistory-colors.css text eol=lf
 /b-Site/assets/onehistory-typography.css text eol=lf
+
+# Shanghai backend is installed directly on Linux from a Windows checkout.
+/b-Admin/** text eol=lf

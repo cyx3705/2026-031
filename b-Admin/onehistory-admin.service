@@ -1,0 +1,19 @@
+[Unit]
+Description=OneHistory visitor dashboard
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+SupplementaryGroups=adm
+WorkingDirectory=/opt/onehistory/admin
+ExecStart=/usr/bin/python3 /opt/onehistory/admin/server.py
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+
+[Install]
+WantedBy=multi-user.target
