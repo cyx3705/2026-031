@@ -1,5 +1,5 @@
 /* OneHistory 首页的 3D：首屏的拆装动画，以及「模型展示」选页。
-   three.js 由 index.html 的 importmap 指到 CDN。
+   three.js 由 index.html 的 importmap 指到同源 vendor 目录。
    对外只有 Stage：new Stage(容器, 选项)，stage.show(模型) 切换。
 
    拆装动画是通用的「爆炸图」：把装配里每个零件拿出来，按它离整机中心的方向推开，

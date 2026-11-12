@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css?v=0c7adad3">
-  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js">
+  <link rel="modulepreload" href="/assets/vendor/three-0.170.0/build/three.module.min.js">
   <script>
     // 以前首页就是项目库，别人分享出去的 /?q=… 筛选链接转到新地址
     if (/[?&](q|g)=/.test(location.search)) location.replace("/library/" + location.search + location.hash);
@@ -29,8 +29,8 @@
   <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        "three": "/assets/vendor/three-0.170.0/build/three.module.min.js",
+        "three/addons/": "/assets/vendor/three-0.170.0/examples/jsm/"
       }
     }
   </script>

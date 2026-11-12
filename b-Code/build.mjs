@@ -24,6 +24,7 @@ import { fileURLToPath } from "node:url";
 import { marked } from "marked";
 import {generateTypography} from "./typography.mjs";
 import {generateColors} from "./colors.mjs";
+import {generateVendor} from "./vendor.mjs";
 
 // 有些网络里 GitHub 的 IPv6 地址连不上、只能等超时，优先走 IPv4 能省掉这段空等
 setDefaultResultOrder("ipv4first");
@@ -31,7 +32,7 @@ setDefaultResultOrder("ipv4first");
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = path.join(ROOT, "b-Site");
 const DRY = process.argv.includes("--dry");
-if (!DRY) { await generateTypography(); await generateColors(); }
+if (!DRY) { await generateTypography(); await generateColors(); await generateVendor(); }
 
 const cfg = JSON.parse(await readFile(path.join(ROOT, "b-Code/site.config.json"), "utf8"));
 const includeRe = cfg.includePatterns.map((p) => new RegExp(p));

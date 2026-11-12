@@ -119,12 +119,14 @@ npm run dry        # 只抓取和解析，不写文件
 
 ### 自动发布
 
+自有上海服务器的部署、模型压缩和访问日志说明见 [b-Deploy/README.md](./b-Deploy/README.md)。2026-11-12 已将正式域名和自动发布切到上海服务器，启用 HTTPS；GitHub Actions 构建后通过受限 SSH 通道发布。
+
 `.github/workflows/build-site.yml`：
 
 - 每天 UTC 20:00（北京时间 04:00）刷新一次
 - 改模板/脚本/样式后 push 立即重建
 - 也可在 Actions 页面手动触发
-- 生成结果提交回 `main`（**只提交有差异的部分**），随后发布到 GitHub Pages
+- 生成结果提交回 `main`（**只提交有差异的部分**），随后预压缩模型与文本并发布到上海服务器，HTTPS 检查成功后完成；失败自动切回旧版本
 
 ## 保留内容
 

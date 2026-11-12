@@ -11,6 +11,7 @@ on:
     branches: [main]
     paths:
       - "b-Code/**"
+      - "b-Deploy/**"
       - "z-OneHistoryID/typography.json"
       - "z-OneHistoryID/colors.json"
       - "b-Site/index.template.html"
@@ -24,11 +25,9 @@ on:
 
 permissions:
   contents: write      # 把生成结果提交回仓库
-  pages: write         # 发布到 GitHub Pages
-  id-token: write
 
 concurrency:
-  group: onehistory-pages
+  group: onehistory-shanghai
   cancel-in-progress: false
 
 jobs:
@@ -66,21 +65,30 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
-      - uses: actions/configure-pages@v5
-        with:
-          # 仓库还没开 Pages 时自动开启，省去手动去设置页选 source
-          enablement: true
+      - name: 打包站点和预压缩模型
+        run: |
+          node b-Code/prepare-deploy.mjs
+          tar -czf b-Deploy/out/site.tar.gz -C "$(cat b-Deploy/out/latest.txt)" .
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: b-Site
+      - name: 发布到上海服务器
+        env:
+          DEPLOY_KEY: ${{ secrets.SHANGHAI_DEPLOY_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SHANGHAI_KNOWN_HOSTS }}
+        run: |
+          test -n "$DEPLOY_KEY" && test -n "$KNOWN_HOSTS"
+          install -d -m 700 "$RUNNER_TEMP/onehistory-ssh"
+          trap 'rm -f "$RUNNER_TEMP/onehistory-ssh/key"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$RUNNER_TEMP/onehistory-ssh/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$RUNNER_TEMP/onehistory-ssh/known_hosts"
+          chmod 600 "$RUNNER_TEMP/onehistory-ssh/key"
+          ssh -T -i "$RUNNER_TEMP/onehistory-ssh/key" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/onehistory-ssh/known_hosts" \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+            root@101.132.190.76 < b-Deploy/out/site.tar.gz
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: 验证正式网站
+        run: |
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
+            --resolve onehistory.exc0.top:443:101.132.190.76 \
+            --output /dev/null https://onehistory.exc0.top/

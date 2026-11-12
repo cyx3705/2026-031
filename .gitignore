@@ -60,3 +60,6 @@ node_modules/
 
 # 介绍动画的渲染产物（静帧、音轨、成片），可由 b-Code/intro 重新生成
 b-Code/intro/out/
+
+# 自有服务器部署临时产物
+b-Deploy/out/
