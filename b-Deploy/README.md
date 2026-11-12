@@ -1,70 +1,52 @@
-# 上海服务器部署
+# 分站部署
 
-目标：`101.132.190.76`，Ubuntu 24.04。沿用 MessageHub 的 SSH 登录配置，网站使用独立 Nginx，不代理消息桥。
+2026-11-12：按用户决定，作品页面留在上海服务器，项目库和项目说明页放回 GitHub Pages，不使用 OSS 或本机后台中转。
 
-## 当前状态（2026-11-12）
+## 地址与更新
 
-- 正式入口：`https://onehistory.exc0.top/`。Cloudflare 中 onehistory 已从 GitHub CNAME 改为 `A 101.132.190.76`，仅 DNS（灰云）；HTTP 和 IP 入口跳转到正式 HTTPS 域名。
-- 公网压缩模型 `2025-004.glb` 的 Content-Length 为 1,461,939 字节，原文件 4,251,036 字节；gzip 是无损传输压缩。
-- Three.js 0.170.0 与 GLTFLoader / OrbitControls / BufferGeometryUtils 同源提供，MIT LICENSE 随资源保留。
-- 首页、项目库和说明页已上传。首页在禁用外网请求的浏览器中成功生成 400 个零件，没有脚本错误。
-- Let’s Encrypt 证书已通过 DNS-01 签发并启用，有效至 2027-02-10 16:14（北京时间）。域名与新源站证书校验通过，首页、项目库、说明页、Three.js、GLB 的公网 HTTPS 请求均为 200。
-- 用户要求先跑通，暂不办理备案；本次已执行域名切换。其他 `@` 和 `api` DNS 记录未改。
-- GitHub Actions 每日北京时间 04:00、相关文件推送和手动触发均会构建、压缩并发布到上海服务器；不再运行 GitHub Pages 发布步骤。公开编号仓库仍按原规则自动收录。
+- 作品首页：`https://onehistory.exc0.top/`，上海服务器 `101.132.190.76`，3D 模型和 Three.js 均由上海同源提供，启用 gzip 预压缩和 HTTPS。
+- 项目库：`https://cyx3705.github.io/2026-031/library/`；项目说明页：`https://cyx3705.github.io/2026-031/p/<仓库名>/`。
+- GitHub Actions 每日北京时间 04:00、相关源码推送及手动触发时，从公开编号仓库 README 自动生成项目库和说明页，提交有变化的产物，再发布到 GitHub Pages。新建仓库不直接触发本站 workflow，会在下一次构建时收录。
+- 上海作品首页暂不自动同步；代表作品、3D 模型及首页内容修改后，本机运行 `./b-Deploy/Deploy.ps1 -Build` 更新。
+- 访问旧的上海 `/library/`、`/p/`、`/projects.json` 地址，会跳转到 GitHub；作品页的项目链接也直接指向 GitHub。项目库里的“作品”和 Logo 返回上海首页。
+- 上海日志只能记录到达上海源站的请求，GitHub 项目库的访问不会进入上海日志。
 
-## 发布
+## 构建与发布
 
-日常无需本机操作：`.github/workflows/build-site.yml` 自动生成站点并提交差异，随后通过 SSH 标准输入发送压缩包。仓库 Secrets `SHANGHAI_DEPLOY_KEY` 和 `SHANGHAI_KNOWN_HOSTS` 分别保存专用私钥和固定主机公钥，不使用 MessageHub 私钥。服务器 authorized_keys 对此密钥设置 `restrict,command="/usr/local/sbin/onehistory-receive"`，关闭交互和转发，只运行固定接收器。
+`b-Code/build.mjs` 仍是统一内容生成器；最后调用 `split-hosting.mjs` 写入跨站链接。`prepare-pages.mjs` 把项目库、说明页和必要样式资源复制到独立产物目录，改写 `/2026-031/` 子路径，并生成项目库入口。GitHub 产物不含 CNAME、3D 模型或 Three.js vendor。
 
-`receive-release.py` 由管理员安装到 `/usr/local/sbin/onehistory-receive`（root 所有、0755），工作流不能更新该脚本、Nginx 配置或证书。接收器锁定发布、校验压缩包路径/类型/大小，原子切换版本，检查 HTTPS；失败切回旧版，成功保留当前及最近两版。服务器不需要访问 GitHub 或安装 Node.js。
-
-修改接收器或 Nginx 配置时仍需管理员手动部署；普通网站内容、模板、模型则由 Actions 自动更新。
-
-首次服务器环境需要 `nginx`（Ubuntu 包含 gzip_static）与 `certbot`。安装软件时设置 `NEEDRESTART_MODE=l`，避免安装钩子主动重启其他服务。
-
-本机依赖：Node.js、npm、Windows OpenSSH、tar。运行 `npm ci` 后：
+上海服务器的生成产物保留 `/assets/` 根路径。`prepare-deploy.mjs` 复制站点并预压缩 GLB 与文本，临时包位于忽略入库的 `b-Deploy/out/`。本机需要 Node.js、npm、OpenSSH、tar：
 
 ```powershell
-# 发布当前已生成站点，不联网重新抓 README
-.\b-Deploy\Deploy.ps1
-# 先重新抓取各仓库 README 并构建，再发布
-.\b-Deploy\Deploy.ps1 -Build
+npm ci
+.\b-Deploy\Deploy.ps1        # 发布当前已生成站点
+.\b-Deploy\Deploy.ps1 -Build # 重新抓 README、构建并发布
 ```
 
-部署压缩包位于忽略入库的 `b-Deploy/out/`。`prepare-deploy.mjs` 在新目录复制站点、剔除模板和 CNAME、生成 `.gz` 副本；不要直接修改压缩包。Three.js 的版本与首页 importmap 同步，升级依赖时调整 `vendor.mjs` 与 importmap。
+SSH 沿用 MessageHub 的 `root@101.132.190.76` 和本机 `C:/Users/Administrator/.ssh/messagehub-cloud.pem`，私钥不入库。Nginx 配置在 `/etc/nginx/sites-available/onehistory`，版本目录在 `/var/www/onehistory/releases/`，`current` 为当前版本软链接。管理员脚本 `activate.sh` 检查配置后原子切换并 reload；旧版本可回滚。
 
-服务器路径：
+尝试 GitHub Actions 直接推送上海时，各类执行节点到源站均超时，因此已撤销该 workflow 和专用密钥的授权，删除 GitHub 相关 Secrets。`receive-release.py` 保留为受限接收器源码供参考，不再用于日常发布。
 
-- `/opt/onehistory/incoming/`：上传包、激活脚本与访问报表脚本。
-- `/var/www/onehistory/releases/`：独立版本目录。
-- `/var/www/onehistory/current`：当前版本软链接。
-- `/etc/nginx/sites-available/onehistory`：本站配置。
-- `/var/log/nginx/onehistory.access.log`：JSON 访问日志；沿用 Ubuntu 默认每日轮转、保留 14 份、压缩旧日志。
-
-`activate.sh` 检查 Nginx 配置后原子替换 current 链接并 reload。旧版本保留，可将 current 原子切回之前目录回滚。仓库中的 Nginx 配置已包含 HTTPS。新机器首次部署须先准备相应证书；不能直接把当前 TLS 配置部署到无证书的机器。
-
-## 访问数据
+## 访问日志
 
 ```powershell
 ssh -i C:/Users/Administrator/.ssh/messagehub-cloud.pem root@101.132.190.76 'python3 /opt/onehistory/incoming/access-report.py'
 ```
 
-按日输出页面请求量、独立 IP 数、热门页面和来源域名。包含爬虫、监控与本站验收流量；独立 IP 不等于独立人数。访问日志仅从新服务器开始接收请求后产生，不能恢复 GitHub Pages 历史访问。日志通过 SSH 查看，未设置公开报表地址。
+日志在 `/var/log/nginx/onehistory.access.log`，按默认规则每日轮转、保留 14 份。报表按日给出页面请求量、独立 IP、热门路径、来源域名，包含爬虫和验收请求；独立 IP 不等于人数。历史 GitHub 访问无法补回，GitHub 项目库没有额外部署访客统计。
 
-## 证书续期和回滚
+## HTTPS 和本机访问
 
-当前证书通过手动 DNS 校验签发，**尚不能自动续期**。服务器直连 ACME 超时，本次通过只绑定服务器回环地址的临时 SSH 反向隧道使用本机代理完成签发，命令结束后隧道关闭。webroot 自动续期的 staging 测试因 CA 连接源站 80 端口超时失败，没有替换当前有效证书。不可把已存在的 certbot.timer 视为续期成功。
-
-到期前使用本机已有代理与 SSH 密钥重新发起 DNS 校验：
+证书在 `/etc/letsencrypt/live/onehistory.exc0.top/`，当前有效至 2027-02-10 16:14（北京时间）。通过 DNS-01 手动验证签发，**尚不能自动续期**。服务器直连 ACME 超时，本次通过只绑定回环地址的临时 SSH 反向隧道使用本机代理签发；隧道已关闭。续期命令：
 
 ```powershell
 ssh -tt -R 127.0.0.1:18080:127.0.0.1:7890 -i C:/Users/Administrator/.ssh/messagehub-cloud.pem root@101.132.190.76 'export https_proxy=http://127.0.0.1:18080; export http_proxy=http://127.0.0.1:18080; certbot certonly --manual --preferred-challenges dns --cert-name onehistory.exc0.top -d onehistory.exc0.top'
 ```
 
-按照命令打印的挑战值，在 Cloudflare 更新 `_acme-challenge.onehistory` TXT，确认公共解析生效后按回车完成，随后 `nginx -t && systemctl reload nginx`。当前保留的 TXT 是已使用的验证值，不是访问凭据，也不能用于下一次续期。不要在仓库中存放证书私钥或 Cloudflare 令牌。
+在 Cloudflare 更新命令打印的 `_acme-challenge.onehistory` TXT，确认公共解析生效后回车完成，随后 `nginx -t && systemctl reload nginx`。
 
-如需退回 GitHub Pages，先恢复工作流的 Pages 上传和发布步骤、手动构建成功，再把 Cloudflare 中 onehistory 恢复为原 `CNAME cyx3705.github.io`（仅 DNS）。
+本机代理链路无法访问上海源站，已在 Windows 系统代理例外添加 `onehistory.exc0.top`；其他网站仍使用原代理。本次不改变 GitHub 的代理路线。
 
 ## 安装记录
 
-安装 Nginx 时，系统 needrestart 钩子尝试重启 `aegis.service`，该 unit 报 signal=KILL。随后检查原 AliYunDunUpdate、AliYunDun、AliYunDunMonitor 进程仍存在；没有主动停止这些进程或修改云安全代理。MessageHub 三桥部署后仍 healthy。
+安装 Nginx 时 needrestart 钩子尝试重启 `aegis.service`，该 unit 报 signal=KILL；检查时原 AliYunDunUpdate、AliYunDun、AliYunDunMonitor 进程仍存在，未停止或修改安全代理。MessageHub 三桥部署后仍 healthy。

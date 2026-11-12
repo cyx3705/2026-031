@@ -25,6 +25,7 @@ import { marked } from "marked";
 import {generateTypography} from "./typography.mjs";
 import {generateColors} from "./colors.mjs";
 import {generateVendor} from "./vendor.mjs";
+import {splitHosting} from "./split-hosting.mjs";
 
 // 有些网络里 GitHub 的 IPv6 地址连不上、只能等超时，优先走 IPv4 能省掉这段空等
 setDefaultResultOrder("ipv4first");
@@ -455,4 +456,5 @@ for (const p of projects) {
   n++;
 }
 console.log(`写入 ${n} 个说明页`);
+await splitHosting();
 console.log("完成。");

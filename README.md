@@ -22,7 +22,7 @@
 | `b-Site/assets/stage.js` | 首页的 3D（three.js）：拆装动画与模型展示 |
 | `b-Site/assets/models/` | 首页的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
 | `b-Site/assets/renders/` | 模型展示图，由 `b-Code/renders.mjs` 本机渲染后入库（等轴测、6 阶、深浅两版） |
-| `b-Site/CNAME` | 自定义域名 `onehistory.exc0.top` |
+| `b-Code/prepare-pages.mjs` | 生成 GitHub 项目库的子路径发布包；作品首页另部署至上海 |
 | `b-Site/index.html` | **生成产物**，代表作品页，勿手改 |
 | `b-Site/library/index.html` | **生成产物**，项目库，勿手改 |
 | `b-Site/p/<仓库名>/index.html` | **生成产物**，每个项目一页 |
@@ -119,14 +119,14 @@ npm run dry        # 只抓取和解析，不写文件
 
 ### 自动发布
 
-自有上海服务器的部署、模型压缩和访问日志说明见 [b-Deploy/README.md](./b-Deploy/README.md)。2026-11-12 已将正式域名和自动发布切到上海服务器，启用 HTTPS；GitHub Actions 构建后通过受限 SSH 通道发布。
+自有上海服务器的部署、模型压缩和访问日志说明见 [b-Deploy/README.md](./b-Deploy/README.md)。2026-11-12 确定分站：作品首页在上海服务器，项目库与说明页由 GitHub Pages 自动发布；页面互相链接。上海作品首页通过本机部署脚本更新。
 
 `.github/workflows/build-site.yml`：
 
 - 每天 UTC 20:00（北京时间 04:00）刷新一次
 - 改模板/脚本/样式后 push 立即重建
 - 也可在 Actions 页面手动触发
-- 生成结果提交回 `main`（**只提交有差异的部分**），随后预压缩模型与文本并发布到上海服务器，HTTPS 检查成功后完成；失败自动切回旧版本
+- 生成结果提交回 `main`（**只提交有差异的部分**），随后发布项目库与项目说明页到 GitHub Pages；上海作品首页单独通过部署脚本更新
 
 ## 保留内容
 
