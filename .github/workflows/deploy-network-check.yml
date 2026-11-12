@@ -1,0 +1,27 @@
+name: 上海发布网络诊断
+on:
+  push:
+    paths: ['.github/workflows/deploy-network-check.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 检查源站端口
+        shell: python
+        run: |
+          import socket, concurrent.futures
+          def probe(port):
+              try:
+                  with socket.create_connection(('101.132.190.76', port), timeout=10):
+                      print(str(port) + ': connected', flush=True)
+              except Exception as e:
+                  print(str(port) + ': ' + str(e), flush=True)
+          with concurrent.futures.ThreadPoolExecutor() as pool:
+              list(pool.map(probe, [22, 80, 443, 7443]))
