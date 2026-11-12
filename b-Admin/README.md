@@ -2,6 +2,8 @@
 
 入口为 `https://onehistory.exc0.top/admin/`，首页页脚有“访问统计”链接。源码保存在本 OneHistorySite 仓库的 `b-Admin/`；不发布到 GitHub Pages。
 
+页面风格以 `z-OneHistoryID/网站风格.md`、`colors.json`、`typography.json` 为权威。直接加载首页 `assets/site.css` 及其生成令牌，复用字标、字体、导航和主题切换；后台自己的样式只定义布局与组件，不另设颜色或字体。主题沿用 `oh-theme`，支持系统偏好与手动切换。
+
 ## 部署与登录
 
 从仓库根目录执行 `./b-Deploy/Deploy.ps1` 会安装后台服务并发布首页。无需新增 Python 包：使用系统 Python 3 标准库，systemd 服务为 `onehistory-admin`，仅监听 `127.0.0.1:18731`。Nginx 对整个 `/admin/`（包括 API）进行 HTTP Basic 登录认证，外部通过 HTTPS 访问。后台进程以 `www-data` 运行，仅有日志读取权限；不接收上传或执行管理命令。
