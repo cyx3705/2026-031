@@ -22,7 +22,7 @@ async function rewrite(dir) {
       // 同时处理 HTML 属性、importmap、模块 import 和内联模型 JSON。
       await writeFile(file, html
         .replace(/(["'])\/assets\//g, '$1/2026-031/assets/')
-        .replace('<a href="/admin/" rel="nofollow">访问统计</a>', '<a href="https://onehistory.exc0.top/admin/" rel="nofollow">访问统计</a>')
+        .replace(/\s*<a href="\/admin\/" rel="nofollow">访问统计<\/a>/g, '')
         .replace('</body>', `${statsScript}\n</body>`));
     }
   }

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="https://cyx3705.github.io/2026-031/assets/site.css">
 <script>
 (function(){let t;try{t=localStorage.getItem('oh-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;})();
 </script>
@@ -80,7 +80,7 @@ tr:last-child td{border-bottom:0}
 <section class="box recent"><h2>最近访问</h2><div class="table-scroll" id="recent"></div></section>
 <p class="admin-note">数据仅覆盖上海作品站，不含 GitHub 项目库。已排除静态资源、后台访问和可识别的机器人；未知机器人仍可能计入。原始日志按服务器规则每日轮转，保留 14 份，超出保留期的历史无法补回。页面不展示访客 IP。数据最多缓存 30 秒。</p>
 </main>
-<script src="/assets/site.js"></script>
+<script src="https://cyx3705.github.io/2026-031/assets/site.js"></script>
 <script>
 const $=id=>document.getElementById(id), fmt=n=>n.toLocaleString('zh-CN');
 function table(id,headers,rows){const host=$(id);host.replaceChildren();if(!rows.length){const p=document.createElement('p');p.className='empty';p.textContent='暂无访问数据';host.append(p);return}const t=document.createElement('table'),head=t.createTHead().insertRow();headers.forEach(text=>{const cell=document.createElement('th');cell.textContent=text;head.append(cell)});const body=t.createTBody();rows.forEach(row=>{const tr=body.insertRow();row.forEach(value=>{tr.insertCell().textContent=typeof value==='number'?fmt(value):value})});host.append(t)}

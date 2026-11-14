@@ -1,6 +1,6 @@
 # 访客后台
 
-入口为 `https://onehistory.exc0.top/admin/`。2026-11-14 公开站点全部迁入 GitHub Pages 后，公开首页已移除该入口；后台仍保留在上海，仅统计上海源站请求和历史数据，无法统计 Pages 访问，且原域名的公网连接问题也会影响后台访问。源码保存在本 OneHistorySite 仓库的 `b-Admin/`；不发布到 GitHub Pages。
+统计后台只允许上海服务器本机访问，不设密码。通过 SSH 本地转发后打开 `http://127.0.0.1:18731/admin/`：`ssh -N -L 18731:127.0.0.1:18731 -i C:/Users/Administrator/.ssh/messagehub-cloud.pem root@101.132.190.76`。公开 Pages 页面不提供后台入口。源码保存在本 OneHistorySite 仓库的 `b-Admin/`；不发布到 GitHub Pages。
 
 页面风格以 `z-OneHistoryID/网站风格.md`、`colors.json`、`typography.json` 为权威。直接加载首页 `assets/site.css` 及其生成令牌，复用字标、字体、导航和主题切换；后台自己的样式只定义布局与组件，不另设颜色或字体。主题沿用 `oh-theme`，支持系统偏好与手动切换。
 
