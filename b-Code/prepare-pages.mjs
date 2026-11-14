@@ -7,6 +7,7 @@ import { generateVendor } from './vendor.mjs';
 await splitHosting();
 await generateVendor();
 const root = fileURLToPath(new URL('../', import.meta.url));
+const statsScript = `<script>(()=>{try{const p=location.pathname, u='https://onehistory.exc0.top/stats/collect'; if(p.startsWith('/2026-031/')&&!p.startsWith('/2026-031/admin')) navigator.sendBeacon(u,new Blob([JSON.stringify({path:p,referrer:document.referrer})],{type:'application/json'}));}catch{}})();</script>`;
 const output = path.join(root, 'b-Deploy/out/pages-' + Date.now());
 await mkdir(output, { recursive: true });
 for (const item of ['index.html', 'library', 'p', 'assets', 'projects.json']) {
@@ -21,7 +22,8 @@ async function rewrite(dir) {
       // 同时处理 HTML 属性、importmap、模块 import 和内联模型 JSON。
       await writeFile(file, html
         .replace(/(["'])\/assets\//g, '$1/2026-031/assets/')
-        .replace(/\s*<a href="\/admin\/" rel="nofollow">访问统计<\/a>/g, ''));
+        .replace('<a href="/admin/" rel="nofollow">访问统计</a>', '<a href="https://onehistory.exc0.top/admin/" rel="nofollow">访问统计</a>')
+        .replace('</body>', `${statsScript}\n</body>`));
     }
   }
 }

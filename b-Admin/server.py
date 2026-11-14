@@ -12,6 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
 
 LOG_PATTERN = os.environ.get('OHSITE_LOG_PATTERN', '/var/log/nginx/onehistory.access.log*')
+VISIT_FILE = os.environ.get('OHSITE_VISIT_FILE', '/var/lib/onehistory/visits.jsonl')
 TZ = dt.timezone(dt.timedelta(hours=8))
 LOCK = threading.Lock()
 CACHE = (0, None)
@@ -23,7 +24,7 @@ def summarize(pattern, count=14, today=None):
     days = {d: {'views': 0, 'ips': set(), 'bots': 0} for d in dates}
     pages, sources, browsers, recent = collections.Counter(), collections.Counter(), collections.Counter(), []
     ips = set()
-    for filename in glob.glob(pattern):
+    for filename in glob.glob(pattern) + [VISIT_FILE]:
         opener = gzip.open if filename.endswith('.gz') else open
         try:
             with opener(filename, 'rt', encoding='utf-8', errors='replace') as stream:
@@ -32,7 +33,7 @@ def summarize(pattern, count=14, today=None):
                         row = json.loads(line)
                         day = dt.datetime.fromisoformat(row['time']).astimezone(TZ).date().isoformat()
                         path = urlsplit(row['path']).path
-                        if day not in days or row['method'] != 'GET' or int(row['status']) not in (200, 304):
+                        if day not in days or row.get('method') != 'GET' or int(row.get('status', 0)) not in (200, 304):
                             continue
                         if path.startswith(('/admin', '/assets/', '/.')) or pathlib.PurePosixPath(path).suffix not in ('', '.html'):
                             continue
@@ -63,6 +64,30 @@ def summarize(pattern, count=14, today=None):
 
 
 class Handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        if urlsplit(self.path).path != '/stats/collect' or self.headers.get('Origin') != 'https://cyx3705.github.io':
+            self.send_error(403); return
+        try:
+            length = int(self.headers.get('Content-Length', '0'))
+            if length <= 0 or length > 2048: raise ValueError()
+            body = json.loads(self.rfile.read(length)); path = body['path']
+            if not isinstance(path, str) or not path.startswith('/2026-031/') or '?' in path or '#' in path or len(path) > 500: raise ValueError()
+            if pathlib.PurePosixPath(path).suffix not in ('', '.html') or path.startswith('/2026-031/admin'): raise ValueError()
+            ua = self.headers.get('User-Agent', '')
+            if any(s in ua.lower() for s in ('bot', 'spider', 'crawler', 'curl/', 'python-', 'headless', 'wget/')):
+                self.send_response(204); self.end_headers(); return
+            row = {'time': dt.datetime.now(TZ).isoformat(), 'ip': self.client_address[0], 'method': 'GET', 'status': 200, 'path': path, 'referer': body.get('referrer', ''), 'agent': ua}
+            os.makedirs(os.path.dirname(VISIT_FILE), exist_ok=True)
+            with LOCK:
+                with open(VISIT_FILE, 'a', encoding='utf8') as stream: stream.write(json.dumps(row, ensure_ascii=False) + '\n')
+            self.send_response(204); self.send_header('Access-Control-Allow-Origin', 'https://cyx3705.github.io'); self.end_headers()
+        except (ValueError, KeyError, json.JSONDecodeError): self.send_error(400)
+
+    def do_OPTIONS(self):
+        if urlsplit(self.path).path == '/stats/collect':
+            self.send_response(204); self.send_header('Access-Control-Allow-Origin', 'https://cyx3705.github.io'); self.send_header('Access-Control-Allow-Methods', 'POST'); self.send_header('Access-Control-Allow-Headers', 'Content-Type'); self.end_headers(); return
+        self.send_error(404)
+
     def do_GET(self):
         global CACHE
         url = urlsplit(self.path)
