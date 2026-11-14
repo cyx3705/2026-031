@@ -10,7 +10,7 @@
 
 对外站点 `onehistory.exc0.top` 的源码与生成管线。站点上每一张项目卡片、每一个说明页，都是从 GitHub 上各个**有编号的公开仓库**的 `README.md` 里读出来的，不手工维护内容。
 
-全站地址为 https://cyx3705.github.io/2026-031/ ，包含作品首页、3D 模型、项目库和说明页。Pages 所有页面接入 Cloudflare Web Analytics，首页页脚“访问统计”打开需要 Cloudflare 账户登录的统计后台。上海访客后台保留历史数据，不统计 GitHub Pages 的访问。源码与部署说明见 [b-Admin](b-Admin/README.md)。
+全站地址为 https://cyx3705.github.io/2026-031/ ，包含作品首页、3D 模型、项目库和说明页。上海访客后台保留，但不统计 GitHub Pages 的访问，公开首页不再提供后台入口。源码与部署说明见 [b-Admin](b-Admin/README.md)。
 
 ### 目录结构
 

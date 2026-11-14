@@ -26,8 +26,6 @@ test('Pages homepage loads 3D models and links to library and details', { timeou
   try {
     browser = await chromium.launch({ channel: 'msedge', headless: true });
     const page = await browser.newPage();
-    // 本地验证脚本配置与资源路径；统计接收在发布后单独验证。
-    await page.route('https://static.cloudflareinsights.com/**', route => route.fulfill({ contentType: 'text/javascript', body: '' }));
     const failures = [];
     page.on('pageerror', error => failures.push(error.message));
     page.on('response', response => { if (response.status() >= 400) failures.push(`${response.status()} ${response.url()}`); });
@@ -46,12 +44,9 @@ test('Pages homepage loads 3D models and links to library and details', { timeou
       await page.locator('#hero-load.done').waitFor({ timeout: 60000 });
     }
     assert.equal(await page.locator('a[href*="onehistory.exc0.top"], a[href="/admin/"]').count(), 0);
-    assert.equal(await page.locator('script[data-cf-beacon]').count(), 1);
-    assert.ok(await page.locator('a[href*="dash.cloudflare.com/"]').count());
     assert.ok(await page.locator('a[href="https://cyx3705.github.io/2026-031/library/"]').count());
     for (const location of ['/library/', `/p/${(await readdir(path.join(output, 'p')))[0]}/`]) {
       await page.goto(base + location);
-      assert.equal(await page.locator('script[data-cf-beacon]').count(), 1);
       assert.ok(await page.locator('a[href="https://cyx3705.github.io/2026-031/"]').count());
     }
     assert.deepEqual(failures, []);

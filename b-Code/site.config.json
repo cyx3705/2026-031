@@ -1,10 +1,6 @@
 {
   "owner": "cyx3705",
   "siteTitle": "OneHistory",
-  "webAnalytics": {
-    "token": "b036af70bae94a2080424094758b5f40",
-    "dashboard": "https://dash.cloudflare.com/efdc1e1685e2b39857996963c261c123/web-analytics/overview?siteTag~in=7c084d8aa46e40bd8641acd188e15b93&excludeBots=Yes"
-  },
   "note": "只列出 GitHub 上公开可见的仓库。",
 
   "_comment_include": "只收录仓库名匹配这些规则的项目（有编号的）。0000-xxx-Name 与 YYYY-NNN 两种形态。",

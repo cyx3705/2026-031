@@ -1,13 +1,5 @@
 # 访客后台
 
-## GitHub Pages 当前统计
-
-2026-11-14 起，GitHub Pages 的首页、项目库和全部说明页由 Cloudflare Web Analytics 统计，首页页脚“访问统计”打开 Cloudflare 私有后台，需要登录已有 Cloudflare 账户。站点主机名为 `cyx3705.github.io`，可按 `/2026-031/` 路径筛选。`b-Code/site.config.json` 的 `webAnalytics` 保存公开 beacon 标识与后台地址；该标识不具备管理权限。`prepare-pages.mjs` 向发布包的每个 HTML 插入官方脚本，访问统计不依赖上海域名。
-
-数据从接入时开始，无法补回此前 Pages 的访问。前端统计会受到广告拦截器、脚本禁用和网络故障影响；Cloudflare 的访客口径与旧后台独立 IP 不同，不能直接相加。无需 Cookie。旧上海日志不上传 Cloudflare。
-
-## 上海历史后台
-
 入口为 `https://onehistory.exc0.top/admin/`。2026-11-14 公开站点全部迁入 GitHub Pages 后，公开首页已移除该入口；后台仍保留在上海，仅统计上海源站请求和历史数据，无法统计 Pages 访问，且原域名的公网连接问题也会影响后台访问。源码保存在本 OneHistorySite 仓库的 `b-Admin/`；不发布到 GitHub Pages。
 
 页面风格以 `z-OneHistoryID/网站风格.md`、`colors.json`、`typography.json` 为权威。直接加载首页 `assets/site.css` 及其生成令牌，复用字标、字体、导航和主题切换；后台自己的样式只定义布局与组件，不另设颜色或字体。主题沿用 `oh-theme`，支持系统偏好与手动切换。
