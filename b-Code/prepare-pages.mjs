@@ -21,7 +21,7 @@ async function rewrite(dir) {
       // 同时处理 HTML 属性、importmap、模块 import 和内联模型 JSON。
       await writeFile(file, html
         .replace(/(["'])\/assets\//g, '$1https://onehistory.exc0.top/assets/')
-        .replace(/\s*<a href="\/admin\/" rel="nofollow">访问统计<\/a>/g, ''));
+        );
     }
   }
 }
