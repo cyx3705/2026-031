@@ -113,7 +113,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         for k, v in {'Content-Type': kind, 'Content-Length': str(len(body)), 'Cache-Control': 'no-store',
                      'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY',
-                     'Content-Security-Policy': "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"}.items():
+                     'Content-Security-Policy': "default-src 'none'; script-src 'self' 'unsafe-inline' https://onehistory.exc0.top; style-src 'self' 'unsafe-inline' https://onehistory.exc0.top https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://onehistory.exc0.top; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"}.items():
             self.send_header(k, v)
         self.end_headers()
         self.wfile.write(body)
