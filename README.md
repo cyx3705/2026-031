@@ -10,7 +10,7 @@
 
 对外站点 `onehistory.exc0.top` 的源码与生成管线。站点上每一张项目卡片、每一个说明页，都是从 GitHub 上各个**有编号的公开仓库**的 `README.md` 里读出来的，不手工维护内容。
 
-首页页脚“访问统计”进入上海站访客后台（`/admin/`，需要登录），支持访问趋势、独立 IP、页面和来源统计。源码与部署说明见 [b-Admin](b-Admin/README.md)。
+全站地址为 https://cyx3705.github.io/2026-031/ ，包含作品首页、3D 模型、项目库和说明页。上海访客后台保留，但不统计 GitHub Pages 的访问，公开首页不再提供后台入口。源码与部署说明见 [b-Admin](b-Admin/README.md)。
 
 ### 目录结构
 
@@ -24,7 +24,7 @@
 | `b-Site/assets/stage.js` | 首页的 3D（three.js）：拆装动画与模型展示 |
 | `b-Site/assets/models/` | 首页的 GLB 模型，由 `b-Code/models.py` 从本机 STEP 转出 |
 | `b-Site/assets/renders/` | 模型展示图，由 `b-Code/renders.mjs` 本机渲染后入库（等轴测、6 阶、深浅两版） |
-| `b-Code/prepare-pages.mjs` | 生成 GitHub 项目库的子路径发布包；作品首页另部署至上海 |
+| `b-Code/prepare-pages.mjs` | 生成 GitHub 全站子路径发布包，包含作品首页、模型和 Three.js |
 | `b-Site/index.html` | **生成产物**，代表作品页，勿手改 |
 | `b-Site/library/index.html` | **生成产物**，项目库，勿手改 |
 | `b-Site/p/<仓库名>/index.html` | **生成产物**，每个项目一页 |
@@ -121,14 +121,14 @@ npm run dry        # 只抓取和解析，不写文件
 
 ### 自动发布
 
-自有上海服务器的部署、模型压缩和访问日志说明见 [b-Deploy/README.md](./b-Deploy/README.md)。2026-11-12 确定分站：作品首页在上海服务器，项目库与说明页由 GitHub Pages 自动发布；页面互相链接。上海作品首页通过本机部署脚本更新。
+2026-11-14 起，作品首页、模型、项目库与说明页统一由 GitHub Pages 自动发布。上海服务器的历史部署、模型压缩和访问日志说明见 [b-Deploy/README.md](./b-Deploy/README.md)。
 
 `.github/workflows/build-site.yml`：
 
 - 每天 UTC 20:00（北京时间 04:00）刷新一次
 - 改模板/脚本/样式后 push 立即重建
 - 也可在 Actions 页面手动触发
-- 生成结果提交回 `main`（**只提交有差异的部分**），随后发布项目库与项目说明页到 GitHub Pages；上海作品首页单独通过部署脚本更新
+- 生成结果提交回 `main`（**只提交有差异的部分**），随后发布完整站点到 GitHub Pages
 
 ## 保留内容
 

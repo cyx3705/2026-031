@@ -67,7 +67,7 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
-      - name: 准备 GitHub 项目库子路径
+      - name: 准备 GitHub 全站与 3D 模型子路径
         run: |
           node b-Code/prepare-pages.mjs
           echo "PAGES_DIR=$(cat b-Deploy/out/pages-latest.txt)" >> "$GITHUB_ENV"

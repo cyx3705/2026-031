@@ -1,4 +1,14 @@
-# 分站部署
+# GitHub Pages 全站部署
+
+2026-11-14：上海域名公网 HTTPS 连接被重置，作品首页迁到 `https://cyx3705.github.io/2026-031/`。项目库仍在 `/2026-031/library/`，说明页仍在 `/2026-031/p/`。GitHub Actions 统一构建和发布全部公开页面、GLB 模型、展示图及 Three.js；`prepare-pages.mjs` 将 HTML 属性、importmap、模块导入和模型地址一起适配仓库子路径，不携带 CNAME 或后台文件。
+
+本地验证：运行 `node b-Code/prepare-pages.mjs`，再运行 `node --test b-Code/pages-browser.test.mjs`（需安装 Edge 与 npm 依赖），覆盖首页 3D、全部六个模型、项目库及说明页。准备后的目录记录在 `b-Deploy/out/pages-latest.txt`。
+
+上海访问统计后台继续保留原服务和历史数据；它只统计到达上海 Nginx 的请求，不能统计 GitHub Pages 的访问。Pages 首页移除“访问统计”入口。原域名尚未修改 DNS，也未配置为 Pages 自定义域名。
+
+以下为上海分站的历史部署和维护记录，不代表当前公开站点的发布方式。
+
+## 历史：上海分站部署
 
 2026-11-12：按用户决定，作品页面留在上海服务器，项目库和项目说明页放回 GitHub Pages，不使用 OSS 或本机后台中转。
 
