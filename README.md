@@ -10,7 +10,7 @@
 
 对外站点 `onehistory.exc0.top` 的源码与生成管线。站点上每一张项目卡片、每一个说明页，都是从 GitHub 上各个**有编号的公开仓库**的 `README.md` 里读出来的，不手工维护内容。
 
-全站地址为 https://cyx3705.github.io/2026-031/ ，包含作品首页、3D 模型、项目库和说明页。上海访客后台保留，但不统计 GitHub Pages 的访问，公开首页不再提供后台入口。源码与部署说明见 [b-Admin](b-Admin/README.md)。
+全站地址为 https://onehistory.exc0.top/ ，包含作品首页、3D 模型、项目库和说明页。访问统计现提供 HistoryVulcan 模块 HistorySiteStats，使用 Aurora 统一界面并通过 SSH 按需读取上海后台，无需手动常驻端口隧道。模块数据仍仅覆盖上海服务器记录，不统计迁移后 GitHub Pages 的新访问。源码位于 `b-Code/HistorySiteStats`，约定见 [访问统计模块](b-Office/访问统计模块约定.md)。原后台源码与部署说明见 [b-Admin](b-Admin/README.md)。
 
 ### 目录结构
 

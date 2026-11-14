@@ -1,0 +1,6 @@
+z-Publish/
+Unused/
+b-Deploy/out/
+**/bin/
+**/obj/
+**/node_modules/

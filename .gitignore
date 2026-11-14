@@ -63,3 +63,4 @@ b-Code/intro/out/
 
 # 自有服务器部署临时产物
 b-Deploy/out/
+Directory.Build.user.props
