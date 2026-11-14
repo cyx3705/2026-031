@@ -29,14 +29,11 @@ internal static class StatsPage
                     } },
                 } },
                 Text("仅显示上海服务器已记录的访问。首页迁至 GitHub Pages 后的新访问尚未接入此数据源；独立 IP 不等于人数。"),
-                Table("overview", ("name", "概览"), ("value", "数值")),
-                Text("每日访问趋势与明细（北京时间）"),
+                new { type = "barChart", id = "sitestats-trend", text = "每日访问趋势（北京时间）",
+                    dataSource = new { command = "sitestats.ui.data", args = new { view = "daily" } },
+                    columns = new[] { new { key = "date", title = "日期" }, new { key = "views", title = "访问量" }, new { key = "ips", title = "独立 IP" } } },
                 Table("daily", ("date", "日期"), ("views", "访问量"), ("ips", "独立 IP"), ("bots", "已排除机器人")),
-                Text("热门页面"), Table("pages", ("name", "页面"), ("value", "访问量")),
-                Text("访问来源"), Table("sources", ("name", "来源域名"), ("value", "访问量")),
-                Text("浏览器分布"), Table("browsers", ("name", "浏览器"), ("value", "访问量")),
-                Text("最近访问"), Table("recent", ("time", "时间"), ("path", "页面"), ("browser", "浏览器")),
-                new { type = "panel", id = "sitestats-connection", text = "连接设置（保存在本机）", rows = new object[] {
+                new { type = "popup", id = "sitestats-connection", text = "连接设置（保存在本机）", rows = new object[] {
                     new { mode = "even", widgets = new object[] {
                         new { kind = "textbox", id = "host", label = "SSH 服务器" },
                         new { kind = "textbox", id = "user", label = "用户名" },

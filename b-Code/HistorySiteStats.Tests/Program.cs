@@ -26,7 +26,7 @@ try
     Check(page.RootElement.GetProperty("owner").GetString() == "HistorySitestats", "页面 owner 不符合 Aurora 域规则");
     using var actions = JsonDocument.Parse(StatsPage.Actions());
     Check(actions.RootElement.GetProperty("actions").GetArrayLength() == 2, "刷新与设置动作缺失");
-    Check(new ModuleInfo().Version == "0.1.0", "模块版本错误");
+    Check(new ModuleInfo().Version == "0.1.1", "模块版本错误");
     Console.WriteLine("PASS: 并发缓存、时间范围、强制刷新、时区、投影、连接校验、损坏响应、页面协议与版本。");
 }
 finally { Directory.Delete(dir, true); }

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "template": {"isTemplate":false,"source":"0000-002-ModuleReady","strictValidationArgument":"-Instantiation"},
   "contextExclusions":["z-Publish/**","**/bin/**","**/obj/**","**/node_modules/**","Unused/**","b-Deploy/out/**"],
-  "project": {"id":"2026-031","name":"HistorySiteStats","title":"OneHistory 网站与访问统计模块","kind":["software","website","appshell-module"],"status":"active","version":"0.1.0","branch":"main"},
+  "project": {"id":"2026-031","name":"HistorySiteStats","title":"OneHistory 网站与访问统计模块","kind":["software","website","appshell-module"],"status":"active","version":"0.1.1","branch":"main"},
   "paths": {"activeRoots":["b-Code","b-Site","b-Admin","b-Deploy","b-Office","z-OneHistoryID"],"sourceRoots":["b-Code/HistorySiteStats","b-Code/HistorySiteStats.Tests"],"generatedRoots":["b-Code/**/bin","b-Code/**/obj","b-Deploy/out","z-Publish"],"releaseRoots":["z-Publish"],"archiveRoots":["Unused","z-Publish/history"],"allowedRootDirectoryPrefixes":["a-","b-","z-","Unused"]},
   "documents":{"overview":"README.md","conventions":"b-Office/访问统计模块约定.md"},
   "commands":{"setup":null,"verify":null,"run":null,"package":null,"build":"dotnet build b-Code/HistorySiteStats/HistorySiteStats.csproj -c Release -p:NuGetAudit=false","test":"dotnet run --project b-Code/HistorySiteStats.Tests/HistorySiteStats.Tests.csproj -c Release -p:NuGetAudit=false"},

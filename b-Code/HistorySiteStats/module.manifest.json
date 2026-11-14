@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "type": "HistoryVulcan.Module",
   "name": "HistorySiteStats",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OneHistory 站点访问统计",
   "artifact": "HistorySiteStats.dll",
   "docs": "HistorySiteStats.xml",
