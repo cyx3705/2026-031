@@ -28,12 +28,12 @@
 
   <header class="nav">
     <div class="wrap nav-in">
-      <a class="nav-logo" href="https://onehistory.exc0.top/" aria-label="OneHistory 首页">
+      <a class="nav-logo" href="https://cyx3705.github.io/2026-031/" aria-label="OneHistory 首页">
         <img class="logo logo-light" src="/assets/logo.png" alt="OneHistory">
         <img class="logo logo-dark" src="/assets/logo-dark.png" alt="OneHistory">
       </a>
       <span class="grow"></span>
-      <a class="nav-link" href="https://onehistory.exc0.top/">作品</a>
+      <a class="nav-link" href="https://cyx3705.github.io/2026-031/">作品</a>
       <a class="nav-link" href="https://cyx3705.github.io/2026-031/library/">项目库</a>
       <a class="nav-link" href="https://github.com/cyx3705/2026-031" rel="noopener">GitHub</a>
       <button type="button" id="theme" class="icon-btn" aria-label="切换深浅色" title="切换深浅色">
@@ -61,7 +61,7 @@
 <p><img src="https://github.com/cyx3705/2026-031/raw/HEAD/b-Picture/%E9%A6%96%E9%A1%B5.png" alt="站点首页"></p>
 <h2>项目内容</h2>
 <p>对外站点 <code>onehistory.exc0.top</code> 的源码与生成管线。站点上每一张项目卡片、每一个说明页，都是从 GitHub 上各个<strong>有编号的公开仓库</strong>的 <code>README.md</code> 里读出来的，不手工维护内容。</p>
-<p>首页页脚“访问统计”进入上海站访客后台（<code>/admin/</code>，需要登录），支持访问趋势、独立 IP、页面和来源统计。源码与部署说明见 <a href="https://github.com/cyx3705/2026-031/blob/HEAD/b-Admin/README.md">b-Admin</a>。</p>
+<p>全站地址为 <a href="https://cyx3705.github.io/2026-031/">https://cyx3705.github.io/2026-031/</a> ，包含作品首页、3D 模型、项目库和说明页。上海访客后台保留，但不统计 GitHub Pages 的访问，公开首页不再提供后台入口。源码与部署说明见 <a href="https://github.com/cyx3705/2026-031/blob/HEAD/b-Admin/README.md">b-Admin</a>。</p>
 <h3>目录结构</h3>
 <table>
 <thead>
@@ -104,7 +104,7 @@
 </tr>
 <tr>
 <td><code>b-Code/prepare-pages.mjs</code></td>
-<td>生成 GitHub 项目库的子路径发布包；作品首页另部署至上海</td>
+<td>生成 GitHub 全站子路径发布包，包含作品首页、模型和 Three.js</td>
 </tr>
 <tr>
 <td><code>b-Site/index.html</code></td>
@@ -199,13 +199,13 @@ npm run dry        # 只抓取和解析，不写文件
 Actions 默认的 <code>GITHUB_TOKEN</code> 权限不够，所以第一次仍得手动开启。开启后即可全自动。</p>
 </blockquote>
 <h3>自动发布</h3>
-<p>自有上海服务器的部署、模型压缩和访问日志说明见 <a href="https://github.com/cyx3705/2026-031/blob/HEAD/b-Deploy/README.md">b-Deploy/README.md</a>。2026-11-12 确定分站：作品首页在上海服务器，项目库与说明页由 GitHub Pages 自动发布；页面互相链接。上海作品首页通过本机部署脚本更新。</p>
+<p>2026-11-14 起，作品首页、模型、项目库与说明页统一由 GitHub Pages 自动发布。上海服务器的历史部署、模型压缩和访问日志说明见 <a href="https://github.com/cyx3705/2026-031/blob/HEAD/b-Deploy/README.md">b-Deploy/README.md</a>。</p>
 <p><code>.github/workflows/build-site.yml</code>：</p>
 <ul>
 <li>每天 UTC 20:00（北京时间 04:00）刷新一次</li>
 <li>改模板/脚本/样式后 push 立即重建</li>
 <li>也可在 Actions 页面手动触发</li>
-<li>生成结果提交回 <code>main</code>（<strong>只提交有差异的部分</strong>），随后发布项目库与项目说明页到 GitHub Pages；上海作品首页单独通过部署脚本更新</li>
+<li>生成结果提交回 <code>main</code>（<strong>只提交有差异的部分</strong>），随后发布完整站点到 GitHub Pages</li>
 </ul>
 <h2>保留内容</h2>
 <h3>logo与作者</h3>
