@@ -9,7 +9,7 @@ await generateVendor();
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'b-Deploy/out/pages-' + Date.now());
 await mkdir(output, { recursive: true });
-for (const item of ['index.html', 'library', 'p', 'assets', 'projects.json']) {
+for (const item of ['index.html', 'library', 'p', 'assets', 'projects.json', 'CNAME']) {
   await cp(path.join(root, 'b-Site', item), path.join(output, item), { recursive: true });
 }
 async function rewrite(dir) {
