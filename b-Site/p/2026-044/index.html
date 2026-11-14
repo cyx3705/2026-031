@@ -169,7 +169,7 @@
 </tbody></table>
 <p>| 材料牌号库 | <code>norma.material.grade grade=HT250</code>：牌号是主键；成分、力学、物理、工艺合一，category/property/condition/family可选 |
 | 材料库 | <code>norma.material.library name=PTFE</code>：非金属/复合材料按名称或型号查卡；通用物性、堆积、摩擦及无明确牌号的产品性能也在此，以category分类 |
-| 产品规格库 | <code>norma.product.spec name=结构用热轧无缝钢管 spec=&#39;{&quot;外径&quot;:32,&quot;壁厚&quot;:3}&#39; property=理论重量</code>：尺寸、重量、截面参数、供应组合及公差；产品全名/坐标见工具自描述 |</p>
+| 产品规格库 | <code>norma.product.spec name=结构用热轧无缝钢管 spec=&#39;{&quot;外径&quot;:32,&quot;壁厚&quot;:3}&#39; property=理论重量</code>：尺寸、重量、截面参数、供应组合及公差；省略name分页查产品目录，缺坐标返回字段及选项 |</p>
 <p>0.12.1 合并了9个重复入口：<code>material.strength</code>改为牌号库<code>category=力学</code>；8个物性/摩擦专用入口改为材料库可选分类。Norma总注册指令57→48，对MCP公开54→45。材料数据查询固定为牌号库、材料库、规格库三个入口；硬度换算和疲劳极限估算保留独立计算。</p>
 <p>材料库支持category=非金属/复合材料/弹性/密度/热学/线膨胀/堆积/滑动摩擦/物体摩擦/滚动摩擦力臂/产品性能。例如<code>name=铅 category=密度 property=密度</code>或<code>name=钢-钢 category=滑动摩擦</code>。通用参考值不归给具体牌号，原表温区、载荷、配方和单位保持独立；缺值保留null及原因。类别/属性均不需要新增工具。</p>
 <p>原产品数据中的791格纯力学/试验性能转由材料库<code>category=产品性能</code>查询；不推定钢带/钢丝的牌号。规格入口当前为99页150表、9126条规则、22018格、106个产品/专表；存储仍保留全部原表用于追溯，整卷未整理范围不变。</p>

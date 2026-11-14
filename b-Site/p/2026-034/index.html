@@ -110,7 +110,7 @@
 <li><strong>先看后改</strong>：出图前 <code>model.info</code> / <code>asm.list</code> 读模型；改图前 <code>check.svg</code>（图纸读成带编号的 SVG）、<code>view.list</code>、<code>dim.list</code> 拿到视图名、注解名和边 / 孔编号，再按编号寻址修改。</li>
 <li><strong>大粒度起稿，细粒度修</strong>：<code>onekey.*</code> 出初稿（回执末尾带本类修正要点，必须照着修完）→ <code>dim.*</code>、<code>tol.*</code>、<code>tech.*</code>、<code>view.move</code> 逐处修 → <code>check.*</code> 验收。</li>
 <li><strong>长指令</strong>：经 MCP 调用最多 40 秒先回「还在执行」，指令接着跑；用 <code>strenua.quick.last</code> 取完整回执（完成即返回，最多等 40 秒）。</li>
-<li><strong>笔记</strong>：经 MCP 的每条回执最上面带通用区与本类区的注意点；发现指令本身的坑用 <code>note.write</code> 记下（每条 ≤ 100 字，不记项目内容）。</li>
+<li><strong>工具笔记</strong>：统一由 Diana 的 <code>diana.note.read/write</code> 管理，MCP 回执按域、类和指令自动附上；本模块不再注册笔记管理指令。</li>
 </ol>
 <p>所有指令共用一个执行器：在附着 SolidWorks 的 STA 线程上<strong>一次只跑一条</strong>（它们共用同一个选择集），可用 <code>strenua.quick.cancel</code> 取消。
 写进尺寸、孔标注、技术要求的 Ø ↧ ⌴ ± ° 等符号自动换成 SolidWorks 符号码，不会乱码。</p>
@@ -425,10 +425,6 @@
 <tbody><tr>
 <td><code>quick.list</code> / <code>quick.run</code> / <code>quick.last</code> / <code>quick.perf</code> / <code>quick.cancel</code></td>
 <td>列出快捷指令与状态、按 key 执行、取回上次完整回执（<code>back=</code> 往前取）、耗时明细、取消正在执行的</td>
-</tr>
-<tr>
-<td><code>note.read</code> / <code>note.write</code></td>
-<td>读写指令注意点笔记（MCP 回执自动带上）</td>
 </tr>
 <tr>
 <td><code>option.clearance</code> / <code>option.chain</code> / <code>option.techai</code></td>
