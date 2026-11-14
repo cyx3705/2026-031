@@ -1,4 +1,4 @@
-// 全站发布到 GitHub Pages 的 /2026-031/ 子路径。
+// 全站发布到 GitHub Pages 自定义域，资源从站点根路径加载。
 import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,7 @@ async function rewrite(dir) {
       const html = await readFile(file, 'utf8');
       // 同时处理 HTML 属性、importmap、模块 import 和内联模型 JSON。
       await writeFile(file, html
-        .replace(/(["'])\/assets\//g, '$1/2026-031/assets/')
+        .replace(/(["'])\/assets\//g, '$1https://onehistory.exc0.top/assets/')
         .replace(/\s*<a href="\/admin\/" rel="nofollow">访问统计<\/a>/g, ''));
     }
   }
