@@ -13,6 +13,7 @@ public sealed class HistorySiteStatsModule : IModuleContextAware
         var days = 14;
         async Task RefreshPage()
         {
+            await context.Bus.InvokeAsync("aurora.ui.invalidate owner=HistorySitestats", "").ConfigureAwait(false);
             await context.Bus.InvokeAsync("aurora.ui.refreshdata page=sitestats", "").ConfigureAwait(false);
         }
         context.RegisterCommands(r => {
