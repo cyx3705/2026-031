@@ -7,6 +7,10 @@ import { generateVendor } from './vendor.mjs';
 await splitHosting();
 await generateVendor();
 const root = fileURLToPath(new URL('../', import.meta.url));
+// 公开的站点统计标识，不是管理 API 密钥；只在 Pages 发布包中插入脚本。
+const { webAnalytics } = JSON.parse(await readFile(path.join(root, 'b-Code/site.config.json'), 'utf8'));
+if (!/^[a-f0-9]{32}$/.test(webAnalytics.token)) throw new Error('Invalid Web Analytics token');
+const analytics = `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token: webAnalytics.token })}'></script>`;
 const output = path.join(root, 'b-Deploy/out/pages-' + Date.now());
 await mkdir(output, { recursive: true });
 for (const item of ['index.html', 'library', 'p', 'assets', 'projects.json']) {
@@ -21,7 +25,9 @@ async function rewrite(dir) {
       // 同时处理 HTML 属性、importmap、模块 import 和内联模型 JSON。
       await writeFile(file, html
         .replace(/(["'])\/assets\//g, '$1/2026-031/assets/')
-        .replace(/\s*<a href="\/admin\/" rel="nofollow">访问统计<\/a>/g, ''));
+        .replace('<a href="/admin/" rel="nofollow">访问统计</a>',
+          `<a href="${webAnalytics.dashboard.replaceAll('&', '&amp;')}" rel="nofollow noopener" target="_blank">访问统计</a>`)
+        .replace('</body>', `${analytics}\n</body>`));
     }
   }
 }
